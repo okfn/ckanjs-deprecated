@@ -9,6 +9,11 @@ CKAN.Remote = function($) {
   my.apiSearch = my.api + '/search';
   my.apiRest = my.api + '/rest';
 
+  my.saveFromEditable = function(value, settings) {
+    // TODO: actually save stuff
+    return value;
+  };
+
   return my;
 }(jQuery);
 
@@ -45,8 +50,24 @@ CKAN.UI = function($) {
     });
     var out = $('#tmpl-package-summary').tmpl(data.results);
     $results.find('.packages').html(out);
+    my.makeEditable();
   };
-
+  
+  my.makeEditable = function() {
+    $('.editable').editable(CKAN.Remote.saveFromEditable);
+    $('.editable-area').editable(
+      CKAN.Remote.saveFromEditable, {
+        type      : 'textarea',
+        cancel    : 'Cancel',
+        submit    : 'OK',
+        tooltip   : 'Click to edit...',
+        data      : function(value, settings) {
+          // Get raw markdown for this package
+          return value
+        }
+      }
+    );
+  }
   return my;
 }(jQuery);
 
