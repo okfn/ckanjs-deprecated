@@ -31,13 +31,15 @@ var CKAN = function($, my) {
             item.displaytitle = item.title ? item.title : item.name;
 
             item.snippet = $(showdown.makeHtml(item.notes ? item.notes : '')).text();
-            item.snippet = item.snippet.split(' ').slice(0, 190).join(' ') + ' ...';
+            if (item.snippet.split(' ') > 190) {
+              item.snippet = item.snippet.split(' ').slice(0, 190).join(' ') + ' ...';
+            }
 
             // for templating (to be ckan compatible)
             item.package = item;
           });
           var out = $('#tmpl-package-summary').tmpl(data.results);
-          $results.find('.package-list').html(out);
+          $results.find('.packages').html(out);
         },
         dataType: 'jsonp'
       });
