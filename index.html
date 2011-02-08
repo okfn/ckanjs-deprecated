@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>CKAN Javascript Client</title>
 
+  <link rel="stylesheet" href="http://ckan.net/css/style.css" type="text/css" media="screen, print" />
+
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
 
@@ -45,21 +47,44 @@
   </script>
 
   <style>
+    #search-form {
+      margin-bottom: 30px;
+    }
   </style>
 </head>
 <body>
-  <h1>CKAN from Javascript</h1>
+<div id="wrapper" class="hfeed">
+  <div id="header">
+  <div id="masthead">
+    <div id="branding" role="banner">
+    <h1 id="site-title">CKAN from Javascript</h1>
+  </div><!-- #masthead -->
+  </div><!-- #header -->  
 
-  <form id="search-form">
-    <input type="search" name="q" placeholder="Search ..." class="search" />
-    <input type="submit" name="submit" value="Search" />
-  </form>
-  <div id="results" style="display: none;">
-    <h3>Results</h3>
-    <strong><span class="count"></span></strong> results found.
-    <ul class="package-list">
-    </ul>
-  </div>
+  <div id="main"> 
+    <div id="container"> 
+      <div id="content" role="main"> 
+
+        <form id="search-form">
+          <input type="search" name="q" placeholder="Search ..." class="search" />
+          <input type="submit" name="submit" value="Search" />
+        </form>
+
+        <div id="results" style="display: none;">
+          <h3>Results</h3>
+          <p>
+          <strong><span class="count"></span></strong> results found.
+          </p>
+
+          <ul class="package-list">
+          </ul>
+        </div>
+
+      </div> <!-- #content -->
+    </div> <!-- #container -->
+  </div><!-- #main -->
+
+</div><!-- #wrapper -->
 </body>
 </html>
 
