@@ -9,6 +9,7 @@
 
   <script src="vendor/jquery/1.4.4/jquery.min.js"></script>
   <script src="vendor/jquery.tmpl/beta1/jquery.tmpl.min.js"></script>
+  <script src="vendor/showdown/showdown.js"></script>
 
   <script src="config.js"></script>
   <script src="configlocal.js"></script>
@@ -17,7 +18,30 @@
     jQuery(document).ready(function($) {
       CKAN.initialize();
       $('input.search').val('ckan');
+      $('#search-form').submit();
     });
+  </script>
+
+  <script id="tmpl-package-summary" type="text/html">
+    <li class="">
+      <div class="header">
+        <span class="title">
+          <a href="${ckan_url}">${displaytitle}</a>
+        </span>
+        <div class="search_meta">
+          {{if package.resources.length}}
+          <ul class="package_formats">
+            {{each package.resources}}
+              <li>${$value.format}</li>
+            {{/each}}
+          {{/if}}
+          </ul>
+        </div>
+      </div>
+      <div class="extract">
+        {{html package.snippet}}
+      </div>
+    </li>
   </script>
 
   <style>
@@ -30,7 +54,11 @@
     <input type="search" name="q" placeholder="Search ..." class="search" />
     <input type="submit" name="submit" value="Search" />
   </form>
-  <div id="results">
+  <div id="results" style="display: none;">
+    <h3>Results</h3>
+    <strong><span class="count"></span></strong> results found.
+    <ul class="package-list">
+    </ul>
   </div>
 </body>
 </html>
