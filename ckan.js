@@ -41,8 +41,8 @@ CKAN.UI = function($) {
       item.displaytitle = item.title ? item.title : item.name;
 
       item.snippet = $(showdown.makeHtml(item.notes ? item.notes : '')).text();
-      if (item.snippet.split(' ') > 190) {
-        item.snippet = item.snippet.split(' ').slice(0, 190).join(' ') + ' ...';
+      if (item.snippet.length > 190) {
+        item.snippet = item.snippet.slice(0, 190) + ' ...';
       }
 
       // for templating (to be ckan compatible)
