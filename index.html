@@ -5,6 +5,9 @@
   <title>CKAN Javascript Client</title>
 
   <link rel="stylesheet" href="http://ckan.net/css/style.css" type="text/css" media="screen, print" />
+  <!-- local cached copy -->
+  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, print" />
+  <link rel="stylesheet" href="ckanjs.css" type="text/css" media="screen, print" />
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
@@ -37,12 +40,21 @@
             {{each package.resources}}
               <li>${$value.format}</li>
             {{/each}}
-          {{/if}}
           </ul>
+          {{/if}}
         </div>
       </div>
       <div class="extract editable-area">
         {{html package.snippet}}
+      </div>
+      <div class="package-tags">
+        {{if package.tags.length}}
+        <ul class="package-tags">
+          {{each package.tags}}
+            <li>${$value}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
       </div>
     </li>
   </script>

@@ -1,0 +1,16 @@
+ul.package-tags, #content ul.package-tags {
+  margin: 0;
+  padding: 0;
+}
+
+ul.package-tags li {
+    display:inline;
+    margin:0;
+    padding:0 5px 2px 5px;
+    border:none;
+    font-weight:normal;
+    font-size:0.8em;
+    color: black;
+    background:#afc6e9;
+}
+
