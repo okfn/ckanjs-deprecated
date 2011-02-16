@@ -29,10 +29,10 @@
   </script>
 
   <script id="tmpl-package-summary" type="text/html">
-    <li class="">
+    <li class="ckan-package" ckan-package-id="${package.id}">
       <div class="header">
         <span class="title" >
-          <a href="${ckan_url}" class="editable">${displaytitle}</a>
+          <a href="${ckan_url}" ckan-attrname="title" class="editable">${displaytitle}</a>
         </span>
         <div class="search_meta">
           {{if package.resources.length}}
