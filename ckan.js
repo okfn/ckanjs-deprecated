@@ -10,13 +10,11 @@ CKAN.Remote = function($) {
   my.apiRest = my.api + '/rest';
   
   my.saveFromEditable = function(value, settings) {
-    // TODO: actually save stuff
     var attrname = $(this).attr('ckan-attrname');
-    console.log(attrname);
     var pkg_id = $(this).closest('.ckan-package').attr('ckan-package-id');
     var url = my.apiRest + '/package/'+ pkg_id;
-    console.log(url); 
-    data = {attrname:value};
+    data = {};
+    data[attrname] = value;
 
     $.ajax({
         type :'POST',
@@ -26,9 +24,8 @@ CKAN.Remote = function($) {
         success: function(e) {
             var msg = 'success!'+e;
             alert(msg) 
-                
-        },
-        });
+        }
+    });
 
     return value;
   };
@@ -61,7 +58,7 @@ CKAN.UI = function($) {
     $(data.results).each(function(idx, item) {
       item.ckan_url = CKAN.Remote.url + '/package/' + item.name;
 
-      item.displaytitle = item.title ? item.title : item.name;
+      item.displaytitle = item.title ? item.title : 'No Title ...';
 
       item.snippet = $(showdown.makeHtml(item.notes ? item.notes : '')).text();
       if (item.snippet.length > 190) {
