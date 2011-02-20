@@ -40,9 +40,26 @@ CKAN.UI = function($) {
 
   };
 
+  my.initialize = function() {
+    my.$results = $('#results');
+    my.$dialog = $('#dialog'); 
+  };
+
+  my.showSpinner = function() {
+    my.$dialog.empty();
+    my.$dialog.html('<h2>Loading results...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+    my.$dialog.show();
+  };
+
+  my.hideSpinner = function() {
+    my.$dialog.empty().hide()
+  };
+
   my.search = function(q) {
     var apiUrlSearch = CKAN.Remote.apiSearch + '/package?q='
     var url = apiUrlSearch + q + '&limit=10&all_fields=1';
+    my.showSpinner();
+    my.$results.hide();
     $.ajax({
       url: url,
       success: my.renderSearchResults,
@@ -51,14 +68,13 @@ CKAN.UI = function($) {
   };
 
   my.renderSearchResults = function(data) {
-    var $results = $('#results');
+    var $results = my.$results;
     $results.find('.count').html(data.count);
-    $results.show();
 
     $(data.results).each(function(idx, item) {
       item.ckan_url = CKAN.Remote.url + '/package/' + item.name;
 
-      item.displaytitle = item.title ? item.title : 'No Title ...';
+      item.displaytitle = item.title ? item.title : item.name;
 
       item.snippet = $(showdown.makeHtml(item.notes ? item.notes : '')).text();
       if (item.snippet.length > 190) {
@@ -70,9 +86,11 @@ CKAN.UI = function($) {
     });
     var out = $('#tmpl-package-summary').tmpl(data.results);
     $results.find('.packages').html(out);
+    my.hideSpinner();
+    $results.show();
     my.makeEditable();
   };
-   
+  
   my.makeEditable = function() {
     $('.editable').editable(CKAN.Remote.saveFromEditable);
     $('.editable-area').editable(
@@ -93,6 +111,7 @@ CKAN.UI = function($) {
 
 var CKAN = function($, my) {
   my.initialize = function() {
+    CKAN.UI.initialize();
     $('#search-form').submit(function() {
       var q = $('input.search').val();
       CKAN.UI.search(q);
