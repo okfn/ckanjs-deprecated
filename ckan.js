@@ -58,6 +58,11 @@ CKAN.UI = function($) {
     my.$results = $('#results');
     my.$dialog = $('#dialog'); 
     $(document).bind('notification', my.showNotification);
+    $('#search-form').submit(function() {
+      var q = $('input.search').val();
+      my.search(q);
+      return false;
+    });
   };
 
   my.showSpinner = function() {
@@ -127,11 +132,6 @@ CKAN.UI = function($) {
 var CKAN = function($, my) {
   my.initialize = function() {
     CKAN.UI.initialize();
-    $('#search-form').submit(function() {
-      var q = $('input.search').val();
-      CKAN.UI.search(q);
-      return false;
-    });
   };
   return my
 }(jQuery, CKAN);
