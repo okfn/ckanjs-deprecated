@@ -8,6 +8,10 @@ CKAN.Remote = function($) {
   my.api = my.url + '/api';
   my.apiSearch = my.api + '/search';
   my.apiRest = my.api + '/rest';
+
+  my.notify = function(msg, type) {
+    $.event.trigger('notification', [msg, type]);
+  }
   
   my.saveFromEditable = function(value, settings) {
     var attrname = $(this).attr('ckan-attrname');
@@ -20,10 +24,16 @@ CKAN.Remote = function($) {
         type :'POST',
         url: url,
         data: data,
-        error: function(e) { alert(e) },
-        success: function(e) {
-            var msg = 'success!'+e;
-            alert(msg) 
+        error: function(xhr, textStatus, error) { 
+          my.notify('Save failed ' + textStatus, 'error');
+        },
+        success: function(context, data, xhr) {
+          // In WebKit and FF an unsuccessful request using CORS still
+          // returns success
+          if(xhr.status == 0) {
+            msg = 'Sorry, save failed!\n(Not exactly sure why, but please check your API key and that CORS is enabled on the server)';
+            my.notify(msg, 'error')
+          }
         }
     });
 
@@ -40,9 +50,14 @@ CKAN.UI = function($) {
 
   };
 
+  my.showNotification = function(e, msg, type) {
+    alert(msg);
+  }
+
   my.initialize = function() {
     my.$results = $('#results');
     my.$dialog = $('#dialog'); 
+    $(document).bind('notification', my.showNotification);
   };
 
   my.showSpinner = function() {
