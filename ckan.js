@@ -25,7 +25,8 @@ CKAN.Remote = function($) {
         url: url,
         data: data,
         error: function(xhr, textStatus, error) { 
-          my.notify('Save failed ' + textStatus, 'error');
+          msg = 'Error: ' + xhr.responseText;
+          my.notify(msg, 'error');
         },
         success: function(context, data, xhr) {
           // In WebKit and FF an unsuccessful request using CORS still
