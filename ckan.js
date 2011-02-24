@@ -126,11 +126,16 @@ CKAN.UI = function($) {
     $(data.results).each(function(idx, item) {
       item.ckan_url = CKAN.Catalog.url + '/package/' + item.name;
 
-      item.displaytitle = item.title ? item.title : item.name;
-
-      item.snippet = $(showdown.makeHtml(item.notes ? item.notes : '')).text();
-      if (item.snippet.length > 190) {
-        item.snippet = item.snippet.slice(0, 190) + ' ...';
+      item.displaytitle = item.title ? item.title : 'No title ...';
+      item.notesHtml = function() {
+        return showdown.makeHtml(this.notes ? this.notes : '');
+      }
+      item.snippet = function() {
+        var out = $(this.notesHtml()).text();
+        if (out.length > 190) {
+          out = out.slice(0, 190) + ' ...';
+        }
+        return out;
       }
 
       // for templating (to be ckan compatible)
