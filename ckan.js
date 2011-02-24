@@ -25,9 +25,13 @@ CKAN.Catalog = function($) {
     data[attrname] = value;
 
     $.ajax({
-        type :'POST',
+        type :'PUT',
         url: url,
-        data: data,
+        data: JSON.stringify(data),
+        dataType: 'json',
+        beforeSend: function(XMLHttpRequest) {
+          XMLHttpRequest.setRequestHeader("X-CKAN-API-KEY", my.apikey);
+        },
         error: function(xhr, textStatus, error) { 
           msg = 'Error: ' + xhr.responseText;
           my.notify(msg, 'error');
@@ -36,7 +40,9 @@ CKAN.Catalog = function($) {
           // In WebKit and FF an unsuccessful request using CORS still
           // returns success
           if(xhr.status == 0) {
-            msg = 'Sorry, save failed!\n(Not exactly sure why, but please check your API key and that CORS is enabled on the server)';
+            msg = 'Sorry, save failed!\n';
+            msg += '(Not exactly sure why, but please check your API key ';
+            msg += 'and that CORS is enabled on the server)';
             my.notify(msg, 'error')
           }
         }
