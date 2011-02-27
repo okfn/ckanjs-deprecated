@@ -75,17 +75,11 @@ CKAN.UI = function($) {
     my.$apikey.val(CKAN.Config.apikey ? CKAN.Config.apikey : '');
     my.configureCatalog();
 
-    $('a.config-show').click(function(e) {
-      e.preventDefault();
-      $('#config-form').toggle('fast');
-    });
-
     $('#config-form').submit(function(e) {
       e.preventDefault();
       my.$ckanUrl.val(my.$ckanUrl.val());
       my.$apikey.val(my.$apikey.val());
       my.configureCatalog();
-      $('#config-form').hide('slow');
     });
 
     // load templates
@@ -94,6 +88,13 @@ CKAN.UI = function($) {
     $.get('templates/_ckan.tmpl.html', function(templates) {
       // Inject all those templates at the end of the document.
       $('body').append(templates);
+    });
+
+    $('#access .menu a').click(function(e) {
+      // have links like a href="#search" ...
+      var action = $(e.target).attr('href').slice(1);
+      $('.page-view').hide();
+      $('#' + action + '-page').show();
     });
   };
 

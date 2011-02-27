@@ -45,17 +45,6 @@
     <h1 id="site-title">CKAN from Javascript</h1>
 
     <div id="top-bar">
-      <div id="config-form" style="display:none">
-        <form>
-          <label for="ckan-url">CKAN Url</label>
-          <input type="text" name="ckan-url" value="" placeholder="CKAN Url e.g. http://ckan.net" />
-          <br />
-          <label for="ckan-api-key">API Key</label>
-          <input type="text" name="ckan-api-key" value="" placeholder="API Key" />
-          <br />
-          <input type="submit" name="save" value="Save" />
-        </form>
-      </div>
     </div><!-- /top-bar -->
 
     <div id="access" role="navigation">
@@ -77,6 +66,24 @@
     <div id="container"> 
       <div id="content" role="main"> 
 
+      <div id="config-page" class="page-view" style="display: none;">
+        <div id="config-form">
+          <form>
+            <label for="ckan-url">CKAN Url</label>
+            <input type="text" name="ckan-url" value="" placeholder="CKAN Url e.g. http://ckan.net" />
+            <br />
+            <label for="ckan-api-key">API Key</label>
+            <input type="text" name="ckan-api-key" value="" placeholder="API Key" />
+            <br />
+            <input type="submit" name="save" value="Save" />
+          </form>
+        </div>
+      </div>
+
+      <div id="add-page" class="page-view" style="display: none;">
+      </div>
+
+      <div id="search-page" class="page-view">
         <form id="search-form">
           <input type="search" name="q" placeholder="Search ..." class="search" />
           <input type="submit" name="submit" value="Search" />
@@ -94,6 +101,7 @@
           <ul class="packages">
           </ul>
         </div>
+      </div>
 
       </div> <!-- #content -->
     </div> <!-- #container -->
