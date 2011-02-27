@@ -76,19 +76,16 @@
     <h1 id="site-title">CKAN from Javascript</h1>
 
     <div id="top-bar">
-      <div class="config">
-        <span class="config-show">
-          <a href="#">Configuration</a>
-        </span>
-        <div id="config-form" style="display:none">
-          <form>
-            <input type="text" name="ckan-url" value="" placeholder="CKAN Url e.g. http://ckan.net" />
-            <br />
-            <input type="text" name="ckan-api-key" value="" placeholder="API Key" />
-            <br />
-            <input type="submit" name="save" value="Save" />
-          </form>
-        </div>
+      <div id="config-form" style="display:none">
+        <form>
+          <label for="ckan-url">CKAN Url</label>
+          <input type="text" name="ckan-url" value="" placeholder="CKAN Url e.g. http://ckan.net" />
+          <br />
+          <label for="ckan-api-key">API Key</label>
+          <input type="text" name="ckan-api-key" value="" placeholder="API Key" />
+          <br />
+          <input type="submit" name="save" value="Save" />
+        </form>
       </div>
     </div><!-- /top-bar -->
 
@@ -96,7 +93,10 @@
       <div class="menu">
         <ul>
           <li class="first"><a href="#search">Search</a></li>
-          <li class="last"><a href="#add">Add a Dataset</a></li>
+          <li><a href="#add">Add a Dataset</a></li>
+          <li class="last">
+            <a href="#config" class="config-show">Configuration</a>
+          </li>
         </ul>
       </div> <!-- .menu -->
     </div> <!-- #access -->

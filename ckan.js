@@ -75,7 +75,7 @@ CKAN.UI = function($) {
     my.$apikey.val(CKAN.Config.apikey ? CKAN.Config.apikey : '');
     my.configureCatalog();
 
-    $('.config-show a').click(function(e) {
+    $('a.config-show').click(function(e) {
       e.preventDefault();
       $('#config-form').toggle('fast');
     });
