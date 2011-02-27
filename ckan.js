@@ -87,6 +87,14 @@ CKAN.UI = function($) {
       my.configureCatalog();
       $('#config-form').hide('slow');
     });
+
+    // load templates
+    // TODO: is there a problem that this is async (e.g. we complete an
+    // action that requires templates before they are loaded?)
+    $.get('templates/_ckan.tmpl.html', function(templates) {
+      // Inject all those templates at the end of the document.
+      $('body').append(templates);
+    });
   };
 
   my.configureCatalog = function() {

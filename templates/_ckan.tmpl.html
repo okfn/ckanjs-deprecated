@@ -1,0 +1,32 @@
+<script id="tmpl-package-summary" type="x-jquery-tmpl">
+  <li class="ckan-package" ckan-package-id="${package.id}">
+    <div class="header">
+      <span class="title" >
+        <a href="${ckan_url}" ckan-attrname="title" class="editable">${displaytitle}</a>
+      </span>
+      <div class="search_meta">
+        {{if package.resources.length}}
+        <ul class="package_formats">
+          {{each package.resources}}
+            <li>${$value.format}</li>
+          {{/each}}
+        </ul>
+        {{/if}}
+      </div>
+    </div>
+    <div class="extract editable-area">
+      {{html package.snippet()}}
+    </div>
+    <div class="package-tags">
+      {{if package.tags.length}}
+      <ul class="package-tags">
+        {{each package.tags}}
+          <li>${$value}</li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </div>
+  </li>
+</script>
+
+
