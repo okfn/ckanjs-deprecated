@@ -61,3 +61,12 @@ ul.package-tags li {
 #access li:hover > a, #access ul ul :hover > a {
   background: none;
 }
+
+
+/****************************************
+  * Forms
+  ***************************************/
+
+.instructions {
+  font-size: 75%;
+}

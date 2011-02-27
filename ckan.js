@@ -2,6 +2,27 @@ var showdown = new Showdown.converter();
 
 var CKAN = CKAN || {};
 
+CKAN.Model = function($) {
+  var my = {};
+  my.Package = Backbone.Model.extend({});
+
+  return my;
+}(jQuery);
+
+CKAN.View = function($) {
+  var my = {};
+
+  my.PackageCreateView = Backbone.View.extend({
+    render: function() {
+      var tmpl = $('#tmpl-package-form').tmpl(this.model.toJSON());
+      $(this.el).html(tmpl);
+      return this;
+    }
+  });
+
+  return my;
+}(jQuery);
+
 CKAN.Catalog = function($) {
   var my = {};  
 
@@ -95,6 +116,12 @@ CKAN.UI = function($) {
       var action = $(e.target).attr('href').slice(1);
       $('.page-view').hide();
       $('#' + action + '-page').show();
+    });
+
+    $('#access .menu a[href=#add]').click(function (e) {
+      var newPkg = new CKAN.Model.Package();
+      var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
+      $('#add-page').append(newCreateView.render().el);
     });
   };
 
