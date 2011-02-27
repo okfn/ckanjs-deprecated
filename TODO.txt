@@ -1,0 +1,6 @@
+2011-02-27 p:wui For notification messages use 'flash' div rather than alert.
+
+##############################
+## DONE
+
+x 2011-02-23 2011-02-16 p:wui Drop down config menu (set ckan site to interact with, set api key)
