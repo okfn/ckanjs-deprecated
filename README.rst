@@ -13,6 +13,14 @@ Installation
 
 2. Open index.html in a web browser.
 
+Config File
+-----------
+
+You can overload the main config options in config.js by creating your own
+configlocal.js and setting relevant options e.g.::
+
+    CKAN.Config.url = "http://myckaninstance.org/" 
+
 
 CKAN Server Config
 ------------------
@@ -49,11 +57,12 @@ The following features are planned:
   * Editing Package relationships
   * Embeddable widget on websites to show latest changes
 
-Config File
-===========
 
-You can overload the main config options in config.js by creating your own
-configlocal.js and setting relevant options e.g.::
+Roadmap
+-------
 
-    CKAN.Config.url = "http://myckaninstance.org/" 
+  0. Testing - QUnit + Sinon.js
+  1. Search (Done)
+  2. Create a Package
+  3. Edit a Package - Full and Inline
 
