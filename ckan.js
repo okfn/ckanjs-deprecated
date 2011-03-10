@@ -4,27 +4,6 @@ var CKAN = CKAN || {};
 
 CKAN.Model = function($) {
   var my = {};
-  my.Package = Backbone.Model.extend({});
-
-  return my;
-}(jQuery);
-
-CKAN.View = function($) {
-  var my = {};
-
-  my.PackageCreateView = Backbone.View.extend({
-    render: function() {
-      var tmpl = $('#tmpl-package-form').tmpl(this.model.toJSON());
-      $(this.el).html(tmpl);
-      return this;
-    }
-  });
-
-  return my;
-}(jQuery);
-
-CKAN.Catalog = function($) {
-  var my = {};  
 
   my.configure = function(url, apikey) {
     my.url = url;
@@ -38,39 +17,122 @@ CKAN.Catalog = function($) {
     $.event.trigger('notification', [msg, type]);
   }
   
-  my.saveFromEditable = function(value, settings) {
-    var attrname = $(this).attr('ckan-attrname');
-    var pkg_id = $(this).closest('.ckan-package').attr('ckan-package-id');
-    var url = my.apiRest + '/package/'+ pkg_id;
-    data = {};
-    data[attrname] = value;
+  // Model objects
+  my.Package = Backbone.Model.extend({
+    url : function() {
+      var base = my.apiRest +  '/package';
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
+    } 
+  });
 
-    $.ajax({
-        type :'PUT',
-        url: url,
-        data: JSON.stringify(data),
-        dataType: 'json',
-        beforeSend: function(XMLHttpRequest) {
-          XMLHttpRequest.setRequestHeader("X-CKAN-API-KEY", my.apikey);
-        },
-        error: function(xhr, textStatus, error) { 
-          msg = 'Error: ' + xhr.responseText;
-          my.notify(msg, 'error');
-        },
-        success: function(context, data, xhr) {
-          // In WebKit and FF an unsuccessful request using CORS still
-          // returns success
-          if(xhr.status == 0) {
-            msg = 'Sorry, save failed!\n';
-            msg += '(Not exactly sure why, but please check your API key ';
-            msg += 'and that CORS is enabled on the server)';
-            my.notify(msg, 'error')
-          }
-        }
-    });
-
-    return value;
+  // Following 2 methods come directly from Backbone
+  // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
+  var methodMap = {
+    'create': 'POST',
+    'update': 'PUT',
+    'delete': 'DELETE',
+    'read'  : 'GET'
   };
+  var getUrl = function(object) {
+    if (!(object && object.url)) throw new Error("A 'url' property or function must be specified");
+    return _.isFunction(object.url) ? object.url() : object.url;
+  };
+
+  // Backbone.sync - original plus modifications to send auth headers etc
+  Backbone.sync = function(method, model, success, error) {
+    var type = methodMap[method];
+    var modelJSON = (method === 'create' || method === 'update') ?
+                    JSON.stringify(model.toJSON()) : null;
+
+    // TODO: use success / error passed in ...
+    error = function(xhr, textStatus, error) { 
+      msg = 'Error: ' + xhr.responseText;
+      my.notify(msg, 'error');
+    }
+    var success = function(context, data, xhr) {
+      // In WebKit and FF an unsuccessful request using CORS still
+      // returns success
+      if(xhr.status == 0) {
+        msg = 'Sorry, save failed!\n';
+        msg += '(Not exactly sure why, but please check your API key ';
+        msg += 'and that CORS is enabled on the server)';
+        my.notify(msg, 'error')
+      } else {
+        my.notify('Saved', 'success');
+      }
+    }
+
+    // Default JSON-request options.
+    var params = {
+      url:          getUrl(model),
+      type:         type,
+      data:         modelJSON,
+      dataType:     'json',
+      processData:  false,
+      success:      success,
+      error:        error,
+      beforeSend: function(XMLHttpRequest) {
+        XMLHttpRequest.setRequestHeader("X-CKAN-API-KEY", my.apikey);
+      }
+    };
+
+    // For older servers, emulate JSON by encoding the request into an HTML-form.
+    if (Backbone.emulateJSON) {
+      params.contentType = 'application/x-www-form-urlencoded';
+      params.processData = true;
+      params.data        = modelJSON ? {model : modelJSON} : {};
+    }
+
+    // For older servers, emulate HTTP by mimicking the HTTP method with `_method`
+    // And an `X-HTTP-Method-Override` header.
+    if (Backbone.emulateHTTP) {
+      if (type === 'PUT' || type === 'DELETE') {
+        if (Backbone.emulateJSON) params.data._method = type;
+        params.type = 'POST';
+        params.beforeSend = function(xhr) {
+          xhr.setRequestHeader("X-HTTP-Method-Override", type);
+        };
+      }
+    }
+
+    // Make the request.
+    $.ajax(params);
+  };
+
+  return my;
+}(jQuery);
+
+CKAN.View = function($) {
+  var my = {};
+
+  my.PackageCreateView = Backbone.View.extend({
+    render: function() {
+      var tmpl = $('#tmpl-package-form').tmpl(this.model.toJSON());
+      $(this.el).html(tmpl);
+      return this;
+    },
+
+    events: {
+      'submit form.package': 'saveData'
+    },
+
+    saveData: function(e) {
+      e.preventDefault();
+      this.model.save(this.getData());
+      return false;
+    },
+
+    getData: function() {
+      var _data = $(this.el).find('form.package').serializeArray();
+      modelData = {};
+      $.each(_data, function(idx, value) {
+        modelData[value.name.split('--')[1]] = value.value
+      });
+      return modelData;
+    }
+
+  });
 
   return my;
 }(jQuery);
@@ -94,13 +156,13 @@ CKAN.UI = function($) {
     // initialize from file config
     my.$ckanUrl.val(CKAN.Config.url);
     my.$apikey.val(CKAN.Config.apikey ? CKAN.Config.apikey : '');
-    my.configureCatalog();
+    my.configureModel();
 
     $('#config-form').submit(function(e) {
       e.preventDefault();
       my.$ckanUrl.val(my.$ckanUrl.val());
       my.$apikey.val(my.$apikey.val());
-      my.configureCatalog();
+      my.configureModel();
     });
 
     // load templates
@@ -118,15 +180,13 @@ CKAN.UI = function($) {
       $('#' + action + '-page').show();
     });
 
-    $('#access .menu a[href=#add]').click(function (e) {
-      var newPkg = new CKAN.Model.Package();
-      var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
-      $('#add-page').append(newCreateView.render().el);
-    });
+    var newPkg = new CKAN.Model.Package();
+    var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
+    $('#add-page').append(newCreateView.render().el);
   };
 
-  my.configureCatalog = function() {
-    CKAN.Catalog.configure(my.$ckanUrl.val(), my.$apikey.val());
+  my.configureModel = function() {
+    CKAN.Model.configure(my.$ckanUrl.val(), my.$apikey.val());
   };
 
   my.showNotification = function(e, msg, type) {
@@ -144,7 +204,7 @@ CKAN.UI = function($) {
   };
 
   my.search = function(q) {
-    var apiUrlSearch = CKAN.Catalog.apiSearch + '/package?q='
+    var apiUrlSearch = CKAN.Model.apiSearch + '/package?q='
     var url = apiUrlSearch + q + '&limit=10&all_fields=1';
     my.showSpinner();
     my.$results.hide();
@@ -160,7 +220,7 @@ CKAN.UI = function($) {
     $results.find('.count').html(data.count);
 
     $(data.results).each(function(idx, item) {
-      item.ckan_url = CKAN.Catalog.url + '/package/' + item.name;
+      item.ckan_url = CKAN.Model.url + '/package/' + item.name;
 
       item.displaytitle = item.title ? item.title : 'No title ...';
       item.notesHtml = function() {
@@ -185,9 +245,9 @@ CKAN.UI = function($) {
   };
   
   my.makeEditable = function() {
-    $('.editable').editable(CKAN.Catalog.saveFromEditable);
+    $('.editable').editable(CKAN.Model.saveFromEditable);
     $('.editable-area').editable(
-      CKAN.Catalog.saveFromEditable, {
+      CKAN.Model.saveFromEditable, {
         type      : 'textarea',
         cancel    : 'Cancel',
         submit    : 'OK',
