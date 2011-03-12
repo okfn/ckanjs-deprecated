@@ -49,13 +49,14 @@ Features
 The following features are supported so far:
 
   1. Search and rendering of search results
-  2. Editing of packages (with an API key)
+  2. Inline editing of packages (with an API key)
+  3. Adding packages
 
 The following features are planned:
   
-  * Switching between different CKAN instances during use
   * Editing Package relationships
   * Embeddable widget on websites to show latest changes
+  * Switching between different CKAN instances during use
 
 
 Roadmap
