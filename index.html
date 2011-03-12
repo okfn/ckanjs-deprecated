@@ -8,10 +8,11 @@
 
   <link rel="stylesheet" href="http://ckan.net/css/style.css" type="text/css" media="screen, print" />
   <link rel="stylesheet" href="http://ckan.net/css/forms.css" type="text/css" media="screen, print" />
-  <!-- local cached copy -->
-  <link rel="stylesheet" href="css/style.css" type="text/css" media="screen, print" />
-  <link rel="stylesheet" href="css/forms.css" type="text/css" media="screen, print" />
-  <link rel="stylesheet" href="ckanjs.css" type="text/css" media="screen, print" />
+  <!-- local cached copy of ckan css for when working offline -->
+  <link rel="stylesheet" href="css/ckan/style.css" type="text/css" media="screen, print" />
+  <link rel="stylesheet" href="css/ckan/forms.css" type="text/css" media="screen, print" />
+
+  <link rel="stylesheet" href="css/ckanjs.css" type="text/css" media="screen, print" />
 
   <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
   <script src="http://ajax.microsoft.com/ajax/jquery.templates/beta1/jquery.tmpl.min.js"></script>
@@ -24,9 +25,9 @@
   <script src="vendor/underscore/1.1.4/underscore.min.js"></script>
   <script src="vendor/backbone/0.3.3/backbone.min.js"></script>
 
-  <script src="config.js"></script>
-  <script src="configlocal.js"></script>
-  <script src="ckan.js"></script>
+  <script src="scripts/config.js"></script>
+  <script src="scripts/configlocal.js"></script>
+  <script src="scripts/ckanjs.js"></script>
   <script type="text/javascript">
     jQuery(document).ready(function($) {
       CKAN.initialize();
