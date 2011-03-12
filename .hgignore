@@ -2,3 +2,4 @@ syntax: glob
 ext/*
 configlocal.js
 sandbox/*
+css/ckan
