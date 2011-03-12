@@ -23,8 +23,52 @@ CKAN.Model = function($) {
       var base = my.apiRest +  '/package';
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
-    } 
+    }
   });
+
+  my.search = function(q) {
+    var apiUrlSearch = my.apiSearch + '/package?q='
+    var url = apiUrlSearch + q + '&limit=10&all_fields=1';
+    function handleSearchResults(data) {
+      my.PackageSearchResults.count = data.count;
+
+      $(data.results).each(function(idx, item) {
+        item.ckan_url = CKAN.Model.url + '/package/' + item.name;
+
+        item.displaytitle = item.title ? item.title : 'No title ...';
+        item.notesHtml = function() {
+          return showdown.makeHtml(this.notes ? this.notes : '');
+        }
+        item.snippet = function() {
+          var out = $(this.notesHtml()).text();
+          if (out.length > 190) {
+            out = out.slice(0, 190) + ' ...';
+          }
+          return out;
+        }
+
+        // for templating (to be ckan compatible)
+        item.package = item;
+
+        var pkg = new my.Package(item);
+        my.PackageSearchResults.add(pkg);
+      });
+
+      $.event.trigger('searchComplete');
+    }
+    $.ajax({
+      url: url,
+      success: handleSearchResults,
+      dataType: 'jsonp'
+    });
+  }
+
+  my.PackageSearchResultsList = Backbone.Collection.extend({
+    model: my.Package
+  });
+
+  // making it a singleton (may wish to change this if one could do multiple searches at once)
+  my.PackageSearchResults = new my.PackageSearchResultsList;
 
   // Following 2 methods come directly from Backbone
   // Map from CRUD to HTTP for our default `Backbone.sync` implementation.
@@ -134,6 +178,78 @@ CKAN.View = function($) {
 
   });
 
+  my.PackageSearchView = Backbone.View.extend({
+    initialize: function() {
+      this.el = $('#search-page');
+      this.$results = this.el.find('.results');
+      this.$dialog = this.el.find('.dialog');
+      this.el.find('#search-form').submit(this.doSearch.bind(this));
+
+      _.bindAll(this, 'addOne', 'render');
+      this.collection = CKAN.Model.PackageSearchResults;
+      // listen for one add event to package list
+      this.collection.bind('add', this.addOne);
+      // bind to all events
+      // this.collection.bind('all', this.render);
+      $(document).bind('searchComplete', this.render.bind(this));
+    },
+
+    render: function() {
+      this.$results.find('.count').html(this.collection.count);
+      this.hideSpinner();
+      this.$results.show();
+      // this.makeEditable();
+    },
+
+    addOne: function(pkg) {
+      var out = $('#tmpl-package-summary').tmpl(pkg.toJSON());
+      this.$results.find('.packages').append(out);
+      return this;
+    },
+
+//    makeEditable = function() {
+//      $('.editable').editable(CKAN.Model.saveFromEditable);
+//      $('.editable-area').editable(
+//        CKAN.Model.saveFromEditable, {
+//          type      : 'textarea',
+//          cancel    : 'Cancel',
+//          submit    : 'OK',
+//          tooltip   : 'Click to edit...',
+//          data      : function(value, settings) {
+//            // Get raw markdown for this package
+//            return value
+//          }
+//        }
+//      );
+//    }
+
+    // does not seem to work (perhaps because run before document is ready?
+    events: {
+      'submit #search-form': 'doSearch'
+    },
+    
+    doSearch: function() {
+      var q = $(this.el).find('input.search').val();
+      this.showSpinner();
+      this.$results.hide();
+      this.$results.find('.packages').empty();
+      CKAN.Model.search(q, function(data) {
+      });
+      return false;
+    },
+
+    showSpinner: function() {
+      this.$dialog.empty();
+      this.$dialog.html('<h2>Loading results...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+      this.$dialog.show();
+    },
+
+    hideSpinner: function() {
+      this.$dialog.empty().hide()
+    }
+
+  });
+
   return my;
 }(jQuery);
 
@@ -141,19 +257,11 @@ CKAN.UI = function($) {
   var my = {};
   
   my.initialize = function() {
-    my.$results = $('#results');
-    my.$dialog = $('#dialog'); 
     my.$ckanUrl = $('#config-form input[name=ckan-url]');
     my.$apikey = $('#config-form input[name=ckan-api-key]');
     my.$notificationDiv = $('.flash-banner-box');
 
     $(document).bind('notification', my.showNotification);
-
-    $('#search-form').submit(function() {
-      var q = $('input.search').val();
-      my.search(q);
-      return false;
-    });
 
     // initialize from file config
     my.$ckanUrl.val(CKAN.Config.url);
@@ -186,6 +294,7 @@ CKAN.UI = function($) {
     var newPkg = new CKAN.Model.Package();
     var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
     $('#add-page').append(newCreateView.render().el);
+    var searchView = new CKAN.View.PackageSearchView();
   };
 
   my.configureModel = function() {
@@ -205,72 +314,6 @@ CKAN.UI = function($) {
     my.$notificationDiv.slideDown(400);
   }
 
-  my.showSpinner = function() {
-    my.$dialog.empty();
-    my.$dialog.html('<h2>Loading results...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
-    my.$dialog.show();
-  };
-
-  my.hideSpinner = function() {
-    my.$dialog.empty().hide()
-  };
-
-  my.search = function(q) {
-    var apiUrlSearch = CKAN.Model.apiSearch + '/package?q='
-    var url = apiUrlSearch + q + '&limit=10&all_fields=1';
-    my.showSpinner();
-    my.$results.hide();
-    $.ajax({
-      url: url,
-      success: my.renderSearchResults,
-      dataType: 'jsonp'
-    });
-  };
-
-  my.renderSearchResults = function(data) {
-    var $results = my.$results;
-    $results.find('.count').html(data.count);
-
-    $(data.results).each(function(idx, item) {
-      item.ckan_url = CKAN.Model.url + '/package/' + item.name;
-
-      item.displaytitle = item.title ? item.title : 'No title ...';
-      item.notesHtml = function() {
-        return showdown.makeHtml(this.notes ? this.notes : '');
-      }
-      item.snippet = function() {
-        var out = $(this.notesHtml()).text();
-        if (out.length > 190) {
-          out = out.slice(0, 190) + ' ...';
-        }
-        return out;
-      }
-
-      // for templating (to be ckan compatible)
-      item.package = item;
-    });
-    var out = $('#tmpl-package-summary').tmpl(data.results);
-    $results.find('.packages').html(out);
-    my.hideSpinner();
-    $results.show();
-    my.makeEditable();
-  };
-  
-  my.makeEditable = function() {
-    $('.editable').editable(CKAN.Model.saveFromEditable);
-    $('.editable-area').editable(
-      CKAN.Model.saveFromEditable, {
-        type      : 'textarea',
-        cancel    : 'Cancel',
-        submit    : 'OK',
-        tooltip   : 'Click to edit...',
-        data      : function(value, settings) {
-          // Get raw markdown for this package
-          return value
-        }
-      }
-    );
-  }
   return my;
 }(jQuery);
 
