@@ -145,8 +145,10 @@ CKAN.UI = function($) {
     my.$dialog = $('#dialog'); 
     my.$ckanUrl = $('#config-form input[name=ckan-url]');
     my.$apikey = $('#config-form input[name=ckan-api-key]');
+    my.$notificationDiv = $('.flash-banner-box');
 
     $(document).bind('notification', my.showNotification);
+
     $('#search-form').submit(function() {
       var q = $('input.search').val();
       my.search(q);
@@ -163,6 +165,7 @@ CKAN.UI = function($) {
       my.$ckanUrl.val(my.$ckanUrl.val());
       my.$apikey.val(my.$apikey.val());
       my.configureModel();
+      my.showNotification(null, 'Saved configuration', 'success');
     });
 
     // load templates
@@ -189,8 +192,17 @@ CKAN.UI = function($) {
     CKAN.Model.configure(my.$ckanUrl.val(), my.$apikey.val());
   };
 
+  // TODO: should this be in initialize or even in a separate view?
+  $.template('notificationTemplate',
+      '<div class="flash-banner ${type}">${message} <button>X</button></div>');
+  $('.flash-banner button').live('click', function(e) {
+    e.preventDefault() 
+    my.$notificationDiv.slideUp(200);
+  });
   my.showNotification = function(e, msg, type) {
-    alert(msg);
+    var _out = $.tmpl('notificationTemplate', {'message': msg, 'type': type})
+    my.$notificationDiv.html(_out);
+    my.$notificationDiv.slideDown(400);
   }
 
   my.showSpinner = function() {
