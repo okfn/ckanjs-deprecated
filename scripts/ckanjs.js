@@ -179,9 +179,22 @@ CKAN.View = function($) {
   });
 
   my.PackageSummaryView = Backbone.View.extend({
+    initialize: function() {
+    },
+
     render: function() {
       this.el = $('#tmpl-package-summary').tmpl(this.model.toJSON());
+      // want this.el.find(...) but this does not work as not in dom yet
+      $('.actions a').live('click', this.handleAction.bind(this));
       return this;
+    },
+
+    handleAction: function(e) {
+      e.preventDefault();
+      var action = $(e.target).attr('href').slice(1);
+      if (action=='edit') {
+        $.event.trigger('package-edit', this.model);
+      }
     }
   });
 
@@ -278,14 +291,24 @@ CKAN.UI = function($) {
     $('#access .menu a').click(function(e) {
       // have links like a href="#search" ...
       var action = $(e.target).attr('href').slice(1);
-      $('.page-view').hide();
-      $('#' + action + '-page').show();
+      switchView(action);
     });
+
+    function switchView(view) {
+      $('.page-view').hide();
+      $('#' + view + '-page').show();
+    }
 
     var newPkg = new CKAN.Model.Package();
     var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
     $('#add-page').append(newCreateView.render().el);
     var searchView = new CKAN.View.PackageSearchView();
+
+    $(document).bind('package-edit', function(e, pkg) {
+      var newCreateView = new CKAN.View.PackageCreateView({model: pkg});
+      $('#edit-page').append(newCreateView.render().el);
+      switchView('edit');
+    });
   };
 
   my.configureModel = function() {

@@ -30,6 +30,26 @@ ul.package-tags li {
     background:#afc6e9;
 }
 
+ul.actions, #content ul.actions {
+  margin: 0;
+  padding: 0;
+  margin-top: 10px;
+}
+
+ul.actions li {
+    display:inline;
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    border: none;
+    font-weight: normal;
+    font-size: 0.9em;
+    background: #eee;
+}
+
+/****************************************
+  * Config
+  ***************************************/
+
 #config-form input {
   line-height: 12px;
 }
