@@ -178,6 +178,13 @@ CKAN.View = function($) {
 
   });
 
+  my.PackageSummaryView = Backbone.View.extend({
+    render: function() {
+      this.el = $('#tmpl-package-summary').tmpl(this.model.toJSON());
+      return this;
+    }
+  });
+
   my.PackageSearchView = Backbone.View.extend({
     initialize: function() {
       this.el = $('#search-page');
@@ -198,30 +205,14 @@ CKAN.View = function($) {
       this.$results.find('.count').html(this.collection.count);
       this.hideSpinner();
       this.$results.show();
-      // this.makeEditable();
-    },
-
-    addOne: function(pkg) {
-      var out = $('#tmpl-package-summary').tmpl(pkg.toJSON());
-      this.$results.find('.packages').append(out);
       return this;
     },
 
-//    makeEditable = function() {
-//      $('.editable').editable(CKAN.Model.saveFromEditable);
-//      $('.editable-area').editable(
-//        CKAN.Model.saveFromEditable, {
-//          type      : 'textarea',
-//          cancel    : 'Cancel',
-//          submit    : 'OK',
-//          tooltip   : 'Click to edit...',
-//          data      : function(value, settings) {
-//            // Get raw markdown for this package
-//            return value
-//          }
-//        }
-//      );
-//    }
+    addOne: function(pkg) {
+      var newView = new CKAN.View.PackageSummaryView({model: pkg});
+      this.$results.find('.packages').append(newView.render().el);
+      return this;
+    },
 
     // does not seem to work (perhaps because run before document is ready?
     events: {
