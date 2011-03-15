@@ -216,7 +216,15 @@
         You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown formatting</a>
       </dt>
       <dd>
-        <textarea id="Package--notes" name="Package--notes" placeholder="Start with a summary sentence ...">${notes}</textarea>
+        <div class="previewable-textarea">
+          <ul class="tabs">
+            <li><a href="#" action="write" class="selected">Write</a></li>
+            <li><a href="#" action="preview">Preview</a></li>
+          </ul>
+          <textarea id="Package--notes" name="Package--notes" placeholder="Start with a summary sentence ...">${notes}</textarea>
+          <div id="Package--notes-preview" class="preview" style="display: none;">
+          <div>
+        </div>
       </dd>
 
       <dt>

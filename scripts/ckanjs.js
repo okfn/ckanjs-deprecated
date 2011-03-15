@@ -23,6 +23,11 @@ CKAN.Model = function($) {
       var base = my.apiRest +  '/package';
       if (this.isNew()) return base;
       return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
+    },
+
+    notesHtml: function() {
+      var notes = this.get('notes');
+      return showdown.makeHtml(notes ? notes : '');
     }
   });
 
@@ -158,7 +163,8 @@ CKAN.View = function($) {
     },
 
     events: {
-      'submit form.package': 'saveData'
+      'submit form.package': 'saveData',
+      'click .previewable-textarea a': 'togglePreview'
     },
 
     saveData: function(e) {
@@ -174,6 +180,28 @@ CKAN.View = function($) {
         modelData[value.name.split('--')[1]] = value.value
       });
       return modelData;
+    },
+
+    togglePreview: function(e) {
+      // set model data as we use it below for notesHtml
+      this.model.set(this.getData());
+      e.preventDefault();
+      var el = $(e.target);
+      var action = el.attr('action');
+      var div = el.closest('.previewable-textarea');
+      div.find('.tabs a').removeClass('selected');
+      div.find('.tabs a[action='+action+']').addClass('selected');
+      var textarea = div.find('textarea');
+      var preview = div.find('.preview');
+      if (action=='preview') {
+        preview.html(this.model.notesHtml());
+        textarea.hide();
+        preview.show();
+      } else {
+        textarea.show();
+        preview.hide();
+      }
+      return false;
     }
 
   });
@@ -300,8 +328,8 @@ CKAN.UI = function($) {
     }
 
     var newPkg = new CKAN.Model.Package();
-    var newCreateView = new CKAN.View.PackageCreateView({model: newPkg});
-    $('#add-page').append(newCreateView.render().el);
+    var newCreateView = new CKAN.View.PackageCreateView({model: newPkg, el: $('#add-page')});
+    newCreateView.render();
     var searchView = new CKAN.View.PackageSearchView();
 
     $(document).bind('package-edit', function(e, pkg) {
