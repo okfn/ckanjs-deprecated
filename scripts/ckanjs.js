@@ -331,9 +331,3 @@ CKAN.UI = function($) {
   return my;
 }(jQuery);
 
-var CKAN = function($, my) {
-  my.initialize = function() {
-    CKAN.UI.initialize();
-  };
-  return my
-}(jQuery, CKAN);
