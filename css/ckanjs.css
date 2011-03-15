@@ -54,6 +54,10 @@ ul.actions li {
   line-height: 12px;
 }
 
+/****************************************
+  * Site Layout Fixes to Core CKAN CSS
+  ***************************************/
+
 #sitetitle {
   width: 400px;
 }

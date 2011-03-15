@@ -89,9 +89,11 @@
       </div>
 
       <div id="add-page" class="page-view" style="display: none;">
+        <h2>Add a Dataset</h2>
       </div>
 
       <div id="edit-page" class="page-view" style="display: none;">
+        <h2>Edit Dataset</h2>
       </div>
 
       <div id="search-page" class="page-view">
@@ -161,7 +163,7 @@
   <form class="package" action="" method="POST">
   <fieldset>
     <legend>
-      <h2>Add a New Dataset</h2>
+      <h3>Basics</h3>
     </legend>
     <dl>
       <dt>
@@ -170,20 +172,16 @@
         </label>
       </dt>
       <dd>
-        <input id="Package--title" name="Package--title" type="text" />
-        <img src="img/help.png"
-          class="help"
-          title="A short descriptive title for the data set"
-          >
+        <input id="Package--title" name="Package--title" type="text" value="${title}" placeholder="A title (not a description) .."/>
       </dd>
 
       <dt>
         <label class="field_req" for="Package--name">
-          Dataset 'Slug'
+          'Slug'
         </label>
       </dt>
       <dd>
-        <input id="Package--name" maxlength="100" name="Package--name" type="text" />
+        <input id="Package--name" maxlength="100" name="Package--name" type="text" value="${name}" placeholder="A shortish name usable in urls ..." />
         <img src="img/help.png"
           class="help"
           title="A unique lowercase name for the package for use in urls and thefore only containing alphanumeric characters plus - and _"
@@ -192,11 +190,11 @@
 
       <dt>
         <label class="field_opt" for="Package--url">
-          Dataset Home Page
+          Data Home Page
         </label>
       </dt>
       <dd>
-        <input id="Package--url" name="Package--url" type="text" />
+        <input id="Package--url" name="Package--url" type="text" value="${url}" placeholder="http://mydataset.com/about/" />
       </dd>
 
       <dt>
@@ -209,10 +207,6 @@
           <option selected="selected" value=""></option>
           <option value="notspecified">Other::License Not Specified</option>
         </select>
-        <img src="img/help.png"
-          class="help"
-          title=""
-          >
       </dd>
 
       <dt>
@@ -222,26 +216,16 @@
         You can use <a href="http://daringfireball.net/projects/markdown/syntax">Markdown formatting</a>
       </dt>
       <dd>
-        <textarea id="Package--notes" name="Package--notes"></textarea>
-        <img src="img/help.png"
-          class="help"
-          title="Start it with a short sentence that describes the dataset succinctly."
-          >
+        <textarea id="Package--notes" name="Package--notes" placeholder="Start with a summary sentence ...">${notes}</textarea>
       </dd>
 
       <dt>
         <label class="field_opt" for="Package--tags">
           Tags
-          <br />
-          (space separated)
         </label>
       </dt>
       <dd>
-        <input class="tagComplete" data-tagcomplete-queryparam="incomplete" data-tagcomplete-url="/api/2/util/tag/autocomplete" id="Package--tags" name="Package--tags" type="text" value="" />
-        <img src="img/help.png"
-          class="help"
-          title="e.g. pollution rivers water-quality"
-          >
+        <input class="tagComplete" data-tagcomplete-queryparam="incomplete" data-tagcomplete-url="/api/2/util/tag/autocomplete" id="Package--tags" name="Package--tags" type="text" value="${tags}" placeholder="e.g. pollution rivers water-quality" />
       </dd>
     </dl>
   </fieldset>

@@ -306,7 +306,7 @@ CKAN.UI = function($) {
 
     $(document).bind('package-edit', function(e, pkg) {
       var newCreateView = new CKAN.View.PackageCreateView({model: pkg});
-      $('#edit-page').append(newCreateView.render().el);
+      $('#edit-page').html(newCreateView.render().el);
       switchView('edit');
     });
   };
