@@ -213,7 +213,7 @@ CKAN.View = function($) {
     render: function() {
       this.el = $('#tmpl-package-summary').tmpl(this.model.toJSON());
       // want this.el.find(...) but this does not work as not in dom yet
-      $('.actions a').live('click', this.handleAction.bind(this));
+      $('.actions a').live('click', this.handleAction);
       return this;
     },
 
@@ -231,15 +231,19 @@ CKAN.View = function($) {
       this.el = $('#search-page');
       this.$results = this.el.find('.results');
       this.$dialog = this.el.find('.dialog');
-      this.el.find('#search-form').submit(this.doSearch.bind(this));
-
+      // TODO: must be a better way
+      var self = this;
+      this.el.find('#search-form').submit(
+        function() {
+          self.doSearch.apply(self, arguments);
+      });
       _.bindAll(this, 'addOne', 'render');
       this.collection = CKAN.Model.PackageSearchResults;
       // listen for one add event to package list
       this.collection.bind('add', this.addOne);
       // bind to all events
       // this.collection.bind('all', this.render);
-      $(document).bind('searchComplete', this.render.bind(this));
+      $(document).bind('searchComplete', this.render);
     },
 
     render: function() {
