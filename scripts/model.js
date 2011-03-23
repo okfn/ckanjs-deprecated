@@ -5,12 +5,12 @@ var CKAN = CKAN || {};
 CKAN.Model = function($) {
   var my = {};
 
-  my.configure = function(url, apikey) {
-    my.url = url;
+  my.configure = function(cfg) {
+    my.url = cfg.ckan_url;
     my.api = my.url + '/api';
     my.apiSearch = my.api + '/search';
     my.apiRest = my.api + '/rest';
-    my.apikey = apikey;
+    my.apikey = cfg.api_key;
   }
 
   my.notify = function(msg, type) {

@@ -3,6 +3,41 @@ var CKAN = CKAN || {};
 CKAN.View = function($) {
   var my = {};
 
+  my.NotificationView = Backbone.View.extend({
+  });
+
+  my.ConfigView = Backbone.View.extend({
+    initialize: function() {
+      this.cfg = {};
+      this.$ckanUrl = this.el.find('input[name=ckan-url]');
+      this.$apikey = this.el.find('input[name=ckan-api-key]');
+
+      // initialize from file config
+      this.$ckanUrl.val(CKAN.Config.url);
+      this.$apikey.val(CKAN.Config.apikey ? CKAN.Config.apikey : '');
+      // propagate changes
+      this.saveConfig();
+    },
+
+    events: {
+      'submit #config-form': 'updateConfig'      
+    },
+
+    updateConfig: function(e) {
+      e.preventDefault();
+      this.saveConfig();
+      $.event.trigger('notification', ['Saved configuration', 'success']);
+    },
+
+    saveConfig: function() {
+      this.cfg = {
+        'ckan_url': this.$ckanUrl.val(),
+        'api_key': this.$apikey.val()
+      };
+      $.event.trigger('config:update', this.cfg);
+    }
+  });
+
   my.PackageCreateView = Backbone.View.extend({
     render: function() {
       var tmpl = $('#tmpl-package-form').tmpl(this.model.toJSON());
