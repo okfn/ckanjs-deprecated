@@ -291,8 +291,63 @@ CKAN.View = function($) {
 
 CKAN.UI = function($) {
   var my = {};
+
+  var Workspace = Backbone.Controller.extend({
+    routes: {
+      "": "index",
+      "search": "search",
+      "search/:query": "search",
+      "search/:query/p:page": "search",
+      "add": "add",
+      "config": "config"
+    },
+
+    initialize: function(options) {
+      var newPkg = new CKAN.Model.Package();
+      var newCreateView = new CKAN.View.PackageCreateView({model: newPkg, el: $('#add-page')});
+      newCreateView.render();
+      var searchView = new CKAN.View.PackageSearchView();
+
+      function switchView(view) {
+        this.switchView(view);
+      }
+
+      $(document).bind('package-edit', function(e, pkg) {
+        var newCreateView = new CKAN.View.PackageCreateView({model: pkg});
+        $('#edit-page').html(newCreateView.render().el);
+        switchView('edit');
+      });
+    },
+
+    switchView: function(view) {
+      $('.page-view').hide();
+      $('#' + view + '-page').show();
+    },
+
+    index: function(query, page) {
+      this.search();
+    },
+
+    search: function(query, page) {
+      this.switchView('search');
+    },
+
+    add: function() {
+      this.switchView('add');
+    },
+
+    edit: function(pkg) {
+    },
+
+    config: function() {
+      this.switchView('config');
+    }
+  });
   
   my.initialize = function() {
+    var workspace = new Workspace();
+    Backbone.history.start()
+
     my.$ckanUrl = $('#config-form input[name=ckan-url]');
     my.$apikey = $('#config-form input[name=ckan-api-key]');
     my.$notificationDiv = $('.flash-banner-box');
@@ -319,28 +374,6 @@ CKAN.UI = function($) {
     //  // Inject all those templates at the end of the document.
     //  $('body').append(templates);
     // });
-
-    $('#access .menu a').click(function(e) {
-      // have links like a href="#search" ...
-      var action = $(e.target).attr('href').slice(1);
-      switchView(action);
-    });
-
-    function switchView(view) {
-      $('.page-view').hide();
-      $('#' + view + '-page').show();
-    }
-
-    var newPkg = new CKAN.Model.Package();
-    var newCreateView = new CKAN.View.PackageCreateView({model: newPkg, el: $('#add-page')});
-    newCreateView.render();
-    var searchView = new CKAN.View.PackageSearchView();
-
-    $(document).bind('package-edit', function(e, pkg) {
-      var newCreateView = new CKAN.View.PackageCreateView({model: pkg});
-      $('#edit-page').html(newCreateView.render().el);
-      switchView('edit');
-    });
   };
 
   my.configureModel = function() {
