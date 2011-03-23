@@ -26,6 +26,10 @@ CKAN.UI = function($) {
         el: $('#config-page')
         });
 
+      this.notificationView = new CKAN.View.NotificationView({
+        el: $('.flash-banner-box')
+        });
+
       function switchView(view) {
         this.switchView(view);
       }
@@ -65,32 +69,7 @@ CKAN.UI = function($) {
   my.initialize = function() {
     var workspace = new Workspace();
     Backbone.history.start()
-
-    my.$notificationDiv = $('.flash-banner-box');
-
-    $(document).bind('notification', my.showNotification);
-
-    // load templates
-    // TODO: is there a problem that this is async (e.g. we complete an
-    // action that requires templates before they are loaded?)
-    // $.get('templates/_ckan.tmpl.html', function(templates) {
-    //  // Inject all those templates at the end of the document.
-    //  $('body').append(templates);
-    // });
   };
-
-  // TODO: should this be in initialize or even in a separate view?
-  $.template('notificationTemplate',
-      '<div class="flash-banner ${type}">${message} <button>X</button></div>');
-  $('.flash-banner button').live('click', function(e) {
-    e.preventDefault() 
-    my.$notificationDiv.slideUp(200);
-  });
-  my.showNotification = function(e, msg, type) {
-    var _out = $.tmpl('notificationTemplate', {'message': msg, 'type': type})
-    my.$notificationDiv.html(_out);
-    my.$notificationDiv.slideDown(400);
-  }
 
   return my;
 }(jQuery);

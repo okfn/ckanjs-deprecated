@@ -4,6 +4,29 @@ CKAN.View = function($) {
   var my = {};
 
   my.NotificationView = Backbone.View.extend({
+    initialize: function() {
+      $.template('notificationTemplate',
+          '<div class="flash-banner ${type}">${message} <button>X</button></div>');
+
+      var self = this;
+      $(document).bind('notification', function(e, msg, type) {
+        self.render(msg, type)
+      });
+    },
+
+    events: {
+      'click .flash-banner button': 'hide'
+    },
+
+    render: function(msg, type) {
+      var _out = $.tmpl('notificationTemplate', {'message': msg, 'type': type})
+      this.el.html(_out);
+      this.el.slideDown(400);
+    },
+
+    hide: function() {
+      this.el.slideUp(200);
+    }
   });
 
   my.ConfigView = Backbone.View.extend({
