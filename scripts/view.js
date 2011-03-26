@@ -118,9 +118,13 @@ CKAN.View = function($) {
 
     render: function() {
       this.el = $('#tmpl-package-summary').tmpl(this.model.toJSON());
-      // want this.el.find(...) but this does not work as not in dom yet
-      $('.actions a').live('click', this.handleAction);
+      // have to redelegate as element set up here ...
+      this.delegateEvents();
       return this;
+    },
+
+    events: {
+      'click .actions a': 'handleAction'
     },
 
     handleAction: function(e) {

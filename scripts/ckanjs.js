@@ -14,6 +14,7 @@ CKAN.UI = function($) {
     },
 
     initialize: function(options) {
+      var self = this;
       var newPkg = new CKAN.Model.Package();
       var newCreateView = new CKAN.View.PackageCreateView({model: newPkg, el: $('#add-page')});
       newCreateView.render();
@@ -31,7 +32,7 @@ CKAN.UI = function($) {
         });
 
       function switchView(view) {
-        this.switchView(view);
+        self.switchView(view);
       }
 
       $(document).bind('package-edit', function(e, pkg) {
