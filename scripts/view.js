@@ -140,7 +140,8 @@ CKAN.View = function($) {
       // TODO: must be a better way
       var self = this;
       this.el.find('#search-form').submit(
-        function() {
+        function(e) {
+          e.preventDefault();
           self.doSearch.apply(self, arguments);
       });
       _.bindAll(this, 'addOne', 'render');
@@ -175,8 +176,7 @@ CKAN.View = function($) {
       this.showSpinner();
       this.$results.hide();
       this.$results.find('.packages').empty();
-      CKAN.Model.search(q, function(data) {
-      });
+      CKAN.Model.search(q);
       return false;
     },
 
