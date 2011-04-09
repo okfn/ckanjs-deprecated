@@ -1,0 +1,2 @@
+CKAN.Config.ckan_url = 'http://some.other.ckan.net';
+CKAN.Config.apikey = 'my-api-key';
