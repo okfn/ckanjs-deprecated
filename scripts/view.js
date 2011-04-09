@@ -2,6 +2,7 @@ var CKAN = CKAN || {};
 
 CKAN.View = function($) {
   var my = {};
+  var showdown = new Showdown.converter();
 
   my.NotificationView = Backbone.View.extend({
     initialize: function() {
@@ -193,6 +194,39 @@ CKAN.View = function($) {
     hideSpinner: function() {
       this.$dialog.empty().hide()
     }
+
+  });
+
+  my.ResourceEditView = Backbone.View.extend({
+    render: function() {
+      var tmpl = $('#tmpl-resource-form').tmpl(this.model.toJSON());
+      $(this.el).html(tmpl);
+      return this;
+    },
+
+    events: {
+      'submit form': 'saveData',
+    },
+
+    saveData: function() {
+      this.model.save(this.getData(), {
+        error: function(model, error) {
+          var msg = 'Failed to save, possibly due to invalid data ';
+          msg += JSON.stringify(error);
+          alert(msg);
+        }
+      });
+      return false;
+    },
+
+    getData: function() {
+      var _data = $(this.el).find('form.resource').serializeArray();
+      modelData = {};
+      $.each(_data, function(idx, value) {
+        modelData[value.name.split('--')[1]] = value.value
+      });
+      return modelData;
+    },
 
   });
 

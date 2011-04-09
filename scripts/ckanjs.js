@@ -10,6 +10,7 @@ CKAN.UI = function($) {
       "search/:query": "search",
       "search/:query/p:page": "search",
       "add": "add",
+      "add-resource": "addResource",
       "config": "config"
     },
 
@@ -18,6 +19,11 @@ CKAN.UI = function($) {
       var newPkg = new CKAN.Model.Package();
       var newCreateView = new CKAN.View.PackageCreateView({model: newPkg, el: $('#add-page')});
       newCreateView.render();
+
+      var newResource = new CKAN.Model.Resource();
+      var newResourceEditView = new CKAN.View.ResourceEditView({model: newResource, el: $('#add-resource-page')});
+      newResourceEditView.render();
+
       var searchView = new CKAN.View.PackageSearchView();
 
       $(document).bind('config:update', function(e, cfg) {
@@ -57,6 +63,10 @@ CKAN.UI = function($) {
 
     add: function() {
       this.switchView('add');
+    },
+
+    addResource: function() {
+      this.switchView('add-resource');
     },
 
     edit: function(pkg) {

@@ -31,6 +31,27 @@ CKAN.Model = function($) {
     }
   });
 
+  my.Resource = Backbone.Model.extend({
+    url: function() {
+      var base = my.apiRest +  '/resource';
+      if (this.isNew()) return base;
+      return base + (base.charAt(base.length - 1) == '/' ? '' : '/') + this.id;
+    },
+
+    validate: function(attrs) {
+      if (!attrs.url) {
+        return {
+          'url': 'URL must be set'
+        }
+      }
+    },
+
+    notesHtml: function() {
+      var notes = this.get('notes');
+      return showdown.makeHtml(notes ? notes : '');
+    }
+  });
+
   my.search = function(q) {
     var apiUrlSearch = my.apiSearch + '/package?q='
     var url = apiUrlSearch + q + '&limit=10&all_fields=1';
