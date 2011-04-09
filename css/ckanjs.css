@@ -107,6 +107,22 @@ ul.actions li {
   * Forms
   ***************************************/
 
+#content form dd, #content form dt {
+  margin: 2px;
+}
+
+form.package input, form.resource input {
+}
+
+legend h3 {
+  padding: 0 6px;
+  font-size: 1.1em;
+}
+
+fieldset {
+  padding-bottom: 0;
+}
+
 .instructions {
   font-size: 75%;
 }
