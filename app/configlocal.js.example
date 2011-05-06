@@ -1,2 +1,5 @@
-CKAN.Config.ckan_url = 'http://some.other.ckan.net';
-CKAN.Config.apikey = 'my-api-key';
+var localConfig = {
+  endpoint:  'http://some.other.ckan.net',
+  api_key: 'my-api-key'
+};
+

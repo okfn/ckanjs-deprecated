@@ -25,7 +25,7 @@
   <script src="../vendor/underscore/1.1.4/underscore.min.js"></script>
   <script src="../vendor/backbone/0.3.3/backbone.min.js"></script>
 
-  <script src="../lib/config.js"></script>
+  <!-- defines localConfig -->
   <script src="configlocal.js"></script>
 
   <script src="../lib//model.js"></script>
@@ -34,7 +34,10 @@
 
   <script type="text/javascript">
     jQuery(document).ready(function($) {
-      CKAN.UI.initialize();
+      // localConfig
+      CKAN.UI.initialize({
+        config: localConfig
+        });
       // $('input.search').val('russian');
       // $('#search-form').submit();
     });
