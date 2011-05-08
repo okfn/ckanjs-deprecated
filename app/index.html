@@ -104,6 +104,10 @@
         <h2>Edit Dataset</h2>
       </div>
 
+      <div id="view-page" class="page-view" style="display: none;">
+        <h2>View Dataset</h2>
+      </div>
+
       <div id="add-resource-page" class="page-view" style="display: none;">
       </div>
 
@@ -136,10 +140,10 @@
 <!-- templates -->
 
 <script id="tmpl-package-summary" type="x-jquery-tmpl">
-  <li class="ckan-package" ckan-package-id="${package.id}">
+  <li class="package" package-id="${package.id}">
     <div class="header">
       <span class="title" >
-        <a href="${ckan_url}" ckan-attrname="title" class="editable">${displaytitle}</a>
+        <a href="${package.ckan_url}" ckan-attrname="title" class="editable">${package.displaytitle}</a>
       </span>
       <div class="search_meta">
         {{if package.resources.length}}
@@ -164,10 +168,35 @@
       {{/if}}
     </div>
     <ul class="actions">
-      <li><a href="#more">More &raquo;</a></li>
-      <li><a href="#edit">Edit &raquo;</a></li>
+      <li>
+        <a href="${urls.packageView}">
+          More &raquo;</a>
+      </li>
+      <li>
+        <a href="${urls.packageEdit}">Edit &raquo;</a>
+      </li>
     </ul>
   </li>
+</script>
+
+<script id="tmpl-package-full" type="x-jquery-tmpl">
+  <div class="package" package-id="${package.id}">
+    <h2 class="title" >
+      <a href="${package.ckan_url}" ckan-attrname="title" class="editable">${package.displaytitle}</a>
+    </h2>
+    <div class="extract editable-area">
+      {{html package.notesHtml}}
+    </div>
+    <div class="package-tags">
+      {{if package.tags.length}}
+      <ul class="package-tags">
+        {{each package.tags}}
+          <li>${$value}</li>
+        {{/each}}
+      </ul>
+      {{/if}}
+    </div>
+  </div>
 </script>
 
 <script id="tmpl-package-form" type="x-jquery-tmpl">
