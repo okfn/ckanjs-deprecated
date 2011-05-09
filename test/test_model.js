@@ -13,5 +13,7 @@ test("Create package", function () {
   var pkg = new CKAN.Model.Package(indata);
 
   equals(pkg.get('title'), indata.title);
-  equals(pkg.notesHtml(), '<h2>Xyz</h2>');
+  var out = pkg.toTemplateJSON();
+  equals(out.notesHtml, '<h2>Xyz</h2>');
+  equals(out.displaytitle, indata.title);
 });
