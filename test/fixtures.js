@@ -12,10 +12,10 @@ var packages = [
     version: null,
     license_id: "cc-nc",
     resources: [ ],
-    tags: [,
+    tags: [
       "russian"
     ],
-    groups: [,
+    groups: [
       "david"
     ],
     name: "warandpeace",
@@ -66,11 +66,11 @@ var packages = [
         size: "345"
       }
     ],
-    tags: [,
+    tags: [
       "russian",
       "tolstoy"
     ],
-    groups: [,
+    groups: [
       "david",
       "roger"
     ],
