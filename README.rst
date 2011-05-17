@@ -1,4 +1,4 @@
-A fully-featured javascript-only interface to CKAN_ sites.
+A fully-featured javascript-only interface to CKAN_ sites (entitled DataDeck).
 
 With its modular design it can also function as a javascript library for those
 wishing to do their own development.
@@ -8,18 +8,15 @@ wishing to do their own development.
 Installation
 ============
 
-1. Copy index.html along with the vendor directory, the css and the javascript
-   to your directory of choice.
+1. Copy this directory to the directory of your choice.
 
-2. Open index.html in a web browser.
+2. Open app/index.html in a web browser.
 
 Config File
 -----------
 
-You can overload the main config options in config.js by creating your own
-configlocal.js and setting relevant options e.g.::
-
-    CKAN.Config.url = "http://myckaninstance.org/" 
+You can overload the main config options by creating your own configlocal.js
+app/ directory and setting relevant options (copy and paste from template).
 
 
 CKAN Server Config
@@ -62,8 +59,8 @@ The following features are planned:
 Roadmap
 -------
 
-  0. Testing - QUnit + Sinon.js
+  0. Testing - QUnit + Sinon.js (DONE)
   1. Search (Done)
-  2. Create a Package
-  3. Edit a Package - Full and Inline
+  2. Create a Package (DONE)
+  3. Edit a Package - Full and Inline (DONE)
 
