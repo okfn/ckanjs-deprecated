@@ -48,19 +48,28 @@ The following features are supported so far:
   1. Search and rendering of search results
   2. Inline editing of packages (with an API key)
   3. Adding packages
+  4. Switching between different CKAN instances during use
 
 The following features are planned:
   
   * Editing Package relationships
   * Embeddable widget on websites to show latest changes
-  * Switching between different CKAN instances during use
 
 
 Roadmap
 -------
 
-  0. Testing - QUnit + Sinon.js (DONE)
-  1. Search (Done)
-  2. Create a Package (DONE)
-  3. Edit a Package - Full and Inline (DONE)
+  * Testing - QUnit + Sinon.js (DONE)
+  * Search (DONE)
+  * Create a Package (DONE)
+  * Edit a Package - Full and Inline (DONE)
+  * Quick Add Resources to Package
+  * Inline edit of tags
+  * Geolocate (and display)
+  * Update multiple packages at once
+  * Editing Package relationships
+
+Others:
+
+  * Extract Preview code for use in main site
 
