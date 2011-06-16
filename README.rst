@@ -1,7 +1,5 @@
-A fully-featured javascript-only interface to CKAN_ sites (entitled DataDeck).
-
-With its modular design it can also function as a javascript library for those
-wishing to do their own development.
+A javascript library for CKAN_ including a fully-featured javascript-only app
+interface to CKAN_ sites (entitled DataDeck).
 
 .. _CKAN: http://ckan.org/
 
