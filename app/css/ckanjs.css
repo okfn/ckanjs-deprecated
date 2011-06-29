@@ -178,4 +178,60 @@ div.preview {
 form dl dd .preview ul {
   margin-left: 1.5em;
 }
+/* Lightbox */
+
+.lightbox {
+  position: fixed;
+  top: 85px;
+  left: 120px;
+  right: 120px;
+  bottom: 40px;
+  padding: 1.5em 15px 40px;
+  background-color: rgb(255, 255, 255);
+  -webkit-border-radius: 14px;
+  -moz-border-radius: 14px;
+  border-radius: 14px;
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  z-index: 3;
+}
+
+.lightbox.loading {
+  background-image: url(../images/bg-spinner.gif);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.lightbox > h1 {
+  line-height: 2em;
+  font-size: 1.5em;
+  margin: 0;
+}
+.lightbox > h1 span {
+  font-size: 0.9em;
+}
+
+.lightbox .container {
+  position: absolute;
+  top: 6em;
+  bottom: 6em;
+  left: 15px;
+  right: 15px;
+  display: block;
+  overflow-y: auto;
+}
+
+.lightbox.hide {
+  display: none;
+}
+
+.lightbox .close {
+  position: absolute;
+  width: 50px;
+  height: 40px;
+  right: 0;
+  top: 0;
+  border: none;
+}
 
