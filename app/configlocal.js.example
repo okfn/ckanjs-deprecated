@@ -1,5 +1,0 @@
-var localConfig = {
-  endpoint:  'http://some.other.ckan.net',
-  api_key: 'my-api-key'
-};
-
