@@ -1,0 +1,62 @@
+body {
+background:#fff;
+color:#666;
+font-family:Helvetica, Ariel, sans;
+}
+
+#header-wrap {
+background:url('http://neuromantics.net/af/blog-imgs/artfinder-header-bg.jpg') repeat-x center top;
+}
+
+#header {
+background:url('http://neuromantics.net/af/blog-imgs/blank.gif') no-repeat center;
+}
+
+#content-container {
+background:url('http://neuromantics.net/af/blog-imgs/body.png') center top repeat-y;
+}
+
+#footer #subscribe-rss a {
+background:url('http://neuromantics.net/af/blog-imgs/rss.png') no-repeat;
+width:150px;
+height:50px;
+margin-top:5px;
+margin-left:20px;
+}
+
+.post .post-date {
+width:auto;
+height:auto;
+background-image:url('http://neuromantics.net/af/blog-imgs/blank.gif');
+margin:4px -20px 0 0;
+}
+
+.sidebar li {
+color:#333;
+}
+
+.sidebar a {
+color:#123;
+}
+
+.credit {
+font-size:10px;
+display:none;
+}
+
+h1.entry-title,h2.entry-title {
+width:auto;
+}
+
+.hr {
+background:url('http://neuromantics.net/af/blog-imgs/hr.png') no-repeat center;
+}
+
+h1,h2 {
+color:#3b3b3b;
+font-size:1.4em;
+}
+
+a {
+color:#223366;
+}

@@ -1,0 +1,333 @@
+.gcard {
+	position: absolute;
+	z-index: 20;
+	-moz-box-shadow: 0 0 8px #888;
+	-webkit-box-shadow: 0 0 8px #888;
+	box-shadow: 0 0 8px #888;
+	max-width: 400px;
+}
+	.gcard { /* IE8 Fix */
+		z-index /*\**/: auto\9;
+	}
+		
+	.gcard .grav-inner {
+		zoom: 1;
+		position: relative;
+		background: #000; /* Hi IE! */
+		background: rgba(0,0,0,0.85);
+		padding: 18px;
+		color: #fff;
+		font-family: Helvetica, Arial, Tahoma, sans-serif;
+		font-size: 12px;
+		line-height: 150%;
+		text-shadow: #000 0px -1px 0;
+		font-style: normal !important;
+	}
+	
+		.gcard .grav-inner * {
+			font-style: normal !important;
+		}
+
+	.gcard .gcard-about {
+		clear: left;
+	}
+
+	.gcard a {
+		color: #fff !important;
+		border: none !important;
+		text-decoration: none !important;
+		font-family: Helvetica, Arial, Tahoma, sans-serif;
+	}
+	
+	.gcard a:hover {
+		text-decoration: none !important;
+		border: none !important;
+		color: #3f94c7 !important;
+	}
+
+	.gcard ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: 12px;
+	}
+	
+	.gcard ul li {
+		list-style: none;
+	}
+	
+	.gcard p {
+		color: #fff;
+		text-align: left;
+		font-size: 12px;
+	}
+
+	.gcard .grav-small { font-size: 10px; }
+
+	.gcard .grav-leftcol {
+		float: left;
+		width: 220px;
+	}
+		.gcard h4 {
+			float: left;
+			margin: 0 10px 5px 0 !important;
+			padding: 0 !important;
+			font-size: 18px;
+			font-family: Helvetica, Arial, Tahoma, sans-serif;
+			border-bottom: 1px solid #666 !important;
+			line-height: 115%;
+			vertical-align: middle;
+			text-transform: none;
+			text-align: left;
+		}
+			.gcard h4, x:-moz-any-link, x:default { line-height: 90% }
+			
+			.gcard h4:hover {
+				border-bottom: 1px solid #444 !important;
+			}
+			
+		
+	.gcard .grav-rightcol {
+		float: right;
+		width: 130px;
+		margin-left: 10px;
+	}
+		.gcard h5 {
+			margin: 0 0 6px 0;
+			padding: 0;
+			color: #888;
+			font-size: 13px;
+			font-weight: normal;
+			font-family: Helvetica, Arial, Tahoma, sans-serif;
+			text-transform: none;
+			text-align: left;
+		}
+
+		.gcard .grav-rightcol ul {
+			margin-bottom: 10px;
+		}
+		
+			.gcard ul.grav-links li {
+				margin: 0;
+				text-align: left;
+			}
+			
+			.gcard ul.grav-links li a {
+				line-height: 85%;
+				border-bottom: 1px solid #666 !important;
+			}
+				.gcard ul.grav-links li a:hover {
+					border-bottom: 1px solid #444 !important;
+				}
+
+			.gcard ul.grav-services li {
+				float: left;
+				margin: 0 4px 0 0;
+			}
+
+			.gcard ul.grav-services li a {
+				height: 16px;
+				width: 16px;
+				display: block;
+				background-image: url( '/images/grav-share-sprite.png' );
+				background-repeat: no-repeat;
+				margin: 0 0 4px 0;
+			}
+
+	/* Hide card info for incomplete cards */
+	.gcard .grav-about, .gcard .grav-links, .gcard .grav-gallery, .gcard .grav-services {
+		display: none;
+	}
+	/* Display card info for cards with that info */
+	.gcard-about .grav-about, .gcard-links .grav-links, .gcard-gallery .grav-gallery, .gcard-services .grav-services {
+		display: block;
+	}
+	
+	.grav-about {
+		clear: left;
+	}
+		a.grav-edit-profile {
+			border-bottom: 1px solid #666 !important;
+		}
+			a.grav-edit-profile:hover {
+				border-bottom: 1px solid #444 !important;
+			}
+
+	.gcard .grav-gallery {
+		clear: both;
+		overflow: hidden;
+		padding-top: 10px;
+	}
+		.grav-gallery .grav-gallery-container {
+			width: 314px;
+			overflow: hidden;
+			float: left;
+			white-space: nowrap;
+		}
+
+		.grav-gallery ul {
+			margin: 0;
+			padding: 0;
+			white-space: nowrap;
+			width: auto;
+			height: 55px;
+			width: 9000px;
+		}
+			.grav-gallery ul li {
+				float: left;
+				margin: 0 10px 0 0;
+			}
+				.grav-gallery ul li img {
+					border: 3px solid #555;
+					cursor: pointer;
+					height: 50px;
+				}
+					.grav-gallery ul li img:hover {
+						border-color: #fff;
+					}
+					
+					.grav-gallery ul li img.grav-large:hover {
+						border-color: #555;
+					}
+					
+				.grav-gallery .grav-large-close {
+					position: absolute;
+					bottom: 12px;
+					right: 12px;
+					z-index: 120;
+					background: rgba(0,0,0,0.8);
+					color: #fff;
+					font-size: 14px;
+					font-weight: bold;
+					padding: 2px 6px 1px;
+					-moz-border-radius: 3px;
+					-webkit-border-radius: 3px;
+					border-radius: 3px;
+					line-height: 100%;
+					cursor: pointer;
+				}
+				.grav-gallery .grav-large-close, x:-moz-any-link, x:default { padding: 6px 6px 1px; }
+					
+				.grav-gallery .grav-large-close:hover {
+					background-color: #3b91c5;
+					color: #fff !important;
+				}
+
+		.grav-gallery a.grav-gallery-prev, .grav-gallery a.grav-gallery-next {
+			overflow: hidden;
+			text-indent: -999em;
+			width: 13px;
+			height: 56px;
+			display: block;
+			outline: none;
+		}
+
+		.grav-gallery a.grav-gallery-prev {
+			float: left;
+			margin-right: 10px;
+			background: url(/images/arr.gif) 0 0 no-repeat;
+		}
+
+		.grav-gallery a.grav-gallery-next {
+			float: left;
+			margin-left: 10px;
+			background: url(/images/arr.gif) -26px 0 no-repeat;
+		}
+
+	.gcard .grav-cardarrow {
+		position: absolute;
+		top: 0;
+		width: 10px;
+		left: -7px;
+		background: url(/images/cardarrow.gif) top right no-repeat;
+	}
+		.pos-left .grav-cardarrow {
+			left: auto;
+			right: -10px;
+			background: url(/images/cardarrow-left.gif) top right no-repeat;
+		}
+
+	.gcard .grav-tag {
+		clear: both;
+		position: absolute;
+		top: 0;
+		right: -22px;
+		background: url(/images/grav-tag.png) top right no-repeat;
+		width: 48px;
+		height: 61px;
+	}
+		.pos-left .grav-tag {
+			right: auto;
+			left: -22px;
+			background: url(/images/grav-tag-left.png) top right no-repeat;
+		}
+
+	.gcard .grav-tag a {
+		width: 48px;
+		height: 61px;
+		display: block;
+		text-decoration: none;
+		background: url(/images/grav-tag.gif) 22px 0 no-repeat;
+	}
+		.pos-left .grav-tag a {
+			/* TODO: Replace flip with grav-tag-left.gif */
+			-o-transform: scaleX(-1);
+			-moz-transform: scaleX(-1);
+			-webkit-transform: scaleX(-1);
+			transform: scaleX(-1);
+			filter: fliph;
+		}
+	
+	.gcard .grav-extra {
+		float: left;
+		margin: 5px 5px 0 0;
+		vertical-align: middle;
+	}
+		.gcard .grav-extra, x:-moz-any-link, x:default { margin-top: 1px; }
+		
+		.gcard .grav-extra a {
+			display: block;
+			line-height: 80%;
+			padding: 3px 5px 3px 17px !important;
+			color: #000 !important;
+			font-size: 11px;
+			-moz-border-radius: 3px;
+			-webkit-border-radius: 3px;
+			border-radius: 3px;
+			text-shadow: none;
+		}
+			.gcard .grav-extra, x:-moz-any-link, x:default { padding-bottom: 2px !important; }
+
+			.gcard .grav-extra a:hover {
+				background-color: #3b91c5;
+				color: #fff !important;
+			}
+		
+		.gcard .comments a {
+			background: #fff url(/images/pillicon.png) 3px 2px no-repeat;
+		}
+			.gcard .comments a:hover {
+				background-position: -11px 2px;
+			}
+			
+		.gcard .likes a {
+			background: #fff url(/images/pillicon.png) 4px -13px no-repeat;
+		}
+
+			.gcard .likes a:hover {
+				background-position: -10px -13px;
+			}
+
+	.gcard .grav-disable {
+		clear: both;
+		margin: 3px -11px -11px -11px;
+		text-align: right;
+		font-size: 10px;
+		line-height: 10px;
+	}
+		.gcard .grav-disable a {
+			color: #666 !important;
+		}
+		.gcard .grav-disable a:hover {
+			color: #fff !important;
+		}

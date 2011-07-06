@@ -1,0 +1,181 @@
+/****************************************
+  * Flash Messages / Notifications
+  ***************************************/
+
+.flash-banner button {
+  float: right;
+  font-size: 90%;
+  padding: 2px 4px 2px 4px;
+  margin: 0;
+  line-height: 0.9;
+}
+
+/****************************************
+  * Package Summaries
+  ***************************************/
+
+ul.package-tags, #content ul.package-tags {
+  margin: 0;
+  padding: 0;
+}
+
+ul.package-tags li {
+    display:inline;
+    margin:0;
+    padding:0 5px 2px 5px;
+    border:none;
+    font-weight:normal;
+    font-size:0.8em;
+    color: black;
+    background:#afc6e9;
+}
+
+ul.actions, #content ul.actions {
+  margin: 0;
+  padding: 0;
+  margin-top: 10px;
+}
+
+ul.actions li {
+    display:inline;
+    margin: 0;
+    padding: 2px 5px 2px 5px;
+    border: none;
+    font-weight: normal;
+    font-size: 0.9em;
+    background: #eee;
+}
+
+/****************************************
+  * Config
+  ***************************************/
+
+#config-form input {
+  line-height: 12px;
+}
+
+/****************************************
+  * Site Layout Fixes to Core CKAN CSS
+  ***************************************/
+
+#sitetitle {
+  width: 400px;
+}
+
+#access {
+  float: right;
+  clear: right;
+  margin-top: 5px;
+  padding: 4px 0px;
+  width: auto;
+  border: none;
+	-moz-border-radius: 0.5em;
+	-webkit-border-radius: 0.5em;
+  border-radius: 0.5em;
+  background: #f1f1f1;
+}
+
+#access .menu-header, div.menu {
+  width: auto;
+}
+
+#access div.menu li {
+  border-right: solid 1px #ccc;
+  border-left: solid 1px #d2d2d2;
+  padding: 4px 5px;
+}
+
+#access div.menu li.first {
+  border-left: none;
+}
+
+#access div.menu li.last {
+  border-right: none;
+}
+
+#access a {
+  line-height: 18px;
+  text-shadow: white 1px 1px 0;
+}
+
+#access li:hover > a, #access ul ul :hover > a {
+  background: none;
+}
+
+
+/****************************************
+  * Forms
+  ***************************************/
+
+#content form dd, #content form dt {
+  margin: 2px;
+}
+
+form.package input, form.resource input {
+}
+
+legend h3 {
+  padding: 0 6px;
+  font-size: 1.1em;
+}
+
+fieldset {
+  padding-bottom: 0;
+}
+
+.instructions {
+  font-size: 75%;
+}
+
+form ul.tabs li {
+  display: inline;
+}
+
+div.previewable-textarea {
+  background: #EEE;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-bottom-left-radius: 5px 5px;
+  border: 1px solid #CCC;
+  padding: 0 5px 0 10px;
+}
+
+form ul.tabs li a {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #666;
+  border: 1px solid transparent;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-top-left-radius: 10px 10px;
+  border-top-right-radius: 10px 10px;
+  border-bottom-right-radius: 10px 10px;
+  border-bottom-left-radius: 10px 10px;
+}
+
+form ul.tabs li a.selected {
+  color: #333;
+  background: white;
+  border-color: #BBB;
+  border-right-color: #DDD;
+  border-bottom-color: #DDD;
+}
+
+div.preview {
+  min-height: 80px;
+  background: white;
+  border: 1px solid #CCC;
+  margin-bottom: 5px;
+  padding: 5px;
+}
+
+form dl dd .preview ul {
+  margin-left: 1.5em;
+}
+
