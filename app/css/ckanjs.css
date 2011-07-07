@@ -11,15 +11,15 @@
 }
 
 /****************************************
-  * Package Summaries
+  * Dataset Summaries
   ***************************************/
 
-ul.package-tags, #content ul.package-tags {
+ul.dataset-tags, #content ul.dataset-tags {
   margin: 0;
   padding: 0;
 }
 
-ul.package-tags li {
+ul.dataset-tags li {
     display:inline;
     margin:0;
     padding:0 5px 2px 5px;
@@ -111,7 +111,7 @@ ul.actions li {
   margin: 2px;
 }
 
-form.package input, form.resource input {
+form.dataset input, form.resource input {
 }
 
 legend h3 {

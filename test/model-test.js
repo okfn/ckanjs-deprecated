@@ -4,13 +4,13 @@
 
 module("Model");
 
-test("Create package", function () {
+test("Create dataset", function () {
   var indata = {
-    title: 'My New Package',
+    title: 'My New Dataset',
     notes: '## Xyz',
     tags: ['abc', 'efg']
   };
-  var pkg = new CKAN.Model.Package(indata);
+  var pkg = new CKAN.Model.Dataset(indata);
 
   equals(pkg.get('title'), indata.title);
   var out = pkg.toTemplateJSON();

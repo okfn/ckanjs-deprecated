@@ -1,4 +1,4 @@
-var packages = [
+var datasets = [
   {
     maintainer: null,
     maintainer_email: null,

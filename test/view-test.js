@@ -2,9 +2,9 @@ module("View");
 
 CKAN.UI.initialize()
 
-test("PackageSummaryView", function () {
-  var pkg = new CKAN.Model.Package(packages[1]);
-  var view = new CKAN.View.PackageSummaryView({
+test("DatasetSummaryView", function () {
+  var pkg = new CKAN.Model.Dataset(datasets[1]);
+  var view = new CKAN.View.DatasetSummaryView({
     model: pkg
   });
   view.render();
@@ -13,10 +13,10 @@ test("PackageSummaryView", function () {
   equals(title, 'A Novel By Tolstoy');
 });
 
-test("PackageFullView", function () {
-  var pkg = new CKAN.Model.Package(packages[0]);
+test("DatasetFullView", function () {
+  var pkg = new CKAN.Model.Dataset(datasets[0]);
   var $view = $('<div />').appendTo($('.fixture'));
-  var view = new CKAN.View.PackageFullView({
+  var view = new CKAN.View.DatasetFullView({
     el: $view,
     model: pkg
   });
@@ -36,17 +36,17 @@ test("PackageFullView", function () {
   ok(out.indexOf('Download (no description)')!=-1, 'Did not find required string');
 });
 
-test("PackageSearchView", function () {
-  var coll = new CKAN.Model.PackageCollection()
+test("DatasetSearchView", function () {
+  var coll = new CKAN.Model.DatasetCollection()
 
-  var searchView = new CKAN.View.PackageSearchView({
+  var searchView = new CKAN.View.DatasetSearchView({
     el: $('#search-page'),
     collection: coll
   });
-  var pkg = new CKAN.Model.Package(packages[1]);
+  var pkg = new CKAN.Model.Dataset(datasets[1]);
   coll.add([pkg]);
   searchView.render();
 
-  var title = $('.packages li .title a').text();
+  var title = $('.datasets li .title a').text();
   equals(title, 'A Novel By Tolstoy');
 });
