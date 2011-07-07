@@ -3,6 +3,11 @@
 <head>
   <title>CKANJS Test Suite</title>
   <link rel="stylesheet" href="../vendor/qunit/qunit.css" media="screen" />
+  <style>
+    li.fail {
+      white-space: pre-wrap; /* Better formatting for stack traces */
+    }
+  </style>
 </head>
 <body>
   <h1 id="qunit-header">Tests</h1>
@@ -42,11 +47,13 @@
   <script src="../vendor/qunit/qunit.js"></script>
 
   <script src="../lib/templates.js"></script>
+  <script src="../lib/client.js"></script>
   <script src="../lib/model.js"></script>
   <script src="../lib/view.js"></script>
   <script src="../lib/ui.js"></script>
 
   <script src="fixtures.js"></script>
+  <script src="client-test.js"></script>
   <script src="model-test.js"></script>
   <!--<script src="view-test.js"></script>-->
 </body>
