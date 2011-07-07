@@ -1,51 +1,48 @@
 (function ($, undefined) {
-  module("CKAN.Client");
 
-  test("new Client()", function () {
-    var client = new CKAN.Client();
-
-    equal(client instanceof CKAN.Client, true, 'Expect client to be an instance of Client');
-    deepEqual(client.env, CKAN.Client.defaults, 'Expect client.env to equal Client.defaults');
+  module("CKAN.Client", {
+    setup: function () {
+      CKAN.Client._environment = {};
+    }
   });
 
-  test("new Client(config)", function () {
-    var config = {url: 'http://ckan.org/api/2'},
-        client = new CKAN.Client(config);
+  test(".initialize(config)", function () {
+    var spy = this.spy(CKAN.Client, 'environment'),
+        config = {};
 
-    deepEqual(client.env.url, config.url, 'Expect client.env.url to equal config.url');
+    CKAN.Client.initialize(config);
+
+    ok(spy.calledOnce, 'Expect .environment() to have been called');
+    ok(spy.calledWith(config), 'Expect .environment() to have been called with config');
   });
 
   test(".environment(key)", function () {
-    var client = new CKAN.Client(),
-        url = 'http://ckan.org/api/2';
+    var url = 'http://ckan.org/api/2';
 
-    client.env = {url: url};
+    CKAN.Client._environment = {url: url};
 
-    equal(client.environment('url'), url, 'Expect the "url" key to be returned from the .env object');
-    equal(client.environment('invalid'), undefined, 'Expect keys that are not found to return undefined');
+    equal(CKAN.Client.environment('url'), url, 'Expect the "url" key to be returned from the ._environment object');
+    equal(CKAN.Client.environment('invalid'), undefined, 'Expect keys that are not found to return undefined');
   });
 
   test(".environment(key, value)", function () {
-    var client = new CKAN.Client(),
-        url = 'http://test.ckan.org/api/2',
+    var url = 'http://test.ckan.org/api/2',
         returned;
 
-    returned = client.environment('url', url);
+    returned = CKAN.Client.environment('url', url);
 
-    equal(client.env.url, url, 'Expect the "url" key to have been set on the .env property');
-    same(returned, client, 'Expect the client object to have been returned');
+    equal(CKAN.Client._environment.url, url, 'Expect the "url" key to have been set on the ._environment property');
+    same(returned, CKAN.Client, 'Expect the Client object to have been returned');
   });
 
   test(".environment(keys)", function () {
-    var client = new CKAN.Client(),
-        keys = {url: 'http://test.ckan.org/api/2', apiKey: 'some-long-api-key'},
+    var keys = {url: 'http://test.ckan.org/api/2', apiKey: 'some-long-api-key'},
         returned;
-    
-    client.env = {};
-    returned = client.environment(keys);
 
-    deepEqual(client.env, keys, 'Expect the "url" and "apiKey" keys to have been set on the .env property');
-    same(returned, client, 'Expect the client object to have been returned');
+    returned = CKAN.Client.environment(keys);
+
+    deepEqual(CKAN.Client._environment, keys, 'Expect the "url" and "apiKey" keys to have been set on the ._environment property');
+    same(returned, CKAN.Client, 'Expect the CKAN.Client object to have been returned');
   });
 
 })(this.jQuery);
