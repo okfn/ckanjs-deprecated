@@ -45,4 +45,20 @@ test("Create dataset", function () {
   equals(out.displaytitle, indata.title);
 });
 
+module("Model.SearchCollection");
+
+test('new Model.SearchCollection()', function () {
+  var proto = Backbone.Collection.prototype;
+
+  this.spy(proto, 'constructor');
+
+  var args = [{name: 'My Model Name'}];
+  var options = {total: 32};
+  var instance = new CKAN.Model.SearchCollection(args, {total: 32});
+
+  ok(proto.constructor.calledOnce, 'Expect Base to call Backbone.Model');
+  ok(proto.constructor.calledWith(args, options), 'Expect Base to pass on arguments to Backbone.Model');
+  equal(instance.total, 32, 'Expect the total option to be set to the total "property"');
+});
+
 })(this.jQuery);

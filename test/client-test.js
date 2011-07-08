@@ -92,7 +92,7 @@
         dataset = new CKAN.Model.Dataset(),
         returned;
 
-    this.spy(Backbone, 'sync');
+    this.stub(Backbone, 'sync');
     this.stub(client, 'environment').returns('stubbed');
 
     returned = client.syncDataset(method, dataset, options);
@@ -116,4 +116,45 @@
     }, 'Expect the url to have the id included when the dataset has an id');
   });
 
+  test('.searchDatasets()', function () {
+    var client  = new CKAN.Client(),
+        success = function () {},
+        query = 'osm',
+        mockPromise = {},
+        returned;
+
+    this.stub($, 'ajax').returns(mockPromise);
+    this.stub(client, 'environment').returns('stubbed');
+
+    returned = client.searchDatasets({data: {q: query, success: success}});
+    
+    equal(returned, mockPromise, 'Expect it to return the jQuery promise');
+    ok(client.environment.calledOnce, 'Expect it to call client.environment()');
+    ok(client.environment.calledWith('searchEndpoint'), 'Expect it to call client.environment() to get the search endpoint');
+    ok($.ajax.calledOnce, 'Expect it to call $.ajax()');
+    deepEqual($.ajax.args[0][0], {
+      url: 'stubbed/package',
+      data: {
+        'limit': 10, 'all_fields': 1, 'q': query, 'success': success
+      },
+      converters: {
+        'text json': client._datasetConverter
+      }
+    }, 'Expect options to be merged with defaults');
+  });
+
+  test('._datasetConverter()', function () {
+    var client  = new CKAN.Client(),
+        raw = '{"count": 23, "results": [{"title": "a"}, {"title": "b"}, {"title": "c"}]}',
+        returned;
+
+    this.stub(client, 'createDataset').returns({});
+
+    returned = client._datasetConverter(raw);
+
+    equal(returned.constructor, CKAN.Model.SearchCollection, 'Expect a search collection to be returned');
+    equal(returned.total, 23, 'Expect collection to have a total of 23');
+    equal(returned.length, 3, 'Expect collection to have a length of 3');
+    ok(client.createDataset.calledThrice, 'Expect client.createDataset() to have been called three times');
+  });
 })(this.jQuery);
