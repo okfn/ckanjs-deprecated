@@ -1,0 +1,106 @@
+<!DOCTYPE html>  <html> <head>   <title>client.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>            <div id="jump_to">         Jump To &hellip;         <div id="jump_wrapper">           <div id="jump_page">                                           <a class="source" href="client.html">                 client.js               </a>                                           <a class="source" href="model.html">                 model.js               </a>                        </div>         </div>       </div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               client.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="k">this</span><span class="p">.</span><span class="nx">CKAN</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">CKAN</span> <span class="o">||</span> <span class="p">{};</span>
+
+<span class="k">this</span><span class="p">.</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Client</span> <span class="o">=</span> <span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">CKAN</span><span class="p">,</span> <span class="nx">$</span><span class="p">,</span> <span class="nx">_</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">,</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Client constructor. Creates a new client for communicating with
+the CKAN API.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="kd">function</span> <span class="nx">Client</span><span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">_environment</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">configure</span><span class="p">(</span><span class="nx">config</span> <span class="o">||</span> <span class="nx">Client</span><span class="p">.</span><span class="nx">defaults</span><span class="p">);</span>
+
+    <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;syncDataset&#39;</span><span class="p">,</span> <span class="s1">&#39;_datasetConverter&#39;</span><span class="p">);</span>
+  <span class="p">}</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>Default config parameters for the Client.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">Client</span><span class="p">.</span><span class="nx">defaults</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="nx">apiKey</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">,</span>
+    <span class="nx">endpoint</span><span class="o">:</span> <span class="s1">&#39;http://ckan.net&#39;</span>
+  <span class="p">};</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>Extend the Client prototype with Backbone.Events to provide .bind(),
+.unbind() and .trigger() methods.</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="nx">Client</span><span class="p">.</span><span class="nx">prototype</span><span class="p">,</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Events</span><span class="p">,</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>Allows the implementor to specify an object literal of settings to
+configure the current client. Options include:</p>
+
+<ul>
+<li>apiKey: The API key for the current user to create/edit datasets.</li>
+<li>endpoint: The API endpoint to connect to.</li>
+</ul>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">configure</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">endpoint</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">endpoint</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">endpoint</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/\/$/</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">restEndpoint</span>   <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">endpoint</span> <span class="o">+</span> <span class="s1">&#39;/api/2/rest&#39;</span><span class="p">;</span>
+        <span class="nx">config</span><span class="p">.</span><span class="nx">searchEndpoint</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">endpoint</span> <span class="o">+</span> <span class="s1">&#39;/api/2/search&#39;</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">environment</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>Client environment getter/setter. Environment variables can be retrieved
+by providing a key string, if the key does not exist the method will
+return <code>undefined</code>. To set keys either a key value pair can be provided
+or an object literal containing multiple key/value pairs.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">environment</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">key</span> <span class="o">===</span> <span class="s2">&quot;string&quot;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">arguments</span><span class="p">.</span><span class="nx">length</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">_environment</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">_environment</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">_environment</span><span class="p">,</span> <span class="nx">key</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>Helper method to create a new instance of CKAN.Model.Dataset and
+register a sync listener to update the representation on the server when
+the model is created/updated/deleted.</p>
+
+<pre><code>var myDataset = client.createDataset({
+  title: "My new data set"
+});
+</code></pre>
+
+<p>This ensures that the models are always saved with the latest environment
+data.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">createDataset</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="p">(</span><span class="k">new</span> <span class="nx">CKAN</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">Dataset</span><span class="p">(</span><span class="nx">attributes</span><span class="p">)).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;sync&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">syncDataset</span><span class="p">);</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>A wrapper around Backbone.sync() that adds additional ajax options to
+each request. These include the API key and the request url rather than
+using the model to generate it.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">syncDataset</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>Get the package url.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">environment</span><span class="p">(</span><span class="s1">&#39;restEndpoint&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/package&#39;</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-10">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-10">&#182;</a>               </div>               <p>Add additional request options.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="nx">options</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({},</span> <span class="p">{</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="nx">model</span><span class="p">.</span><span class="nx">isNew</span><span class="p">()</span> <span class="o">?</span> <span class="nx">url</span> <span class="o">:</span> <span class="nx">url</span> <span class="o">+</span> <span class="s1">&#39;/&#39;</span> <span class="o">+</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span>
+        <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s1">&#39;X-CKAN-API-KEY&#39;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">environment</span><span class="p">(</span><span class="s1">&#39;apiKey&#39;</span><span class="p">)</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="nx">options</span><span class="p">);</span>
+
+      <span class="nx">Backbone</span><span class="p">.</span><span class="nx">sync</span><span class="p">(</span><span class="nx">method</span><span class="p">,</span> <span class="nx">model</span><span class="p">,</span> <span class="nx">options</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-11">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-11">&#182;</a>               </div>               <p>Performs a search for datasets against the CKAN API. The <code>options</code>
+argument can contain any keys supported by jQuery.ajax(). The query
+parameters should be provided in the <code>options.query</code> property.</p>
+
+<pre><code>var query = client.searchDatasets({
+  success: function (datasets) {
+    console.log(datasets); // Logs a Backbone.Collection
+  }
+});
+</code></pre>
+
+<p>The <code>options.success</code> method (and any other success callbacks) will
+recieve a <code>SearchCollection</code> containing <code>Dataset</code> models. The method
+returns a jqXHR object so that additional callbacks can be registered
+with .success() and .error().</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">searchDatasets</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">options</span> <span class="o">=</span> <span class="nx">options</span> <span class="o">||</span> <span class="p">{};</span>
+      <span class="nx">options</span><span class="p">.</span><span class="nx">data</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span><span class="s1">&#39;limit&#39;</span><span class="o">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s1">&#39;all_fields&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">},</span> <span class="nx">options</span><span class="p">.</span><span class="nx">query</span><span class="p">);</span>
+      <span class="k">delete</span> <span class="nx">options</span><span class="p">.</span><span class="nx">query</span><span class="p">;</span>
+
+      <span class="k">return</span> <span class="nx">$</span><span class="p">.</span><span class="nx">ajax</span><span class="p">(</span><span class="nx">_</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+        <span class="nx">url</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">environment</span><span class="p">(</span><span class="s1">&#39;searchEndpoint&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;/package&#39;</span><span class="p">,</span>
+        <span class="nx">converters</span><span class="o">:</span> <span class="p">{</span>
+          <span class="s1">&#39;text json&#39;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">_datasetConverter</span>
+        <span class="p">}</span>
+      <span class="p">},</span> <span class="nx">options</span><span class="p">));</span>
+    <span class="p">},</span></pre></div>             </td>           </tr>                               <tr id="section-12">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-12">&#182;</a>               </div>               <p>A "converter" method for jQuery.ajax() this is used to convert the
+results from a search API request into models which in turn will be
+passed into any registered success callbacks. We do this here so that
+<em>all</em> registered success callbacks recieve the same data rather than
+just the callback registered when the search was made.</p>             </td>             <td class="code">               <div class="highlight"><pre>    <span class="nx">_datasetConverter</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">raw</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">parseJSON</span><span class="p">(</span><span class="nx">raw</span><span class="p">),</span>
+          <span class="nx">models</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">results</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">attributes</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">createDataset</span><span class="p">(</span><span class="nx">attributes</span><span class="p">);</span>
+          <span class="p">},</span> <span class="k">this</span><span class="p">);</span>
+
+      <span class="k">return</span> <span class="k">new</span> <span class="nx">CKAN</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">SearchCollection</span><span class="p">(</span><span class="nx">models</span><span class="p">,</span> <span class="p">{</span><span class="nx">total</span><span class="o">:</span> <span class="nx">json</span><span class="p">.</span><span class="nx">count</span><span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">Client</span><span class="p">;</span>
+
+<span class="p">})(</span><span class="k">this</span><span class="p">.</span><span class="nx">CKAN</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">_</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">Backbone</span><span class="p">);</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
