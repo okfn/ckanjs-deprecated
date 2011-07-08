@@ -6,14 +6,36 @@
     var client = new CKAN.Client();
 
     equal(client instanceof CKAN.Client, true, 'Expect client to be an instance of Client');
-    deepEqual(client._environment, CKAN.Client.defaults, 'Expect client.env to equal Client.defaults');
+    deepEqual(client._environment, CKAN.Client.defaults, 'Expect client._environment to equal Client.defaults');
   });
 
   test("new Client(config)", function () {
     var config = {url: 'http://ckan.org/api/2'},
         client = new CKAN.Client(config);
 
-    deepEqual(client._environment.url, config.url, 'Expect client.env.url to equal config.url');
+    deepEqual(client._environment.url, config.url, 'Expect client._environment.url to equal config.url');
+  });
+
+  test(".configure(config)", function () {
+    var client = new CKAN.Client(),
+        config = {endpoint: 'http://test.ckan.net', apiKey: 'some-long-string'},
+        returned;
+
+    this.stub(client, 'environment').returns(client);
+
+    returned = client.configure(config);
+
+    equal(returned, client, 'Expect client to be returned');
+    ok(client.environment.calledOnce, 'Expect .environment() to have been called');
+    deepEqual(client.environment.args[0][0], {
+      apiKey: 'some-long-string',
+      endpoint: 'http://test.ckan.net',
+      restEndpoint: 'http://test.ckan.net/api/2/rest',
+      searchEndpoint: 'http://test.ckan.net/api/2/search'
+    }, 'Expect "endpoint", "restEndpoint", "searchEndpoint" and "apiKey" keys to have been set');
+
+    client.configure({endpoint: 'http://test.ckan.net/'});
+    equal(client.environment.args[1][0].endpoint, 'http://test.ckan.net', 'Expect trailing slash to be trimmed from endpoint');
   });
 
   test(".environment(key)", function () {
@@ -41,7 +63,7 @@
     var client = new CKAN.Client(),
         keys = {url: 'http://test.ckan.org/api/2', apiKey: 'some-long-api-key'},
         returned;
-    
+
     client._environment = {};
     returned = client.environment(keys);
 
@@ -83,8 +105,8 @@
       headers: {'X-CKAN-API-KEY': 'stubbed'}
     }, 'Expect it to call Backbone.sync() with "header" and "url" options');
     ok(client.environment.calledTwice, 'Expect it to call client.environment twice');
-    ok(client.environment.calledWith('api-key'), 'Expect it to request the "api-key" from the client');
-    ok(client.environment.calledWith('rest-endpoint'), 'Expect it request the "rest-endpoint" from the client');
+    ok(client.environment.calledWith('apiKey'), 'Expect it to request the "api-key" from the client');
+    ok(client.environment.calledWith('restEndpoint'), 'Expect it request the "rest-endpoint" from the client');
 
     dataset.id = 1;
     client.syncDataset('update', dataset, options);
