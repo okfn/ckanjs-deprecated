@@ -126,7 +126,7 @@
     this.stub($, 'ajax').returns(mockPromise);
     this.stub(client, 'environment').returns('stubbed');
 
-    returned = client.searchDatasets({data: {q: query, success: success}});
+    returned = client.searchDatasets({query: {q: query}, success: success});
     
     equal(returned, mockPromise, 'Expect it to return the jQuery promise');
     ok(client.environment.calledOnce, 'Expect it to call client.environment()');
@@ -135,8 +135,9 @@
     deepEqual($.ajax.args[0][0], {
       url: 'stubbed/package',
       data: {
-        'limit': 10, 'all_fields': 1, 'q': query, 'success': success
+        'limit': 10, 'all_fields': 1, 'q': query
       },
+      success: success,
       converters: {
         'text json': client._datasetConverter
       }
