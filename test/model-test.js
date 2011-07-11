@@ -171,6 +171,15 @@ test('.destroy()', function () {
   ok(dataset.save.calledWith({}, options), 'Expected .save() to be called with the options');
 });
 
+test(".toJSON()", function () {
+  var dataset  = new CKAN.Model.Dataset({id: 'my-dataset-id'}),
+      resource = new CKAN.Model.Resource({id: 1, url: 'http://', dataset: dataset});
+
+  deepEqual(resource.toJSON(), {
+    id: 1, package_id: 'my-dataset-id', url: 'http://'
+  }, 'Expected a "package_id" key to have been set');
+});
+
 module("Model.SearchCollection");
 
 test('new Model.SearchCollection()', function () {
