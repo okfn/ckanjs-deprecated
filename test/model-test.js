@@ -29,6 +29,24 @@ test('.sync()', function () {
   ok(instance.trigger.calledWith('sync', method, instance, options), 'Expect .sync() to pass on arguments to listeners');
 });
 
+test('.toJSON()', function () {
+  var instance = new CKAN.Model.Base(),
+      object;
+
+  instance.set({
+    test: null,
+    array: [],
+    obj: {},
+    child: new Backbone.Model({key: 'value'}),
+    children: new Backbone.Collection([{key: 'value'}])
+  });
+
+  object = instance.toJSON();
+
+  equal(object.child.key, 'value', 'Expect child to be converted to an object');
+  ok($.isArray(object.children), 'Expect children to be converted to an array');
+});
+
 module("Model.Dataset");
 
 test("new Model.Dataset()", function () {
