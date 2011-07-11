@@ -63,6 +63,11 @@ test("new Model.Dataset()", function () {
   equals(out.displaytitle, indata.title);
 });
 
+test("new Model.Dataset({resources: []})", function () {
+  var dataset = new CKAN.Model.Dataset({resources: []});
+  equals(dataset.get('resources').constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+});
+
 test(".set({resources: []})", function () {
   var dataset = new CKAN.Model.Dataset(),
       resources = dataset.get('resources'),
@@ -79,7 +84,7 @@ test(".set({resources: []})", function () {
 
   dataset.set({resources: newResources});
   ok(!dataset._updateResources.calledOnce, 'Expected collection._updateResources() NOT to have been called');
-  equal(newResources, dataset.get({resources}), 'Expected the new collection to be set to the "resources" key')
+  equal(newResources, dataset.get('resources'), 'Expected the new collection to be set to the "resources" key');
 
   dataset.set({resources: [{url: "http://pathtonewresource.com/download"}]});
   ok(dataset._updateResources.calledOnce, 'Expected collection._updateResources() to have been called');
