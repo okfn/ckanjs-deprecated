@@ -115,6 +115,22 @@ test("._updateResources()", function () {
   ok(resources.remove.calledWith([existingModels[0]]), 'Expected resources.remove() to have been called with array of models');
 });
 
+module("Model.Resource");
+
+test('.set({package_id: 1})', function () {
+  var resource = new CKAN.Model.Resource();
+
+  resource.set({
+    id: "382d4759-a21b-433d-ab3d-7a629f539ffc",
+    url: "http://www.antlab.sci.waseda.ac.jp/software.html",
+    package_id: "dd79c3f0-f5cc-4e55-bd66-3bbfc0382b2e"
+  });
+
+  ok(resource.get("dataset"), 'Expect resource to have a "dataset" key');
+  equal(resource.get("dataset").constructor, CKAN.Model.Dataset, 'Expect "dataset" key to be an instance of Dataset');
+  equal(resource.get("dataset").id, 'dd79c3f0-f5cc-4e55-bd66-3bbfc0382b2e', 'Expect the dataset to have the correct id');
+});
+
 module("Model.SearchCollection");
 
 test('new Model.SearchCollection()', function () {
