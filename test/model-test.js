@@ -117,6 +117,14 @@ test("._updateResources()", function () {
 
 module("Model.Resource");
 
+function getResource() {
+  return new CKAN.Model.Resource({
+    id: "382d4759-a21b-433d-ab3d-7a629f539ffc",
+    url: "http://www.antlab.sci.waseda.ac.jp/software.html",
+    package_id: "dd79c3f0-f5cc-4e55-bd66-3bbfc0382b2e"
+  });
+}
+
 test('.set({package_id: 1})', function () {
   var resource = new CKAN.Model.Resource();
 
@@ -129,6 +137,48 @@ test('.set({package_id: 1})', function () {
   ok(resource.get("dataset"), 'Expect resource to have a "dataset" key');
   equal(resource.get("dataset").constructor, CKAN.Model.Dataset, 'Expect "dataset" key to be an instance of Dataset');
   equal(resource.get("dataset").id, 'dd79c3f0-f5cc-4e55-bd66-3bbfc0382b2e', 'Expect the dataset to have the correct id');
+});
+
+test('.save()', function () {
+  var resource = getResource(),
+      attrs = {}, options = {},
+      dataset = resource.get("dataset");
+  
+  this.spy(resource, 'set');
+  this.spy(dataset, 'save');
+
+  resource.save(attrs, options);
+
+  ok(resource.set.calledWith(attrs), 'Expected the attributes to be set on the model');
+  ok(dataset.save.calledOnce, 'Expected .save() to be called on the dataset');
+  ok(dataset.save.calledWith({}, options), 'Expected .save() to be called with the options');
+});
+
+test('.fetch()', function () {
+  var resource = getResource(),
+      options = {},
+      dataset = resource.get("dataset");
+
+  this.spy(dataset, 'fetch');
+
+  resource.fetch(options);
+
+  ok(dataset.fetch.calledWith(options), 'Expected .fetch() to be called on the dataset');
+});
+
+test('.destroy()', function () {
+  var resource = getResource(),
+      attrs = {}, options = {},
+      dataset = resource.get("dataset");
+
+  this.spy(resource, 'trigger');
+  this.spy(dataset, 'save');
+
+  resource.destroy(options);
+
+  ok(resource.trigger.calledWith('destroy', resource), 'Expected the "destroy" event to be triggered');
+  ok(dataset.save.calledOnce, 'Expected .save() to be called on the dataset');
+  ok(dataset.save.calledWith({}, options), 'Expected .save() to be called with the options');
 });
 
 module("Model.SearchCollection");
