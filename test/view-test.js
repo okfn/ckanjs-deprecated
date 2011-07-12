@@ -37,16 +37,16 @@ test("DatasetFullView", function () {
 });
 
 test("DatasetSearchView", function () {
-  var coll = new CKAN.Model.DatasetCollection()
+  var coll = new CKAN.Model.SearchCollection([]);
 
   var searchView = new CKAN.View.DatasetSearchView({
     el: $('#search-page'),
     collection: coll
   });
   var pkg = new CKAN.Model.Dataset(datasets[1]);
-  coll.add([pkg]);
+  coll.add(pkg);
+  searchView.addOne(pkg);
   searchView.render();
-
   var title = $('.datasets li .title a').text();
   equals(title, 'A Novel By Tolstoy');
 });
