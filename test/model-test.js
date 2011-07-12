@@ -71,33 +71,36 @@ test("new Model.Dataset({resources: []})", function () {
 test(".set({resources: []})", function () {
   var dataset = new CKAN.Model.Dataset(),
       resources = dataset.get('resources'),
-      newResources = new Backbone.Collection();
+      newResources = new Backbone.Collection(),
+      args;
 
-  this.spy(dataset, '_createRelationships');
-  this.spy(dataset, '_updateResources');
+  this.spy(dataset, '_createChildren');
+  this.spy(dataset, '_updateChildren');
 
   equals(resources.length, 0, 'The resources collection should be empty');
 
   dataset.set({});
-  equals(dataset._createRelationships.callCount, 1, 'Expected dataset._createRelationships() to have been called');
-  ok(!dataset._updateResources.calledOnce, 'Expected collection._updateResources() NOT to have been called');
+  equals(dataset._createChildren.callCount, 1, 'Expected dataset._updateChildren() to have been called');
+  equals(dataset._updateChildren.callCount, 0, 'Expected collection._updateChildren() NOT to have been called');
 
   dataset.set({resources: newResources});
-  ok(!dataset._updateResources.calledOnce, 'Expected collection._updateResources() NOT to have been called');
+  equal(dataset._updateChildren.callCount, 0, 'Expected collection._updateChildren() NOT to have been called');
   equal(newResources, dataset.get('resources'), 'Expected the new collection to be set to the "resources" key');
 
-  dataset.set({resources: [{url: "http://pathtonewresource.com/download"}]});
-  ok(dataset._updateResources.calledOnce, 'Expected collection._updateResources() to have been called');
+  args = [{url: "http://pathtonewresource.com/download"}];
+  dataset.set({resources: args});
+  equals(dataset._updateChildren.callCount, 1, 'Expected collection._updateChildren() to have been called');
+  ok(dataset._updateChildren.calledWith({resources: args}), 'Expected collection._updateChildren() to have been called with array of resources');
 
   dataset.set({resources: []});
-  ok(dataset._updateResources.calledTwice, 'Expected collection._updateResources() to have been called');
+  ok(dataset._updateChildren.calledTwice, 'Expected collection._updateChildren() to have been called');
 });
 
-test("._createRelationships()", function () {
+test("._createChildren()", function () {
   var dataset = new CKAN.Model.Dataset(), attrs, returned;
   attrs = dataset.attributes = {};
 
-  returned = dataset._createRelationships();
+  returned = dataset._createChildren();
 
   ok(dataset, returned, 'Expected it to return itself');
   equals(attrs.resources.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
@@ -107,29 +110,34 @@ test("._createRelationships()", function () {
   equals(attrs.relationships.model, CKAN.Model.Relationship, 'Should create Resource instances');
 });
 
-test("._updateResources()", function () {
+test("._updateChildren()", function () {
   var dataset = new CKAN.Model.Dataset(),
       resources = dataset.get('resources'),
-      existingModels = [new CKAN.Model.Resource({id: 1}), new CKAN.Model.Resource({id: 2})],
-      newModels = [{id: 3}, {id: 4}, {id: 2, title: 'New title'}];
+      relationships = dataset.get('relationships'),
+      existingResources = [new CKAN.Model.Resource({id: 1}), new CKAN.Model.Resource({id: 2})],
+      newResources = [{id: 3}, {id: 4}, {id: 2, title: 'New title'}],
+      newRelationships = [{id: 3}];
 
-  resources.add(existingModels);
+  resources.add(existingResources);
 
   this.spy(resources, 'add');
   this.spy(resources, 'remove');
-  this.spy(existingModels[1], 'set');
+  this.spy(relationships, 'add');
+  this.spy(existingResources[1], 'set');
 
-  dataset._updateResources(newModels);
+  dataset._updateChildren({resources: newResources, relationships: newRelationships});
 
-  equal(newModels[0].dataset, dataset, 'Expected dataset to have been appended to the model data');
+  equal(newResources[0].dataset, dataset, 'Expected dataset to have been appended to the model data');
 
   ok(resources.add.calledTwice, 'Expected resources.add() to have been called');
-  ok(resources.add.calledWith(newModels[0]), 'Expected resources.add() to have been called with model');
-  ok(resources.add.calledWith(newModels[1]), 'Expected resources.add() to have been called with model');
-  ok(existingModels[1].set.calledWith(newModels[2]), 'Expected model.set() to have been called with new data');
+  ok(resources.add.calledWith(newResources[0]), 'Expected resources.add() to have been called with model');
+  ok(resources.add.calledWith(newResources[1]), 'Expected resources.add() to have been called with model');
+  ok(existingResources[1].set.calledWith(newResources[2]), 'Expected model.set() to have been called with new data');
+
+  ok(relationships.add.calledOnce, 'Expected relationships.add() to have been called');
 
   ok(resources.remove.calledOnce, 'Expected resources.remove() to have been called');
-  ok(resources.remove.calledWith([existingModels[0]]), 'Expected resources.remove() to have been called with array of models');
+  ok(resources.remove.calledWith([existingResources[0]]), 'Expected resources.remove() to have been called with array of models');
 });
 
 module("Model.Resource");
