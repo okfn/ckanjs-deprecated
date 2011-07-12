@@ -1,0 +1,9 @@
+##############################
+## DONE
+
+x 2011-02-23 2011-02-16 p:wui Drop down config menu (set ckan site to interact with, set api key)
+
+x 2011-03-12 2011-02-27 p:wui For notification messages use 'flash' div rather than alert.
+
+x 2011-03-19 @@ use of .bind(this) which is only ECMAScript >= 1.3 (not in safari) 2011-03-17 problem with safari (and older versions of FF) /code/ckanjs/scripts/ckanjs.js:234TypeError: Result of expression 'this.doSearch.bind' [undefined] is not a function.
+
