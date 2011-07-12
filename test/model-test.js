@@ -73,13 +73,13 @@ test(".set({resources: []})", function () {
       resources = dataset.get('resources'),
       newResources = new Backbone.Collection();
 
+  this.spy(dataset, '_createRelationships');
   this.spy(dataset, '_updateResources');
 
-  equals(resources.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
-  equals(resources.model, CKAN.Model.Resource, 'Should create Resource instances');
   equals(resources.length, 0, 'The resources collection should be empty');
 
   dataset.set({});
+  equals(dataset._createRelationships.callCount, 1, 'Expected dataset._createRelationships() to have been called');
   ok(!dataset._updateResources.calledOnce, 'Expected collection._updateResources() NOT to have been called');
 
   dataset.set({resources: newResources});
@@ -91,6 +91,20 @@ test(".set({resources: []})", function () {
 
   dataset.set({resources: []});
   ok(dataset._updateResources.calledTwice, 'Expected collection._updateResources() to have been called');
+});
+
+test("._createRelationships()", function () {
+  var dataset = new CKAN.Model.Dataset(), attrs, returned;
+  attrs = dataset.attributes = {};
+
+  returned = dataset._createRelationships();
+
+  ok(dataset, returned, 'Expected it to return itself');
+  equals(attrs.resources.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+  equals(attrs.resources.model, CKAN.Model.Resource, 'Should create Resource instances');
+
+  equals(attrs.relationships.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+  equals(attrs.relationships.model, CKAN.Model.Relationship, 'Should create Resource instances');
 });
 
 test("._updateResources()", function () {
