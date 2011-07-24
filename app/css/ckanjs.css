@@ -71,55 +71,6 @@ ul.actions li {
 }
 
 /****************************************
-  * Site Layout Fixes to Core CKAN CSS
-  ***************************************/
-
-#sitetitle {
-  width: 400px;
-}
-
-#access {
-  float: right;
-  clear: right;
-  margin-top: 5px;
-  padding: 4px 0px;
-  width: auto;
-  border: none;
-	-moz-border-radius: 0.5em;
-	-webkit-border-radius: 0.5em;
-  border-radius: 0.5em;
-  background: #f1f1f1;
-}
-
-#access .menu-header, div.menu {
-  width: auto;
-}
-
-#access div.menu li {
-  border-right: solid 1px #ccc;
-  border-left: solid 1px #d2d2d2;
-  padding: 4px 5px;
-}
-
-#access div.menu li.first {
-  border-left: none;
-}
-
-#access div.menu li.last {
-  border-right: none;
-}
-
-#access a {
-  line-height: 18px;
-  text-shadow: white 1px 1px 0;
-}
-
-#access li:hover > a, #access ul ul :hover > a {
-  background: none;
-}
-
-
-/****************************************
   * Forms
   ***************************************/
 
