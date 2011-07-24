@@ -177,7 +177,7 @@ a:hover {
 /* Side bar widgets */
 ul.widget-list {
   list-style: none;
-  padding-left: 0px;
+  padding-right: 0px;
 }
 
 ul.widget-list li.widget-container {
@@ -257,9 +257,9 @@ table caption {
 }
 
 #sidebar {
-  border-right: 1px solid #e0e0e0;
-  margin-right: -10px;
-  padding-right: 9px;
+  border-left: 1px solid #e0e0e0;
+  padding-left: 9px;
+  margin-left: 30px;
   overflow: hidden;
 }
 
