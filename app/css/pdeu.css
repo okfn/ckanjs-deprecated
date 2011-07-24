@@ -569,22 +569,22 @@ form.package-search input.search {
 /* = Package listing = */
 /* =================== */
 
-ul.packages {
+ul.datasets {
 	padding-left: 0;
     margin: 0 0 1em 0;
 }
 
-.packages .header {
+.datasets .header {
     padding-top: 0.5em;
     font-weight: bold;
     font-size: 1.1em;
 }
 
-.packages .extract {
+.datasets .extract {
 	padding-top: 0.3em;
 }
 
-.packages li {
+.datasets li {
 	list-style: none;
 	padding: 1em 0 0.2em 0.0em;
 	border-bottom: 1px solid #ececec;
@@ -592,11 +592,11 @@ ul.packages {
 	/*white-space: nowrap;*/
 }
 
-.packages li a {
+.datasets li a {
 	text-decoration: none;
 }
 
-.packages li img {
+.datasets li img {
 	margin-bottom: -2px;
 }
 
@@ -604,14 +604,14 @@ ul.packages {
     float:right;
 }
 
-ul.package_formats {
+ul.dataset_formats {
     float: right;
     padding: 0 0 3px 0; 
     margin: 0;
     font-family: monospace;
 }
 
-ul.package_formats li {
+ul.dataset_formats li {
     display: inline;
     margin: 0;
     padding: 0 5px 0 5px;
