@@ -33,7 +33,7 @@ from xdg.BaseDirectory import xdg_data_home
 from manager import DataPackageManager
 
 # FIXME: This path needs to be assigned at installing time
-DATADECK_INDEX = 'ckanjs/index.html'
+DATADECK_INDEX = 'ckanjs/app/index.html'
 DATADECK_UI = 'datadeck.ui'
 GCONF_KEY = '/apps/datadeck'
 LOCAL_PACKAGES_DIR = os.path.join(xdg_data_home, 'datadeck')
