@@ -2,3 +2,6 @@ ext/*
 configlocal.js
 sandbox/*
 css/ckan
+*.pyc
+*~
+*.swp
