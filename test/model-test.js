@@ -115,7 +115,7 @@ test("._updateChildren()", function () {
       resources = dataset.get('resources'),
       relationships = dataset.get('relationships'),
       existingResources = [new CKAN.Model.Resource({id: 1}), new CKAN.Model.Resource({id: 2})],
-      newResources = [{id: 3}, {id: 4}, {id: 2, title: 'New title'}],
+      newResources = [{id: 3, package_id: 1}, {id: 4}, {id: 2, title: 'New title'}],
       newRelationships = [{id: 3}];
 
   resources.add(existingResources);
@@ -133,9 +133,12 @@ test("._updateChildren()", function () {
   ok(resources.add.calledWith(newResources[0]), 'Expected resources.add() to have been called with model');
   ok(resources.add.calledWith(newResources[1]), 'Expected resources.add() to have been called with model');
   ok(existingResources[1].set.calledWith(newResources[2]), 'Expected model.set() to have been called with new data');
+  equal(newResources[0].dataset, dataset, 'Expected resources to have a dataset assigned');
+  equal(newResources[0].package_id, undefined, 'Expected resources to have its package_id removed');
 
   ok(relationships.add.calledOnce, 'Expected relationships.add() to have been called');
-
+  equal(newRelationships[0].dataset, undefined, 'Expected relationships not to have a dataset')
+  
   ok(resources.remove.calledOnce, 'Expected resources.remove() to have been called');
   ok(resources.remove.calledWith([existingResources[0]]), 'Expected resources.remove() to have been called with array of models');
 });
