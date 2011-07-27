@@ -22,8 +22,8 @@ test("DatasetFullView", function () {
   });
   view.render();
   var tmpl = $(view.el);
-  var title = tmpl.find('.title a').text();
-  equals(title, 'A Wonderful Story');
+  var tags = tmpl.find('div.tags ul > li').text();
+  equals(tags, 'russian');
 
   $('.action-add-resource').click();
   var out = tmpl.find('form.resource');
