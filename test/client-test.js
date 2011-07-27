@@ -73,8 +73,8 @@
 
   test(".getDatasetById()", function () {
     var client = new CKAN.Client(),
-        options = {success: function () {}},
         error = this.spy(),
+        options = {success: function () {}},
         dataset, dataset2;
 
     this.stub(CKAN.Model.Dataset.prototype, 'fetch').returns({error: error});
@@ -84,16 +84,12 @@
     equal(dataset.constructor, CKAN.Model.Dataset, 'Expected a dataset to have been returned');
     ok(dataset.fetch.calledOnce, 'Expected fetch to have been called');
     ok(dataset.fetch.calledWith(options), 'Expected fetch to have been called with options');
-    ok(error.calledOnce, 'Expected error method to have been called');
 
     dataset2 = client.getDatasetById('an-id');
     equal(dataset2, dataset, 'Expected dataset to have been returned again');
     ok(dataset.fetch.calledOnce, 'Expected fetch NOT to have been called again');
 
     ok(client.cache.dataset.contains(dataset), 'Expect cache to contain dataset');
-    // Call the error callback.
-    error.args[0][0]();
-    ok(!client.cache.dataset.contains(dataset), 'Expect cache NOT to contain dataset');
   });
 
   test(".createDataset()", function () {
