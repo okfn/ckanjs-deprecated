@@ -154,6 +154,16 @@ function getResource() {
   });
 }
 
+test('create', function() {
+  var res = getResource();
+  var out = res.toJSON();
+  equal(out.package_id, '1');
+
+  var res = new CKAN.Model.Resource();
+  var out = res.toJSON();
+  equal(out.package_id, null);
+});
+
 test('.save()', function () {
   var resource = getResource(),
       attrs = {}, options = {},
