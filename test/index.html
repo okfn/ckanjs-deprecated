@@ -15,6 +15,10 @@
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
 
+  <div>
+    <a href="#" id="show-fixtures">Show fixtures</a>
+  </div>
+  </div>
   <div class="fixture" style="display:none;">
     <!-- search form -->
     <div id="search-page" class="page-view">
@@ -35,6 +39,9 @@
         <ul class="datasets">
         </ul>
       </div>
+
+      <div id="resource-view-test">
+      </div>
     </div>
   </div>
   <script src="../vendor/jquery/1.6.2/jquery.js"></script>
@@ -52,6 +59,7 @@
   <script src="../lib/template/dataset-view.js"></script>
   <script src="../lib/template/dataset-form.js"></script>
   <script src="../lib/template/resource-form.js"></script>
+  <script src="../lib/template/resource-view.js"></script>
   <script src="../lib/client.js"></script>
   <script src="../lib/model.js"></script>
   <script src="../lib/view.js"></script>
@@ -65,5 +73,12 @@
   <script src="view/dataset-listing-test.js"></script>
   <script src="widget/search-test.js"></script>
   <script src="view-test.js"></script>
+  <script type="text/javascript">
+    $(document).ready(
+      $('#show-fixtures').click(function(e) {
+        jQuery('.fixture').show();
+      })
+    );
+  </script>
 </body>
 </html>

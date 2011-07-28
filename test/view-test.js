@@ -50,3 +50,16 @@ test("DatasetSearchView", function () {
   var title = $('.datasets li .title a').text();
   equals(title, 'A Novel By Tolstoy');
 });
+
+test("ResourceView", function() {
+  var res = new CKAN.Model.Resource(datasets[1].resources[0]);
+  var $el = $('#resource-view-test');
+  var view = new CKAN.View.ResourceView({
+    model: res,
+    el: $el
+  });
+  view.render();
+  var url = $('.resource.view .url').text();
+  equal(url, res.get('url'));
+});
+
