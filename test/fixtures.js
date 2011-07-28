@@ -78,7 +78,7 @@ var datasets = [
     license: "OKD Compliant::Other (Open)",
     notes_rendered: "<p>Some test notes </p> <h3>A 3rd level heading</h3> <p><strong>Some bolded text.</strong> </p> <p><em>Some italicized text.</em> </p> <p>Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb </p> <p>Needs escaping: left arrow &lt; </p> <p><a href=\"http://ckan.net/\">http://ckan.net/</a> </p>",
     url: "http://www.annakarenina.com",
-    notes: "Some test notes ### A 3rd level heading **Some bolded text.** *Some italicized text.* Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb Needs escaping: left arrow < <http://ckan.net/> ",
+    notes: "Some test notes\n\n### A 3rd level heading\n\n**Some bolded text.** *Some italicized text.* Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb Needs escaping: left arrow < <http://ckan.net/> ",
     title: "A Novel By Tolstoy",
     ratings_average: null,
     extras: {

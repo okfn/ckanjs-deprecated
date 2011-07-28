@@ -71,6 +71,19 @@ ul.actions li {
   margin-bottom: 10px;
 }
 
+.subsection {
+  margin-top: 15px;
+}
+
+.subsection > h3 {
+  font-size: 1.9em;
+  margin-bottom: 0.5em;
+}
+
+.notes-body h1, .notes-body h2, .notes-body h3, .notes-body h4, .notes-body h5 {
+  font-size: 120%;
+}
+
 /****************************************
   * Config
   ***************************************/
