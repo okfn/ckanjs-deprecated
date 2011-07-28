@@ -43,6 +43,8 @@
   <script src="../lib/view.js"></script>
   <script src="../lib/ui.js"></script>
 
+  <script src="../test/fixtures.js"></script>
+
   <!-- defines localConfig -->
   <script src="configlocal.js"></script>
 
@@ -53,9 +55,19 @@
       }
       CKAN.UI.initialize({
         config: localConfig
-        });
-      // $('input.search').val('russian');
-      // $('#search-form').submit();
+      });
+      // fixtures (in var datasets)
+      $.each(datasets, function(idx, obj) {
+        // a backbone collection
+        var collection = CKAN.UI.workspace.client.cache.dataset;
+        // could already be here if we were viewing a dataset as dataset would have been auto created
+        var existing = collection.get(obj.id);
+        if (existing) {
+          existing.set(obj);
+        } else {
+          collection.add(new CKAN.Model.Dataset(obj));
+        }
+      });
     });
   </script>
 </head>
