@@ -58,18 +58,9 @@
         window.localConfig = undefined;
       }
       CKAN.UI.initialize({
-        config: localConfig
-      });
-      // fixtures (in var datasets)
-      $.each(datasets, function(idx, obj) {
-        // a backbone collection
-        var collection = CKAN.UI.workspace.client.cache.dataset;
-        // could already be here if we were viewing a dataset as dataset would have been auto created
-        var existing = collection.get(obj.id);
-        if (existing) {
-          existing.set(obj);
-        } else {
-          collection.add(new CKAN.Model.Dataset(obj));
+        config: localConfig,
+        fixtures: {
+          datasets: datasets
         }
       });
     });
