@@ -33,7 +33,7 @@ test("DatasetFullView", function () {
   equals(pkg.get('resources').length, 1);
 
   var out = $view.find('.resources table tr:last td:first').text();
-  ok(out.indexOf('Download (no description)')!=-1, 'Did not find required string');
+  ok(out.indexOf('(No description)')!=-1, 'Did not find required string');
 });
 
 test("DatasetSearchView", function () {
