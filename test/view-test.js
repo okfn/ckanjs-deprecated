@@ -26,10 +26,11 @@ test("DatasetFullView", function () {
   equals(tags, 'russian');
 
   $('.action-add-resource').click();
-  var out = tmpl.find('form.resource');
+  var dialog = $('.resource-add-dialog');
+  var out = dialog.find('form.resource');
   equals(out.length, 1, 'Did not find resource form');
-  tmpl.find('form input[name=Resource--url]').val('http://xyz.org');
-  tmpl.find('form.resource').submit();
+  dialog.find('form input[name=Resource--url]').val('http://xyz.org');
+  dialog.find('form.resource').submit();
   equals(pkg.get('resources').length, 1);
 
   var out = $view.find('.resources table tr:last td:first').text();
