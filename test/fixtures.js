@@ -52,7 +52,12 @@ var datasets = [
         package_id: "8bb44028-f646-43ba-9320-f2e82f2b272d",
         position: 0,
         id: "d8d9adff-568b-4293-af36-75e26dfdd652",
-        size: "123"
+        size: "123",
+        webstore: {
+          "uri": "http://webstore.thedatahub.org/ckannet/...."
+        },
+        qa: {
+        }
       },
       {
         resource_group_id: "7ed43acb-49ba-4873-9f6e-652c949a8eb0",
