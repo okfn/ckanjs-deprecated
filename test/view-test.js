@@ -37,6 +37,21 @@ test("DatasetFullView", function () {
   ok(out.indexOf('(No description)')!=-1, 'Did not find required string');
 });
 
+test("DatasetEditView", function () {
+  var pkg = new CKAN.Model.Dataset(datasets[1]);
+  var $view = $('<div />').appendTo($('.fixture'));
+  var view = new CKAN.View.DatasetEditView({
+    el: $view,
+    model: pkg
+  });
+  view.render();
+  var tmpl = $(view.el);
+  out = tmpl.find('#Dataset--title').val();
+  equals(out, 'A Novel By Tolstoy');
+  out = tmpl.find('#Dataset--url').val();
+  equals(out, pkg.get('url'));
+});
+
 test("DatasetSearchView", function () {
   var coll = new CKAN.Model.SearchCollection([]);
 
