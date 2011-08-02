@@ -22,18 +22,34 @@ test("DatasetFullView", function () {
   });
   view.render();
   var tmpl = $(view.el);
-  var title = tmpl.find('.title a').text();
-  equals(title, 'A Wonderful Story');
+  var tags = tmpl.find('div.tags ul > li').text();
+  equals(tags, 'russian');
 
   $('.action-add-resource').click();
-  var out = tmpl.find('form.resource');
+  var dialog = $('.resource-add-dialog');
+  var out = dialog.find('form.resource');
   equals(out.length, 1, 'Did not find resource form');
-  tmpl.find('form input[name=Resource--url]').val('http://xyz.org');
-  tmpl.find('form.resource').submit();
+  dialog.find('form input[name=Resource--url]').val('http://xyz.org');
+  dialog.find('form.resource').submit();
   equals(pkg.get('resources').length, 1);
 
   var out = $view.find('.resources table tr:last td:first').text();
-  ok(out.indexOf('Download (no description)')!=-1, 'Did not find required string');
+  ok(out.indexOf('(No description)')!=-1, 'Did not find required string');
+});
+
+test("DatasetEditView", function () {
+  var pkg = new CKAN.Model.Dataset(datasets[1]);
+  var $view = $('<div />').appendTo($('.fixture'));
+  var view = new CKAN.View.DatasetEditView({
+    el: $view,
+    model: pkg
+  });
+  view.render();
+  var tmpl = $(view.el);
+  out = tmpl.find('#Dataset--title').val();
+  equals(out, 'A Novel By Tolstoy');
+  out = tmpl.find('#Dataset--tags').val();
+  equals(out, 'russian,tolstoy');
 });
 
 test("DatasetSearchView", function () {
@@ -50,3 +66,16 @@ test("DatasetSearchView", function () {
   var title = $('.datasets li .title a').text();
   equals(title, 'A Novel By Tolstoy');
 });
+
+test("ResourceView", function() {
+  var res = new CKAN.Model.Resource(datasets[1].resources[0]);
+  var $el = $('#resource-view-test');
+  var view = new CKAN.View.ResourceView({
+    model: res,
+    el: $el
+  });
+  view.render();
+  var url = $('.resource.view .url').text();
+  equal(url, res.get('url'));
+});
+

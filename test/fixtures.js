@@ -52,7 +52,12 @@ var datasets = [
         package_id: "8bb44028-f646-43ba-9320-f2e82f2b272d",
         position: 0,
         id: "d8d9adff-568b-4293-af36-75e26dfdd652",
-        size: "123"
+        size: "123",
+        webstore: {
+          "uri": "http://webstore.thedatahub.org/ckannet/...."
+        },
+        qa: {
+        }
       },
       {
         resource_group_id: "7ed43acb-49ba-4873-9f6e-652c949a8eb0",
@@ -78,7 +83,7 @@ var datasets = [
     license: "OKD Compliant::Other (Open)",
     notes_rendered: "<p>Some test notes </p> <h3>A 3rd level heading</h3> <p><strong>Some bolded text.</strong> </p> <p><em>Some italicized text.</em> </p> <p>Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb </p> <p>Needs escaping: left arrow &lt; </p> <p><a href=\"http://ckan.net/\">http://ckan.net/</a> </p>",
     url: "http://www.annakarenina.com",
-    notes: "Some test notes ### A 3rd level heading **Some bolded text.** *Some italicized text.* Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb Needs escaping: left arrow < <http://ckan.net/> ",
+    notes: "Some test notes\n\n### A 3rd level heading\n\n**Some bolded text.** *Some italicized text.* Foreign characters: u with umlaut ü 66-style quote “ foreign word: thümb Needs escaping: left arrow < <http://ckan.net/> ",
     title: "A Novel By Tolstoy",
     ratings_average: null,
     extras: {

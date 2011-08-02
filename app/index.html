@@ -26,22 +26,30 @@
   <!--[if lt IE 8]>
     <link rel="stylesheet" href="css/blueprint/ie.css" type="text/css" media="screen, projection">
   <![endif]-->
+  <link rel="stylesheet" href="../vendor/jqueryui/1.8.4/css/ui-lightness/jqueryui-lightness.css" />
   <link rel="stylesheet" href="css/style.css" />
   <script src="js/vendor/modernizr-1.7.min.js"></script>
 
   <script src="../vendor/jquery/1.6.2/jquery.js"></script>
   <script src="../vendor/json2.js"></script>
   <script src="../vendor/jquery.tmpl/beta1/jquery.tmpl.min.js"></script>
+  <script src="../vendor/jqueryui/1.8.4/jquery-ui.min.js"></script>
   <script src="../vendor/showdown/showdown.js"></script>
   <script src="../vendor/jquery.jeditable/1.7.2/jquery.jeditable.min.js"></script>
   <script src="../vendor/underscore/1.1.6/underscore.js"></script>
   <script src="../vendor/backbone/0.5.1/backbone.js"></script>
  
   <script src="../lib/templates.js"></script>
+  <script src="../lib/template/dataset-view.js"></script>
+  <script src="../lib/template/dataset-form.js"></script>
+  <script src="../lib/template/resource-form.js"></script>
+  <script src="../lib/template/resource-view.js"></script>
   <script src="../lib/client.js"></script>
   <script src="../lib/model.js"></script>
   <script src="../lib/view.js"></script>
   <script src="../lib/ui.js"></script>
+
+  <script src="../test/fixtures.js"></script>
 
   <!-- defines localConfig -->
   <script src="configlocal.js"></script>
@@ -52,10 +60,11 @@
         window.localConfig = undefined;
       }
       CKAN.UI.initialize({
-        config: localConfig
-        });
-      // $('input.search').val('russian');
-      // $('#search-form').submit();
+        config: localConfig,
+        fixtures: {
+          datasets: datasets
+        }
+      });
     });
   </script>
 </head>
@@ -88,7 +97,7 @@
           </span>
           <ul id="mainmenu">
             <li class="first"><a href="#search">Search</a></li>
-            <li><a href="#add">Add a Dataset</a></li>
+            <li><a href="#add-dataset">Add a Dataset</a></li>
             <li class="last">
               <a href="#config" class="config-show">Configuration</a>
             </li>
@@ -122,16 +131,20 @@
           </div>
         </div>
 
-        <div id="add-page" class="page-view" style="display: none;">
+        <div id="dataset-add-page" class="page-view" style="display: none;">
           <h2>Add a Dataset</h2>
         </div>
 
-        <div id="edit-page" class="page-view" style="display: none;">
+        <div id="dataset-edit-page" class="page-view" style="display: none;">
           <h2>Edit Dataset</h2>
         </div>
 
         <div id="view-page" class="page-view" style="display: none;">
           <h2>View Dataset</h2>
+        </div>
+
+        <div id="resource-view-page" class="page-view" style="display: none;">
+          <h2>View Resource</h2>
         </div>
 
         <div id="add-resource-page" class="page-view" style="display: none;">

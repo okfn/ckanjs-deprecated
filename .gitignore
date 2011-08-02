@@ -2,3 +2,4 @@ ext/*
 configlocal.js
 sandbox/*
 css/ckan
+.*.swp
