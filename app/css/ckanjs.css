@@ -11,6 +11,38 @@
 }
 
 /****************************************
+  * Mini Tabs
+  ***************************************/
+
+ul.tabs li {
+  display: inline;
+}
+
+ul.tabs li a {
+  display: inline-block;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #666;
+  border: 1px solid transparent;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-top-left-radius: 10px 10px;
+  border-top-right-radius: 10px 10px;
+  border-bottom-right-radius: 10px 10px;
+  border-bottom-left-radius: 10px 10px;
+}
+
+ul.tabs li a.selected {
+  color: #333;
+  background: white;
+  border-color: #BBB;
+  border-right-color: #DDD;
+  border-bottom-color: #DDD;
+}
+
+/****************************************
   * Dataset Summaries
   ***************************************/
 
@@ -93,6 +125,22 @@ ul.actions li {
 }
 
 /****************************************
+  * Dataset Edit/Create
+  ***************************************/
+
+div.dataset-form-navigation ul {
+  background: #EEE;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-top-left-radius: 5px 5px;
+  border-top-right-radius: 5px 5px;
+  border-bottom-right-radius: 5px 5px;
+  border-bottom-left-radius: 5px 5px;
+  border: 1px solid #CCC;
+  padding: 5px 5px 5px 10px;
+}
+
+/****************************************
   * Forms
   ***************************************/
 
@@ -116,8 +164,9 @@ fieldset {
   font-size: 75%;
 }
 
-form ul.tabs li {
-  display: inline;
+form ul.tabs {
+  margin-top: 0.5em;
+  padding-left: 0;
 }
 
 div.previewable-textarea {
@@ -132,30 +181,6 @@ div.previewable-textarea {
   padding: 0 5px 0 10px;
 }
 
-form ul.tabs li a {
-  display: inline-block;
-  padding: 2px 8px;
-  font-size: 10px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #666;
-  border: 1px solid transparent;
-  -webkit-border-radius: 10px;
-  -moz-border-radius: 10px;
-  border-top-left-radius: 10px 10px;
-  border-top-right-radius: 10px 10px;
-  border-bottom-right-radius: 10px 10px;
-  border-bottom-left-radius: 10px 10px;
-}
-
-form ul.tabs li a.selected {
-  color: #333;
-  background: white;
-  border-color: #BBB;
-  border-right-color: #DDD;
-  border-bottom-color: #DDD;
-}
-
 div.preview {
   min-height: 80px;
   background: white;
@@ -166,4 +191,12 @@ div.preview {
 
 form dl dd .preview ul {
   margin-left: 1.5em;
+}
+
+.hints {
+  font-weight: normal;
+}
+
+p.hints {
+  margin-bottom: 0;
 }

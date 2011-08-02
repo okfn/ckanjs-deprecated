@@ -48,8 +48,8 @@ test("DatasetEditView", function () {
   var tmpl = $(view.el);
   out = tmpl.find('#Dataset--title').val();
   equals(out, 'A Novel By Tolstoy');
-  out = tmpl.find('#Dataset--url').val();
-  equals(out, pkg.get('url'));
+  out = tmpl.find('#Dataset--tags').val();
+  equals(out, 'russian,tolstoy');
 });
 
 test("DatasetSearchView", function () {
