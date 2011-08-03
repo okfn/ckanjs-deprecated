@@ -148,7 +148,12 @@ div.dataset-form-navigation ul {
   margin: 2px;
 }
 
+label {
+  font-size: 110%;
+}
+
 form.dataset input, form.resource input {
+  width: 200px;
 }
 
 legend h3 {
@@ -166,6 +171,7 @@ fieldset {
 
 form ul.tabs {
   margin-top: 0.5em;
+  margin-bottom: 0.2em;
   padding-left: 0;
 }
 
