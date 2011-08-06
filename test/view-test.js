@@ -85,3 +85,16 @@ test("ResourceView", function() {
   equal(url, res.get('url'));
 });
 
+test("ResourceEditView", function() {
+  var res = new CKAN.Model.Resource(datasets[1].resources[0]);
+  var $el = $('<div />').addClass('resource-form-test');
+  $el.appendTo($('.fixture'));
+  var view = new CKAN.View.ResourceEditView({
+    model: res,
+    el: $el
+  });
+  view.render();
+  var url = $el.find('form.resource input#Resource--url').val();
+  equal(url, res.get('url'));
+});
+
