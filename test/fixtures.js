@@ -101,4 +101,31 @@ var datasets = [
       }
     ]
   }
-]
+];
+
+var FIXTURES = {
+  'apiStorageAuthForm': [
+    {
+      "action": "http://ckantest.commondatastorage.googleapis.com/", 
+      "fields": [
+        {
+          "name": "policy", 
+          "value": "eyJleHBpcmF0aW9uIjogIjIwMTEtMDgtMDhUMTA6MTA6MTRaIiwKImNvbmRpdGlvbnMiOiBbeyJidWNrZXQiOiAiY2thbnRlc3QifSx7ImtleSI6ICJ4eXovYWJjIn1dfQ=="
+        }, 
+        {
+          "name": "AWSAccessKeyId", 
+          "value": "GOOGC6OU3AYPNY47B66M"
+        }, 
+        {
+          "name": "signature", 
+          "value": "3lqm6s3tsxlBhTeYfY7kYBGNB+Q="
+        }, 
+        {
+          "name": "key", 
+          "value": "xyz/abc"
+        }
+      ]
+    }
+  ]
+};
+

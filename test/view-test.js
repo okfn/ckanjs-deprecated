@@ -100,3 +100,25 @@ test("ResourceEditView", function() {
   equal(url, res.get('url'));
 });
 
+test("ResourceUpload", function() {
+  var client = new CKAN.Client();
+  sinon.stub(client, 'getStorageAuthForm', function(key, options) {
+    options.success(FIXTURES.apiStorageAuthForm[0]);
+  });
+
+  var view = new CKAN.View.ResourceUpload({
+    client: client
+  });
+  var $el = view.render().el;
+  ok($el);
+  $('.fixture').append($el);
+
+  view.update()
+  equals($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
+  var expectedFields = ['signature', 'policy'];
+  $.each(expectedFields, function(idx, fieldName) {
+    var _found = $el.find('input[name="' + fieldName + '"]');
+    equals(_found.length, 1, 'Failed to find input ' + fieldName);
+  });
+});
+
