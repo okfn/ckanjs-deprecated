@@ -206,3 +206,12 @@ form dl dd .preview ul {
 p.hints {
   margin-bottom: 0;
 }
+
+/****************************************
+  * Resource Create
+  ***************************************/
+
+.resource-create table td {
+  vertical-align: top;
+}
+

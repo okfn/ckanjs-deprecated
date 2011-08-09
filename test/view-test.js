@@ -122,3 +122,18 @@ test("ResourceUpload", function() {
   });
 });
 
+test("ResourceCreate", function() {
+  var $el = $('<div />').addClass('resource-create-test');
+  $el.appendTo($('.fixture'));
+  var res = new CKAN.Model.Resource({});
+  var view = new CKAN.View.ResourceCreate({
+    model: res,
+    el: $el
+  });
+  view.render();
+  var field = $el.find('form.resource input#Resource--url');
+  equals(field.length, 1, 'Failed to find Resource Create Link to (Edit) form');
+  var field = $el.find('.resource-upload');
+  equals(field.length, 1, 'Failed to find Resource Upload form');
+});
+
