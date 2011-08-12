@@ -113,7 +113,7 @@ test("ResourceUpload", function() {
   ok($el);
   $('.fixture').append($el);
 
-  view.update()
+  view.updateFormData('README.rst');
   equals($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
   var expectedFields = ['signature', 'policy'];
   $.each(expectedFields, function(idx, fieldName) {
