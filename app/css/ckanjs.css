@@ -206,3 +206,24 @@ form dl dd .preview ul {
 p.hints {
   margin-bottom: 0;
 }
+
+/****************************************
+  * Resource Create
+  ***************************************/
+
+.resource-create table td {
+  vertical-align: top;
+}
+
+.resource-create table .separator {
+  background-color: #d2d2d2;
+  width: 5px;
+}
+.resource-create table td.upload {
+  padding-left: 10px;
+}
+
+.resource-create tr.heading td {
+  text-align: center;
+}
+

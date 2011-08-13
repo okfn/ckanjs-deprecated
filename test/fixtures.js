@@ -91,6 +91,41 @@ var datasets = [
       "original media": "book"
     },
     ratings_count: 0,
-    revision_id: "88b4a1d0-d71b-441b-8120-b6194aa10ab6"
+    revision_id: "88b4a1d0-d71b-441b-8120-b6194aa10ab6",
+    relationships: [
+      {
+        comment: "1",
+        type: "links_to",
+        subject: "8bb44028-f646-43ba-9320-f2e82f2b272d",
+        object: "54b9ee58-d7ab-4db8-a55b-57a22d496ede"
+      }
+    ]
   }
-]
+];
+
+var FIXTURES = {
+  'apiStorageAuthForm': [
+    {
+      "action": "http://ckantest.commondatastorage.googleapis.com/", 
+      "fields": [
+        {
+          "name": "policy", 
+          "value": "eyJleHBpcmF0aW9uIjogIjIwMTEtMDgtMDhUMTA6MTA6MTRaIiwKImNvbmRpdGlvbnMiOiBbeyJidWNrZXQiOiAiY2thbnRlc3QifSx7ImtleSI6ICJ4eXovYWJjIn1dfQ=="
+        }, 
+        {
+          "name": "AWSAccessKeyId", 
+          "value": "GOOGC6OU3AYPNY47B66M"
+        }, 
+        {
+          "name": "signature", 
+          "value": "3lqm6s3tsxlBhTeYfY7kYBGNB+Q="
+        }, 
+        {
+          "name": "key", 
+          "value": "xyz/abc"
+        }
+      ]
+    }
+  ]
+};
+
