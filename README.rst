@@ -28,7 +28,7 @@ Here's how to do this on Apache::
 
     Header always set Access-Control-Allow-Origin "*"
     Header always set Access-Control-Allow-Methods "POST, PUT, GET, OPTIONS"
-    Header always set Access-Control-Allow-Headers "X-CKAN-API-KEY"
+    Header always set Access-Control-Allow-Headers "X-CKAN-API-KEY, Content-Type"
 
     # Respond to all OPTIONS requests with 200 OK
     # This could be done in the webapp
