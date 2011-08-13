@@ -101,12 +101,28 @@ test("ResourceEditView", function() {
 });
 
 test("ResourceUpload", function() {
+  var res = new CKAN.Model.Resource({});
   var client = new CKAN.Client();
   sinon.stub(client, 'getStorageAuthForm', function(key, options) {
     options.success(FIXTURES.apiStorageAuthForm[0]);
   });
+  // metadata call
+  var _metadata = {
+    _bucket: "ckantest"
+    , _content_length: 568
+    , _format: "text/plain"
+    , _label: "/README.rst"
+    , _last_modified: "Sat, 13 Aug 2011 13:40:08 GMT"
+    , _location: "https://commondatastorage.googleapis.com/ckantest/README.rst"
+    , _owner: null
+    , "uploaded-by": "dbc9423c-3410-436e-a67b-e9fc6440f089"
+  };
+  sinon.stub(client, 'apiCall', function(options) {
+    options.success(_metadata);
+  });
 
   var view = new CKAN.View.ResourceUpload({
+    model: res,
     client: client
   });
   var $el = view.render().el;
@@ -120,6 +136,13 @@ test("ResourceUpload", function() {
     var _found = $el.find('input[name="' + fieldName + '"]');
     equals(_found.length, 1, 'Failed to find input ' + fieldName);
   });
+
+  // test successful submit ...
+  view.onUploadComplete('README.rst');
+  equals(res.get('url'),  _metadata._location);
+  equals(res.get('name'),  'README.rst');
+  equals(res.get('type'),  'file');
+  equals(res.get('size'),  568);
 });
 
 test("ResourceCreate", function() {
