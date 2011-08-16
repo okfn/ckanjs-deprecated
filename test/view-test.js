@@ -71,8 +71,9 @@ test("DatasetSearchView", function () {
   view.doSearch(_event);
   var count = view.el.find('.count').text();
   equals(count, '2');
-  var title = $('.datasets li .title a').last().text();
-  equals(title, 'A Novel By Tolstoy');
+  var title = $('.datasets li .title a').last();
+  equals(title.text(), 'A Novel By Tolstoy');
+  equals(title.attr('href'), '#dataset/' + _models[1].id + '/view');
 });
 
 test("ResourceView", function() {
