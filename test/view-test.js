@@ -68,7 +68,7 @@ test("DatasetSearchView", function () {
   var _event = {
     preventDefault: function() {}
   };
-  view.doSearch(_event);
+  view.onSearch(_event);
   var count = view.el.find('.count').text();
   equals(count, '2');
   var title = $('.datasets li .title a').last();
