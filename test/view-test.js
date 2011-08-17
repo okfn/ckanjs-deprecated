@@ -2,17 +2,6 @@ module("View");
 
 CKAN.UI.initialize()
 
-test("DatasetSummaryView", function () {
-  var pkg = new CKAN.Model.Dataset(datasets[1]);
-  var view = new CKAN.View.DatasetSummaryView({
-    model: pkg
-  });
-  view.render();
-  var tmpl = $(view.el);
-  var title = tmpl.find('.title a').text();
-  equals(title, 'A Novel By Tolstoy');
-});
-
 test("DatasetFullView", function () {
   var pkg = new CKAN.Model.Dataset(datasets[1]);
   var $view = $('<div />').appendTo($('.fixture'));
@@ -61,18 +50,30 @@ test("DatasetEditView", function () {
 });
 
 test("DatasetSearchView", function () {
-  var coll = new CKAN.Model.SearchCollection([]);
-
-  var searchView = new CKAN.View.DatasetSearchView({
+  var client = new CKAN.Client();
+  var view = new CKAN.View.DatasetSearchView({
     el: $('#search-page'),
-    collection: coll
+    client: client
   });
-  var pkg = new CKAN.Model.Dataset(datasets[1]);
-  coll.add(pkg);
-  searchView.addOne(pkg);
-  searchView.render();
-  var title = $('.datasets li .title a').text();
-  equals(title, 'A Novel By Tolstoy');
+  var _models = _.map(datasets, function(attributes) {
+      return client.createDataset(attributes);
+  });
+  var _results = new CKAN.Model.SearchCollection(
+    _models
+    , {total: 2}
+  );
+  this.stub(view.client, 'searchDatasets', function(options){
+    options.success(_results);
+  });
+  var _event = {
+    preventDefault: function() {}
+  };
+  view.onSearch(_event);
+  var count = view.el.find('.count').text();
+  equals(count, '2');
+  var title = $('.datasets li .title a').last();
+  equals(title.text(), 'A Novel By Tolstoy');
+  equals(title.attr('href'), '#dataset/' + _models[1].id + '/view');
 });
 
 test("ResourceView", function() {
