@@ -220,6 +220,18 @@ p.hints {
 }
 
 /****************************************
+  * Editable Material (Inline)
+  ***************************************/
+
+.editable-area:hover {
+  background: #fffcc3;
+}
+
+.editable-area:hover:after {
+  content: "Click to edit ...";
+}
+
+/****************************************
   * Resource Create
   ***************************************/
 
