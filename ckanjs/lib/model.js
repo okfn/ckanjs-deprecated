@@ -80,6 +80,14 @@ CKAN.Model = function ($, _, Backbone, undefined) {
       Model.Base.prototype.constructor.apply(this, arguments);
     },
 
+    defaults: {
+      title: '',
+      name: '',
+      notes: '',
+      resources: [],
+      tags: []
+    },
+
     // Override the `set()` method on `Backbone.Model` to handle resources as
     // relationships. This will now manually update the `"resouces"` collection
     // (using `_updateResources()`) with any `Resource` models provided rather
@@ -121,8 +129,15 @@ CKAN.Model = function ($, _, Backbone, undefined) {
     _createChildren: function () {
       _.each(this.children, function (Model, key) {
         if (!this.get(key)) {
-          this.attributes[key] = new Backbone.Collection();
-          this.attributes[key].model = Model;
+          var newColl = new Backbone.Collection();
+          this.attributes[key] = newColl;
+          newColl.model = Model;
+          // bind change events so updating the children trigger change on Dataset
+          var self = this;
+          // TODO: do we want to do all or be more selective
+          newColl.bind('all', function() {
+            self.trigger('change');
+          });
         }
       }, this);
       return this;
@@ -145,7 +160,7 @@ CKAN.Model = function ($, _, Backbone, undefined) {
 
           // Provide the dataset key if not already there and current model is
           // not a relationship.
-          if (isLiteral && key !== 'relationship') {
+          if (isLiteral && key !== 'relationships') {
             model.dataset = this;
             delete model.package_id;
           }
@@ -171,7 +186,6 @@ CKAN.Model = function ($, _, Backbone, undefined) {
     // NOTE: Returns localised URL.
     toTemplateJSON: function () {
       var out = this.toJSON();
-      out.ckan_url = '/package/' + this.get('name');
       var title = this.get('title');
       out.displaytitle = title ? title : 'No title ...';
       var notes = this.get('notes');
@@ -238,14 +252,24 @@ CKAN.Model = function ($, _, Backbone, undefined) {
     toJSON: function () {
       // Call Backbone.Model rather than Base to break the circular reference.
       var obj = Backbone.Model.prototype.toJSON.apply(this, arguments);
-      obj.package_id = obj.dataset.id;
-      delete obj.dataset;
+      if (obj.dataset) {
+        obj.package_id = obj.dataset.id;
+        delete obj.dataset;
+      } else {
+        obj.package_id = null;
+      }
+      return obj;
+    },
+
+    toTemplateJSON: function() {
+      var obj = Backbone.Model.prototype.toJSON.apply(this, arguments);
+      obj.displaytitle = obj.description ? obj.description : 'No description ...';
       return obj;
     },
 
     // Validates the provided attributes. Returns an object literal of
     // attribute/error pairs if invalid, `undefined` otherwise.
-    validate: validator('url', 'dataset')
+    validate: validator('url')
   });
 
   // Helper function that returns a stub method that warns the devloper that
@@ -286,7 +310,7 @@ CKAN.Model = function ($, _, Backbone, undefined) {
   // then be accessed via the `total` property.
   Model.SearchCollection = Backbone.Collection.extend({
     constructor: function SearchCollection(models, options) {
-      if (options && options.total) {
+      if (options) {
         this.total = options.total;
       }
       Backbone.Collection.prototype.constructor.apply(this, arguments);

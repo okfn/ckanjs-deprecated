@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>CKANJS Test Suite</title>
+  <link rel="stylesheet" href="../vendor/jqueryui/1.8.4/css/ui-lightness/jqueryui-lightness.css" />
   <link rel="stylesheet" href="../vendor/qunit/qunit.css" media="screen" />
   <style>
     li.fail {
@@ -15,6 +16,10 @@
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
 
+  <div>
+    <a href="#" id="show-fixtures">Show fixtures</a>
+  </div>
+  </div>
   <div class="fixture" style="display:none;">
     <!-- search form -->
     <div id="search-page" class="page-view">
@@ -35,24 +40,46 @@
         <ul class="datasets">
         </ul>
       </div>
+    </div> <!-- /search-view -->
+
+    <div id="resource-view-test">
+    </div>
+
+    <div id="sidebar">
+      <ul class="widget-list">
+      </ul>
     </div>
   </div>
   <script src="../vendor/jquery/1.6.2/jquery.js"></script>
   <script src="../vendor/jquery.tmpl/beta1/jquery.tmpl.min.js"></script>
   <script src="../vendor/json2.js"></script>
+  <script src="../vendor/jqueryui/1.8.4/jquery-ui.min.js"></script>
   <script src="../vendor/underscore/1.1.6/underscore.js"></script>
   <script src="../vendor/backbone/0.5.1/backbone.js"></script>
+
   <script src="../vendor/showdown/showdown.js"></script>
+  <script src="../vendor/jquery.fileupload/20110801/jquery.iframe-transport.js"></script>
+  <script src="../vendor/jquery.fileupload/20110801/jquery.fileupload.js"></script>
 
   <script src="../vendor/qunit/qunit.js"></script>
   <script src="../vendor/sinon/1.1.1/sinon.js"></script>
   <script src="../vendor/sinon-qunit/1.0.0/sinon-qunit.js"></script>
 
   <script src="../lib/templates.js"></script>
+  <script src="../lib/template/dataset-view.js"></script>
+  <script src="../lib/template/dataset-form.js"></script>
+  <script src="../lib/template/resource-form.js"></script>
+  <script src="../lib/template/resource-view.js"></script>
+
   <script src="../lib/client.js"></script>
   <script src="../lib/model.js"></script>
+
   <script src="../lib/view.js"></script>
   <script src="../lib/view/dataset-listing.js"></script>
+  <script src="../lib/view/resource-create.js"></script>
+  <script src="../lib/template/resource-upload.js"></script>
+  <script src="../lib/view/resource-upload.js"></script>
+
   <script src="../lib/ui.js"></script>
   <script src="../widgets/search/js/search.js"></script>
 
@@ -62,5 +89,12 @@
   <script src="view/dataset-listing-test.js"></script>
   <script src="widget/search-test.js"></script>
   <script src="view-test.js"></script>
+  <script type="text/javascript">
+    $(document).ready(
+      $('#show-fixtures').click(function(e) {
+        jQuery('.fixture').show();
+      })
+    );
+  </script>
 </body>
 </html>

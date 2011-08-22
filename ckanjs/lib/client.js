@@ -77,6 +77,7 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
     getDatasetById: function (id, options) {
       var cache   = this.cache.dataset,
           dataset = cache.get(id);
+      var ourOptions = options || {};
 
       if (!dataset) {
         dataset = this.createDataset({id: id});
@@ -88,9 +89,11 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
         // Fetch the dataset from the server passing in any options provided.
         // Also set up a callback to remove the model from the cache in
         // case of error.
-        dataset.fetch(options).error(function () {
+        ourOptions.error = function () {
           cache.remove(dataset);
-        });
+        };
+        // TODO: RP not sure i understand what this does and why it is needed
+        dataset.fetch(ourOptions);
       }
       return dataset;
     },
@@ -167,6 +170,38 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
           }, this);
 
       return new CKAN.Model.SearchCollection(models, {total: json.count});
+    },
+
+    // Performs a query on CKAN API.
+    // The `options` argument can contain any keys supported by jQuery.ajax().
+    // In addition it should contain either a url or offset variable. If
+    // offset provided it will be used to construct the full api url by
+    // prepending the endpoint plus 'api' (i.e. offset of '/2/rest/package'
+    // will become '{endpoint}/api/2/rest'.
+    //
+    // The `options.success` method (and any other success callbacks) will
+    // recieve a `SearchCollection` containing `Dataset` models. The method
+    // returns a jqXHR object so that additional callbacks can be registered
+    // with .success() and .error().
+    apiCall: function (options) {
+      options = options || {};
+      // Add additional request options.
+      options = _.extend({}, {
+        url: this.environment('endpoint') + '/api' + options.offset,
+        headers: {
+          'X-CKAN-API-KEY': this.environment('apiKey')
+        }
+      }, options);
+
+      return $.ajax(options);
+    },
+
+    // wrap CKAN /api/storage/auth/form - see http://packages.python.org/ckanext-storage
+    // params and returns value are as for that API
+    // key is file label/path 
+    getStorageAuthForm: function(key, options) {
+      options.offset = '/storage/auth/form/' + key;
+      this.apiCall(options);
     }
   });
 

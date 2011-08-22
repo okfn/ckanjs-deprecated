@@ -62,13 +62,13 @@ this.CKAN.View || (this.CKAN.View = {});
   CKAN.View.DatasetListingItem = Backbone.View.extend({
     tagName: 'li',
 
-    className: 'dataset',
+    className: 'dataset summary',
 
     options: {
       template: '\
         <div class="header"> \
           <span class="title" > \
-            <a href="${domain}${ckan_url}" ckan-attrname="title" class="editable">${displaytitle}</a> \
+            <a href="${urls.datasetView}" ckan-attrname="title" class="editable">${displaytitle}</a> \
           </span> \
           <div class="search_meta"> \
             {{if formats.length > 0}} \
@@ -91,7 +91,8 @@ this.CKAN.View || (this.CKAN.View = {});
             {{/each}} \
           </ul> \
           {{/if}} \
-        </div>'
+        </div> \
+      '
     },
 
     constructor: function DatasetListingItem() {
@@ -100,10 +101,18 @@ this.CKAN.View || (this.CKAN.View = {});
     },
 
     render: function () {
-      var data = _.extend(this.model.toTemplateJSON(), {
-        dataset: this.model.toTemplateJSON(),
-        domain: this.options.domain,
-        formats: this._availableFormats()
+      var dataset = this.model.toTemplateJSON();
+      // if 'UI' mode ...
+      var urls = {};
+      if (CKAN.UI && CKAN.UI.workspace) {
+        urls.datasetView = CKAN.UI.workspace.url('dataset', 'view', this.model.id);
+      } else {
+        urls.datasetView = dataset.ckan_url;
+      }
+      var data = _.extend(dataset, {
+        dataset: dataset,
+        formats: this._availableFormats(),
+        urls: urls
       });
       this.el.html($.tmpl(this.options.template, data));
       return this;
