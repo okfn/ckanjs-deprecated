@@ -14,7 +14,8 @@ Config File
 -----------
 
 You can overload the main config options by creating your own configlocal.js
-app/ directory and setting relevant options (copy and paste from template).
+app/ directory and setting relevant options (copy and paste from template in
+app directory).
 
 
 CKAN Server Config
