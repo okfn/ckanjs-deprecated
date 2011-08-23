@@ -25,6 +25,8 @@ The 'editing' features in this javascript app require the ability to make
 remote cross-site POST and PUT requests to the CKAN server. For this to work
 you will need to have CORS-enabled your CKAN site.
 
+NOTE: as of August 2011 CORS is built into CKAN itself.
+
 Here's how to do this on Apache::
 
     Header always set Access-Control-Allow-Origin "*"
