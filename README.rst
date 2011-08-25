@@ -14,7 +14,8 @@ Config File
 -----------
 
 You can overload the main config options by creating your own configlocal.js
-app/ directory and setting relevant options (copy and paste from template).
+app/ directory and setting relevant options (copy and paste from template in
+app directory).
 
 
 CKAN Server Config
@@ -23,6 +24,8 @@ CKAN Server Config
 The 'editing' features in this javascript app require the ability to make
 remote cross-site POST and PUT requests to the CKAN server. For this to work
 you will need to have CORS-enabled your CKAN site.
+
+NOTE: as of August 2011 CORS is built into CKAN itself.
 
 Here's how to do this on Apache::
 
