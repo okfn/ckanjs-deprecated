@@ -58,13 +58,13 @@
     }
   }
 
-  /* Public: Escapes HTML entities to prevent broken layout and XSS attacks
-   * when inserting user generated or external content.
-   *
-   * string - A String of HTML.
-   *
-   * Returns a String with HTML special characters converted to entities.
-   */
+  // Public: Escapes HTML entities to prevent broken layout and XSS attacks
+  // when inserting user generated or external content.
+  //
+  // string - A String of HTML.
+  //
+  // Returns a String with HTML special characters converted to entities.
+  //
   dp.escapeHTML = function (string) {
     return string.replace(/&(?!\w+;|#\d+;|#x[\da-f]+;)/gi, '&amp;')
                  .replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -73,16 +73,16 @@
                  .replace(/\//g,'&#x2F;');
   };
 
-  /* Public: Loads the dependancies required by the plugin.
-   *
-   * This allows the page to load quicly with only a minimal bootstrap
-   * to set up the UI. Then the rest of the script, stylesheets and templates
-   * are loaded when the user intiates the plugin.
-   *
-   * callback - A callback to fire once all dependancies are ready.
-   *
-   * Returns nothing.
-   */
+  // Public: Loads the dependancies required by the plugin.
+  //
+  // This allows the page to load quicly with only a minimal bootstrap
+  // to set up the UI. Then the rest of the script, stylesheets and templates
+  // are loaded when the user intiates the plugin.
+  //
+  // callback - A callback to fire once all dependancies are ready.
+  //
+  // Returns nothing.
+  //
   dp.loadDependancies = function (callback) {
     if (dp.areDependanciesLoaded) {
       return callback();
@@ -129,14 +129,14 @@
     });
   };
 
-  /* Public: Requests the formatted resource data from the webstore and
-   * passes the data into the callback provided.
-   *
-   * preview - A preview object containing resource metadata.
-   * callback - A Function to call with the data when loaded.
-   *
-   * Returns nothing.
-   */
+  // Public: Requests the formatted resource data from the webstore and
+  // passes the data into the callback provided.
+  //
+  // preview - A preview object containing resource metadata.
+  // callback - A Function to call with the data when loaded.
+  //
+  // Returns nothing.
+  //
   dp.getResourceDataDirect = function(preview, callback) {
     // $.ajax() does not call the "error" callback for JSONP requests so we
     // set a timeout to provide the callback with an error after x seconds.
@@ -164,14 +164,14 @@
     });
   };
 
-  /* Public: Searches a dataset object returned by the CKAN api for a specific
-   * resource using the hash as identification.
-   *
-   * hash    - A hash String to search for.
-   * dataset - A package dataset object.
-   *
-   * Returns the resource object or null if not found.
-   */
+  // Public: Searches a dataset object returned by the CKAN api for a specific
+  // resource using the hash as identification.
+  //
+  // hash    - A hash String to search for.
+  // dataset - A package dataset object.
+  //
+  // Returns the resource object or null if not found.
+  //
   dp.getResourceFromDataset = function (hash, dataset) {
     var resources = dataset.resources, i = 0, count = resources.length, charts;
     for (; i < count; i += 1) {
@@ -182,54 +182,54 @@
     return null;
   };
 
-  /* Public: Requests a dataset from th CKAN api.
-   *
-   * This method returns a jQuery jqXHR object onto which other additonal
-   * callbacks can be added to handle error requests etc.
-   *
-   * uri      - The uri of the package/dataset on the server.
-   * callback - A Function to call with the dataset on completion.
-   *
-   * Examples
-   *
-   *   var uri = '/api/rest/package/uk-population-estimates-1520-to-1851';
-   *   var request = dp.getResourceDataset(uri, function (dataset) {
-   *     // Do something with the dataset.
-   *   });
-   *
-   *   // Additional callbacks can be added to the returned jqXHR object.
-   *   request.error(onError);
-   *
-   * Returns a jqXHR object for the request.
-   */
+  // Public: Requests a dataset from th CKAN api.
+  //
+  // This method returns a jQuery jqXHR object onto which other additonal
+  // callbacks can be added to handle error requests etc.
+  //
+  // uri      - The uri of the package/dataset on the server.
+  // callback - A Function to call with the dataset on completion.
+  //
+  // Examples
+  //
+  //   var uri = '/api/rest/package/uk-population-estimates-1520-to-1851';
+  //   var request = dp.getResourceDataset(uri, function (dataset) {
+  //     // Do something with the dataset.
+  //   });
+  //
+  //   // Additional callbacks can be added to the returned jqXHR object.
+  //   request.error(onError);
+  //
+  // Returns a jqXHR object for the request.
+  //
   dp.getResourceDataset = function (uri, callback) {
     return $.getJSON(uri, function (dataset) {
       callback && callback(dataset);
     });
   };
 
-  /* Public: Updates a chart on a package resource using the CKAN API.
-   *
-   * Charts are currently stored on an object on the resource namespaced by
-   * id key. This enables each resource to store multiple charts.
-   *
-   * This method returns the jqXHR object onto which additonal callbacks
-   * can be bound.
-   *
-   * preview  - A preview object containing resource data.
-   * chart    - The current chart object to save.
-   * apiKey   - The current logged in users api key String.
-   * callback - A callback Function to fire when the request succeeds.
-   *
-   * Examples
-   *
-   *   datapreview.editor.bind('save', function (chart) {
-   *     var request = dp.updateResourceChart(preview, chart, 'Some-String');
-   *     request.then(onSuccess, onError);
-   *   });
-   *
-   * Returns a jqXHR object.
-   */
+  // Public: Updates a chart on a package resource using the CKAN API.
+  //
+  // Charts are currently stored on an object on the resource namespaced by
+  // id key. This enables each resource to store multiple charts.
+  //
+  // This method returns the jqXHR object onto which additonal callbacks
+  // can be bound.
+  //
+  // preview  - A preview object containing resource data.
+  // chart    - The current chart object to save.
+  // apiKey   - The current logged in users api key String.
+  // callback - A callback Function to fire when the request succeeds.
+  //
+  // Examples
+  //
+  //   datapreview.editor.bind('save', function (chart) {
+  //     var request = dp.updateResourceChart(preview, chart, 'Some-String');
+  //     request.then(onSuccess, onError);
+  //   });
+  //
+  // Returns a jqXHR object.
+  //
   dp.updateResourceChart = function (preview, chart, apiKey, callback) {
     var resource = preview.resource,
         charts   = preview.charts || {},
@@ -263,14 +263,14 @@
     });
   };
 
-  /* Public: Loads the plugin UI into the dialog and sets up event listeners.
-   *
-   * preview - A preview object containing resource data.
-   * columns - Column Array formatted for use in SlickGrid.
-   * data    - A data Array for use in SlickGrid.
-   *
-   * Returns nothing.
-   */
+  // Public: Loads the plugin UI into the dialog and sets up event listeners.
+  //
+  // preview - A preview object containing resource data.
+  // columns - Column Array formatted for use in SlickGrid.
+  // data    - A data Array for use in SlickGrid.
+  //
+  // Returns nothing.
+  //
   dp.loadDataPreview = function (preview, columns, data) {
     var dialog = dp.$dialog;
 
@@ -323,12 +323,12 @@
     });
   };
 
-  /* Public: Sets up the dialog for displaying a full screen of data.
-   *
-   * preview - A preview object containing resource data.
-   *
-   * Returns nothing.
-   */
+  // Public: Sets up the dialog for displaying a full screen of data.
+  //
+  // preview - A preview object containing resource data.
+  //
+  // Returns nothing.
+  //
   dp.setupFullscreenDialog = function (preview) {
     var dialog = dp.$dialog, $window = $(window), timer;
 
@@ -351,27 +351,27 @@
     });
   }
 
-  /* Public: Displays a smaller alert style dialog with an error message.
-   *
-   * error - An error object to display.
-   *
-   * Returns nothing.
-   */
+  // Public: Displays a smaller alert style dialog with an error message.
+  //
+  // error - An error object to display.
+  //
+  // Returns nothing.
+  //
   dp.showError = function (error) {
     var _html = '<strong>' + $.trim(error.title) + '</strong><br />' + $.trim(error.message);
     dp.$dialog.html(_html).dialog(dp.errorDialogOptions);
   };
 
-  /* Public: Displays the datapreview UI in a fullscreen dialog.
-   *
-   * This method also parses the data returned by the webstore for use in
-   * the data preview UI.
-   *
-   * preview - A preview object containing resource data.
-   * data    - An object of parsed CSV data returned by the webstore.
-   *
-   * Returns nothing.
-   */
+  // Public: Displays the datapreview UI in a fullscreen dialog.
+  //
+  // This method also parses the data returned by the webstore for use in
+  // the data preview UI.
+  //
+  // preview - A preview object containing resource data.
+  // data    - An object of parsed CSV data returned by the webstore.
+  //
+  // Returns nothing.
+  //
   dp.showData = function(preview, data) {
     dp.setupFullscreenDialog(preview);
 
@@ -395,13 +395,13 @@
     dp.loadDataPreview(preview, columns, data);
   };
 
-  /* Public: Displays a String of data in a fullscreen dialog.
-   *
-   * preview - A preview object containing resource data.
-   * data    - An object of parsed CSV data returned by the webstore.
-   *
-   * Returns nothing.
-   */
+  // Public: Displays a String of data in a fullscreen dialog.
+  //
+  // preview - A preview object containing resource data.
+  // data    - An object of parsed CSV data returned by the webstore.
+  //
+  // Returns nothing.
+  //
   dp.showPlainTextData = function(preview, data) {
     dp.setupFullscreenDialog(preview);
 
@@ -417,12 +417,12 @@
     }
   };
 
-  /* Public: Displays a fullscreen dialog with the url in an iframe.
-   *
-   * url - The URL to load into an iframe.
-   *
-   * Returns nothing.
-   */
+  // Public: Displays a fullscreen dialog with the url in an iframe.
+  //
+  // url - The URL to load into an iframe.
+  //
+  // Returns nothing.
+  //
   dp.showHtml = function(url) {
     dp.$dialog.empty();
     dp.$dialog.dialog('option', 'title', 'Preview: ' + url);
@@ -433,16 +433,16 @@
     dp.$dialog.append(el).dialog('open');;
   };
 
-  /* Public: Loads a data preview dialog for a preview button.
-   *
-   * Fetches the preview data object from the link provided and loads the
-   * parsed data from the webstore displaying it in the most appropriate
-   * manner.
-   *
-   * link - An anchor Element.
-   *
-   * Returns nothing.
-   */
+  // Public: Loads a data preview dialog for a preview button.
+  //
+  // Fetches the preview data object from the link provided and loads the
+  // parsed data from the webstore displaying it in the most appropriate
+  // manner.
+  //
+  // link - An anchor Element.
+  //
+  // Returns nothing.
+  //
   dp.loadPreviewDialog = function(link) {
     var preview  = $(link).data('preview');
     preview.url  = dp.normalizeUrl(link.href);
@@ -500,21 +500,19 @@
     }
   };
 
-  /* Public: Creates the base UI for the plugin.
-   *
-   * Adds an additonal preview column to the resources table in the CKAN
-   * UI. Also requests the package from the api to see if there is any chart
-   * data stored and updates the preview icons accordingly.
-   *
-   * resources - The resources table wrapped in jQuery.
-   *
-   * Returns nothing.
-   */
+  // Public: Creates the base UI for the plugin.
+  //
+  // Adds an additonal preview column to the resources table in the CKAN
+  // UI. Also requests the package from the api to see if there is any chart
+  // data stored and updates the preview icons accordingly.
+  //
+  // resources - The resources table wrapped in jQuery.
+  //
+  // Returns nothing.
+  //
   dp.createPreviewButtons = function(resources) {
     resources.find('tr:first th:first').before($('<th class="preview">Preview</th>'));
-    /*
-       :param resources: resource section div or table.
-     */
+    // :param resources: resource section div or table.
     resources.find('tr td:first-child').each(function(idx, element) {
       var element = $(element);
       var _format = $.trim(element.next().text());
@@ -598,20 +596,20 @@
     });
   };
 
-  /* Public: Kickstarts the plugin.
-   *
-   * webstoreUrl - URL string for the webstore to use.
-   * dialogId    - The id of the dialog Element in the page.
-   * options     - An object containing aditional options.
-   *               timeout: Time in seconds to wait for a JSONP timeout.
-   *
-   * Examples
-   *
-   *   var url = 'http://test-webstore.ckan.net/okfn';
-   *   dp.initialize(url, '#dialog', {timeout: 3000});
-   *
-   * Returns nothing.
-   */
+  // Public: Kickstarts the plugin.
+  //
+  // webstoreUrl - URL string for the webstore to use.
+  // dialogId    - The id of the dialog Element in the page.
+  // options     - An object containing aditional options.
+  //               timeout: Time in seconds to wait for a JSONP timeout.
+  //
+  // Examples
+  //
+  //   var url = 'http://test-webstore.ckan.net/okfn';
+  //   dp.initialize(url, '#dialog', {timeout: 3000});
+  //
+  // Returns nothing.
+  //
   dp.initialize = function(webstoreUrl, dialogId, options) {
     dp.$dialog = $('#' + dialogId);
     options = options || {};
