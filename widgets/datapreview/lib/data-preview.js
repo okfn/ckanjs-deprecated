@@ -149,6 +149,12 @@
       });
     }, dp.timeout);
 
+    // have to set jsonp because webstore requires _callback but that breaks jsonpdataproxy
+    var jsonp = '_callback';
+    if (preview.url.indexOf('jsonpdataproxy') != -1) {
+      jsonp = 'callback';
+    }
+
     // We need to provide the `cache: true` parameter to prevent jQuery appending
     // a cache busting `={timestamp}` parameter to the query as the webstore
     // currently cannot handle custom parameters.
@@ -156,7 +162,7 @@
       url: preview.url,
       cache: true,
       dataType: 'jsonp',
-      jsonp: '_callback',
+      jsonp: jsonp,
       success: function(data) {
         clearTimeout(timer);
         callback(preview, data);
@@ -378,21 +384,57 @@
     if(data.error) {
       return dp.showError(data.error);
     }
+    var tabular = dp.convertData(data);
 
-    var columns = $.map(data.fields || [], function (column, i) {
-      return {id: 'header-' + i, name: column, field: 'column-' + i, sortable: true};
-    });
+    dp.loadDataPreview(preview, tabular.columns, tabular.data);
+  };
 
-    var data = $.map(data.data || [], function (row, id) {
-      var cells = {id: id};
-      for (var i = 0, c = row.length; i < c; i++) {
-        var isNumeric = (/^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/).test(row[i]);
-        cells['column-' + i] = isNumeric ? parseFloat(row[i]) : row[i];
+  // **Public: parse data from webstore or other source into form for data
+  // preview UI**
+  //
+  // :param data: An object of parsed CSV data returned by the webstore.
+  //
+  // :return: parsed data.
+  //
+  dp.convertData = function(data) {
+    var tabular = {
+      columns: [],
+      data: []
+    };
+    isNumericRegex = (/^[-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?$/);
+
+    // two types of data: that from webstore and that from jsonpdataproxy
+    // if fields then from dataproxy
+    if (data.fields) {
+      tabular.columns = $.map(data.fields || [], function (column, i) {
+        return {id: 'header-' + i, name: column, field: 'column-' + i, sortable: true};
+      });
+
+      tabular.data = $.map(data.data || [], function (row, id) {
+        var cells = {id: id};
+        for (var i = 0, c = row.length; i < c; i++) {
+          var isNumeric = isNumericRegex.test(row[i]);
+          cells['column-' + i] = isNumeric ? parseFloat(row[i]) : row[i];
+        }
+        return cells;
+      });
+    } else {
+      if (data.length) {
+        tabular.columns = $.map(data[0], function(val, key) {
+          return {id: 'header-' + key, name: key, field: 'column-' + key, sortable: true};
+        });
+        tabular.data = $.map(data, function(row, id) {
+          var cells = {id: id};
+          for(i in tabular.columns) {
+            var val = row[tabular.columns[i].name];
+            var isNumeric = isNumericRegex.test(val);
+            cells['column-' + tabular.columns[i].name] = isNumeric ? parseFloat(val) : val;
+          }
+          return cells;
+        });
       }
-      return cells;
-    });
-
-    dp.loadDataPreview(preview, columns, data);
+    }
+    return tabular;
   };
 
   // Public: Displays a String of data in a fullscreen dialog.
