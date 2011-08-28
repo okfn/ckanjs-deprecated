@@ -1,48 +1,51 @@
-<!-- Test/demo page for the data preview UI without requiring a CKAN instance -->
 <!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>Data Preview Plugin</title>
-  <link rel="stylesheet" href="../public/ckanext/datapreview/data-preview.css" class="ckanext-datapreview-stylesheet" />
+  <title>Data Preview Widget</title>
+  <link rel="stylesheet" href="lib/jquery-ui/css/ckan/jquery-ui-1.8.14.custom.css" />
+  <link rel="stylesheet" href="lib/slickgrid/slick.grid.css" />
+  <link rel="stylesheet" href="lib/slickgrid/slick.columnpicker.css" />
+  <link rel="stylesheet" href="lib/data-preview.css" />
+
+  <!-- required external libs -->
+  <script src="../../vendor/jquery/1.6.2/jquery.js"></script>
+
+  <script type="text/javascript" src="lib/jquery-ui/js/jquery-ui-1.8.14.custom.min.js"></script>
+  <script type="text/javascript" src="lib/jquery-ui/js/jquery.event.drag-2.0.min.js"></script>
+  <script type="text/javascript" src="lib/slickgrid/slick.grid.js"></script>
+  <script type="text/javascript" src="lib/slickgrid/slick.columnpicker.js"></script>
+  <script type="text/javascript" src="lib/flot/jquery.flot.js"></script>
+  <!-- /required external libs -->
+
+  <script src="lib/data-preview.js"></script>
+  <script src="lib/data-preview.ui.js"></script>
+  <script src="lib/data-preview-template.js"></script>
 </head>
 <body>
   <div id="ckanext-datapreview-dialog"></div>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script> 
-  <script src="../public/ckanext/datapreview/data-preview.js"></script>
+
   <script>
     jQuery(function ($) {
       var dp = CKANEXT.DATAPREVIEW;
-      var dataproxyUrl = 'http://test-webstore.ckan.net/okfn';
-
-      // Update the sources to point to the public directory.
-      var sources = [dp.stylesheets, dp.scripts['jquery-ui'], dp.scripts['slickgrid'], dp.scripts['flot']];
-
-      $.each(sources, function (index, array) {
-        $.each(this, function (index, uri) {
-          array[index] = '../public' + uri;
-        });
-      });
-      dp.template.src = '../public' + dp.template.src;
+      var dataproxyUrl = 'http://jsonpdataproxy.appspot.com/';
 
       dp.initialize(dataproxyUrl, 'ckanext-datapreview-dialog');
 
       // Load a datasource without seting up the download links.
-      var dataSource = 'http://test-webstore.ckan.net/okfn/b21ae9c691445b73773156380336e2fab821cb64/resource.jsonp?_limit=30';
-      dp.loadDependancies(function () {
-        var resource = {
-          'url': dataSource,
-          'hash': 'b21ae9c691445b73773156380336e2fab821cb64',
-          'format': 'csv',
-          'source': 'http://test.ckan.net/package/bank-of-england-interest-rate',
-          'dataset-uri': '/api/rest/package/uk-population-estimates-1520-to-1851',
-          'datasetRequest': dp.getResourceDataset('/api/rest/package/uk-population-estimates-1520-to-1851')
-        };
+      var dataSource = 'http://webstore.thedatahub.org/rufuspollock/gold_prices/data.jsonp?_limit=30';
+      var resource = {
+        'url': dataSource,
+        'hash': 'b21ae9c691445b73773156380336e2fab821cb64',
+        'format': 'csv',
+        'source': 'http://test.ckan.net/package/bank-of-england-interest-rate',
+        'dataset-uri': '/api/rest/package/uk-population-estimates-1520-to-1851',
+        'datasetRequest': dp.getResourceDataset('/api/rest/package/uk-population-estimates-1520-to-1851')
+      };
 
-        dp.getResourceDataDirect(resource, function (url, type, data) {
-          dp.showData(url, type, data);
-          dp.$dialog.dialog('open');
-        });
+      dp.getResourceDataDirect(resource, function (preview, data) {
+        dp.showData(preview, data);
+        dp.$dialog.dialog('open');
       });
 
       $.cookie = function () { return 'tester'; };

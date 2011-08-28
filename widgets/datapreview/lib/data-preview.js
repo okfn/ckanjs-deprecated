@@ -16,31 +16,31 @@
 
   // An array of stylsheets to be loaded into the head.
   dp.stylesheets = [
-    '/ckanext/datapreview/jquery-ui/css/ckan/jquery-ui-1.8.14.custom.css',
-    '/ckanext/datapreview/slickgrid/slick.grid.css',
-    '/ckanext/datapreview/slickgrid/slick.columnpicker.css'
+     'lib/jquery-ui/css/ckan/jquery-ui-1.8.14.custom.css',
+     'lib/slickgrid/slick.grid.css',
+     'lib/slickgrid/slick.columnpicker.css'
   ];
 
   // Scripts to be loaded when required namspaced by plugin.
   dp.scripts = {
     'jquery-ui': [
-      '/ckanext/datapreview/jquery-ui/js/jquery-ui-1.8.14.custom.min.js',
-      '/ckanext/datapreview/jquery-ui/js/jquery.event.drag-2.0.min.js'
+      'lib/jquery-ui/js/jquery-ui-1.8.14.custom.min.js',
+      'lib/jquery-ui/js/jquery.event.drag-2.0.min.js'
     ],
     'slickgrid': [
-      '/ckanext/datapreview/slickgrid/slick.grid.js',
-      '/ckanext/datapreview/slickgrid/slick.columnpicker.js'
+      'lib/slickgrid/slick.grid.js',
+      'lib/slickgrid/slick.columnpicker.js'
     ],
     'flot': [
-      '/ckanext/datapreview/data-preview.ui.js',
-      '/ckanext/datapreview/flot/jquery.flot.js'
+      'lib/data-preview.ui.js',
+      'lib/flot/jquery.flot.js'
     ]
   };
 
   // Template url. The html property is populated on load.
   dp.template = {
     html: '',
-    src: '/ckanext/datapreview/data-preview.html'
+    src: 'lib/data-preview.html'
   };
 
   dp.normalizeFormat = function(format) {
@@ -156,6 +156,7 @@
       url: preview.url,
       cache: true,
       dataType: 'jsonp',
+      jsonp: '_callback',
       success: function(data) {
         clearTimeout(timer);
         callback(preview, data);
