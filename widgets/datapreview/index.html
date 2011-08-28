@@ -1,0 +1,52 @@
+<!-- Test/demo page for the data preview UI without requiring a CKAN instance -->
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Data Preview Plugin</title>
+  <link rel="stylesheet" href="../public/ckanext/datapreview/data-preview.css" class="ckanext-datapreview-stylesheet" />
+</head>
+<body>
+  <div id="ckanext-datapreview-dialog"></div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.js"></script> 
+  <script src="../public/ckanext/datapreview/data-preview.js"></script>
+  <script>
+    jQuery(function ($) {
+      var dp = CKANEXT.DATAPREVIEW;
+      var dataproxyUrl = 'http://test-webstore.ckan.net/okfn';
+
+      // Update the sources to point to the public directory.
+      var sources = [dp.stylesheets, dp.scripts['jquery-ui'], dp.scripts['slickgrid'], dp.scripts['flot']];
+
+      $.each(sources, function (index, array) {
+        $.each(this, function (index, uri) {
+          array[index] = '../public' + uri;
+        });
+      });
+      dp.template.src = '../public' + dp.template.src;
+
+      dp.initialize(dataproxyUrl, 'ckanext-datapreview-dialog');
+
+      // Load a datasource without seting up the download links.
+      var dataSource = 'http://test-webstore.ckan.net/okfn/b21ae9c691445b73773156380336e2fab821cb64/resource.jsonp?_limit=30';
+      dp.loadDependancies(function () {
+        var resource = {
+          'url': dataSource,
+          'hash': 'b21ae9c691445b73773156380336e2fab821cb64',
+          'format': 'csv',
+          'source': 'http://test.ckan.net/package/bank-of-england-interest-rate',
+          'dataset-uri': '/api/rest/package/uk-population-estimates-1520-to-1851',
+          'datasetRequest': dp.getResourceDataset('/api/rest/package/uk-population-estimates-1520-to-1851')
+        };
+
+        dp.getResourceDataDirect(resource, function (url, type, data) {
+          dp.showData(url, type, data);
+          dp.$dialog.dialog('open');
+        });
+      });
+
+      $.cookie = function () { return 'tester'; };
+    });
+  </script>
+</body>
+</html>
