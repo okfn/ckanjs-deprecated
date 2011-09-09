@@ -1308,11 +1308,24 @@ CKAN.Templates.resourceForm = ' \
       <dd> \
         <input id="Resource--url" name="Resource--url" type="text" value="${url}" placeholder="http://mydataset.com/file.csv" /> \
       </dd> \
+      <dt> \
+        <label class="field_opt" for="Resource--type"> \
+          Kind \
+        </label> \
+      </dt> \
+      <dd> \
+        <select id="Resource--type" name="Resource--type"> \
+          <option selected="selected" value="file">File</option> \
+          <option value="api">API</option> \
+          <option value="listing">Listing</option> \
+          <option value="example">Example</option> \
+        </select> \
+      </dd> \
     </dl> \
  \
   <fieldset> \
     <legend> \
-      <h3>A Bit More Info</h3> \
+      <h3>Optional Info</h3> \
     </legend> \
     <dl> \
       <dt> \
@@ -1324,19 +1337,6 @@ CKAN.Templates.resourceForm = ' \
         <input id="Resource--description" name="Resource--description" type="text" value="${description}" placeholder="A short description ..."/> \
       </dd> \
  \
-      <dt> \
-        <label class="field_opt" for="Resource--kind"> \
-          Kind \
-        </label> \
-      </dt> \
-      <dd> \
-        <select id="Resource--license_id" name="Resource--license_id"> \
-          <option selected="selected" value="file">File</option> \
-          <option value="api">API</option> \
-          <option value="index">Index</option> \
-          <option value="example">Example</option> \
-        </select> \
-      </dd> \
  \
       <dt> \
         <label class="field_opt" for="Resource--format"> \
@@ -1346,19 +1346,7 @@ CKAN.Templates.resourceForm = ' \
       <dd> \
         <input id="Resource--format" name="Resource--format" type="text" value="${format}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/> \
       </dd> \
- \
-      <dt> \
-        <label class="field_opt" for="Resource--license_id"> \
-          Licence \
-        </label> \
-      </dt> \
-      <dd> \
-        <select id="Resource--license_id" name="Resource--license_id"> \
-          <option selected="selected" value=""></option> \
-          <option value="notspecified">Other::License Not Specified</option> \
-        </select> \
-      </dd> \
-  </fieldset> \
+    </fieldset> \
  \
     <div class="submit"> \
       <input id="save" name="save" type="submit" value="Save" /> \
@@ -1371,7 +1359,7 @@ CKAN.Templates.resourceCreate = ' \
     <table> \
       <tr class="heading"> \
         <td> \
-          <h3>Link to data online (File, API etc)</h3> \
+          <h3>Link to data already online</h3> \
         </td> \
         <td><h3>or</h3></td> \
         <td><h3>Upload data</h3></td> \
@@ -1649,10 +1637,9 @@ this.CKAN.View || (this.CKAN.View = {});
           self.updateFormData(self.key);
         },
         send: function(e, data) {
-          self.setMessage('<h2>Uploading file ...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+          self.setMessage('Uploading file ... <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" class="spinner" />');
         },
         done: function(e, data) {
-          self.setMessage('Uploaded OK. Creating Resource ...');
           self.onUploadComplete(self.key);
         }
       })
@@ -1660,7 +1647,7 @@ this.CKAN.View || (this.CKAN.View = {});
 
     updateFormData: function(key) {
       var self = this;
-      self.setMessage('<h2>Checking upload permissions ...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+      self.setMessage('Checking upload permissions ... <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" class="spinner" />');
       self.el.find('.fileinfo').text(key);
       self.client.getStorageAuthForm(key, {
         async: false,
@@ -1675,7 +1662,7 @@ this.CKAN.View || (this.CKAN.View = {});
         },
         error: function(jqXHR, textStatus, errorThrown) {
           // TODO: more graceful error handling (e.g. of 409)
-          self.setMessage('<h2>Failed to get credentials for storage upload. Upload cannot proceed</h2>');
+          self.setMessage('Failed to get credentials for storage upload. Upload cannot proceed');
         }
       });
     },
@@ -1710,18 +1697,21 @@ this.CKAN.View || (this.CKAN.View = {});
             }
             , {
               error: function(model, error) {
-                var msg = 'Error on saving resource: ' + error + '.';
-                msg += 'You will need to create a resource directly. Uploaded file at: ' + data._location;
+                var msg = 'Filed uploaded OK but error adding resource: ' + error + '.';
+                msg += 'You may need to create a resource directly. Uploaded file at: ' + data._location;
                 CKAN.View.flash(msg, 'error');
               }
             }
           );
-          CKAN.View.flash('Resource created and added to dataset');
+          CKAN.View.flash('File uploaded OK and resource added');
         }
       });
     },
 
-    setMessage: function(msg) {
+    setMessage: function(msg, category) {
+      var category = category || 'notice';
+      this.$messages.removeClass('notice success error');
+      this.$messages.addClass(category);
       this.$messages.show();
       this.$messages.html(msg);
     },
