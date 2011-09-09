@@ -13,7 +13,7 @@
 #
 
 set -e
-BUILD=build
+BUILD=pkg
 OUTFILE=$BUILD/ckanjs.js
 MINFILE=$BUILD/ckanjs.min.js
 
@@ -40,7 +40,7 @@ mkdir -p $BUILD
 cp $TMPFILE $OUTFILE
 
 echo "Compressing JS files"
-uglifyjs -o $MINFILE $TMPFILE
+# uglifyjs -o $MINFILE $TMPFILE
 
 # remove temporary folder
 rm -Rf $TMP
