@@ -130,6 +130,12 @@ test("ResourceUpload", function() {
   ok($el);
   $('.fixture').append($el);
 
+  var _out = view.makeUploadKey('README.rst');
+  // NB: when running tests this always yields 1970-01-01 (start of unix time)
+  // but in real usage date is now (as wanted)
+  var re = /\d\d\d\d-\d\d-\d\d.*Z\/README.rst/;
+  ok(_out.match(re), _out);
+
   view.updateFormData('README.rst');
   equals($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
   var expectedFields = ['signature', 'policy'];
