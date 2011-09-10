@@ -1622,7 +1622,7 @@ this.CKAN.View || (this.CKAN.View = {});
     setupFileUpload: function() {
       var self = this;
       this.el.find('.fileupload').fileupload({
-        // needed because we are posting to remove url 
+        // needed because we are posting to remote url 
         forceIframeTransport: true,
         replaceFileInput: false,
         autoUpload: false,
@@ -1710,8 +1710,9 @@ this.CKAN.View || (this.CKAN.View = {});
               , last_modified: data.last_modified
               , format: data._format
               , mimetype: data._format
-              , type: 'file'
+              , type: 'file.upload'
               , owner: data['uploaded-by']
+              , hash: data._checksum
             }
             , {
               error: function(model, error) {
