@@ -30,7 +30,7 @@ this.CKAN.View || (this.CKAN.View = {});
     setupFileUpload: function() {
       var self = this;
       this.el.find('.fileupload').fileupload({
-        // needed because we are posting to remove url 
+        // needed because we are posting to remote url 
         forceIframeTransport: true,
         replaceFileInput: false,
         autoUpload: false,
@@ -40,23 +40,40 @@ this.CKAN.View || (this.CKAN.View = {});
         add: function(e,data) {
           self.fileData = data;
           self.fileUploadData = data;
-          // TODO: sanitize file name ...
-          self.key = data.files[0].name;
+          self.key = self.makeUploadKey(data.files[0].name);
           self.updateFormData(self.key);
         },
         send: function(e, data) {
-          self.setMessage('<h2>Uploading file ...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+          self.setMessage('Uploading file ... <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" class="spinner" />');
         },
         done: function(e, data) {
-          self.setMessage('Uploaded OK. Creating Resource ...');
           self.onUploadComplete(self.key);
         }
       })
     },
 
+    // Create an upload key/label for this file.
+    // 
+    // Form: {current-date}/file-name. Do not just use the file name as this
+    // would lead to collisions.
+    // (Could add userid/username and/or a small random string to reduce
+    // collisions but chances seem very low already)
+    makeUploadKey: function(fileName) {
+      function ISODateString(d){
+        function pad(n){return n<10 ? '0'+n : n}
+        return d.getUTCFullYear()+'-'
+           + pad(d.getUTCMonth()+1)+'-'
+           + pad(d.getUTCDate())+'T'
+           + pad(d.getUTCHours())+':'
+           + pad(d.getUTCMinutes())+':'
+           + pad(d.getUTCSeconds())+'Z'}
+      var now = new Date();
+      return ISODateString(now) + '/' + fileName;
+    },
+
     updateFormData: function(key) {
       var self = this;
-      self.setMessage('<h2>Checking upload permissions ...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+      self.setMessage('Checking upload permissions ... <img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" class="spinner" />');
       self.el.find('.fileinfo').text(key);
       self.client.getStorageAuthForm(key, {
         async: false,
@@ -71,7 +88,7 @@ this.CKAN.View || (this.CKAN.View = {});
         },
         error: function(jqXHR, textStatus, errorThrown) {
           // TODO: more graceful error handling (e.g. of 409)
-          self.setMessage('<h2>Failed to get credentials for storage upload. Upload cannot proceed</h2>');
+          self.setMessage('Failed to get credentials for storage upload. Upload cannot proceed', 'error');
         }
       });
     },
@@ -101,23 +118,28 @@ this.CKAN.View || (this.CKAN.View = {});
               , last_modified: data.last_modified
               , format: data._format
               , mimetype: data._format
-              , type: 'file'
+              , type: 'file.upload'
               , owner: data['uploaded-by']
+              , hash: data._checksum
             }
             , {
               error: function(model, error) {
-                var msg = 'Error on saving resource: ' + error + '.';
-                msg += 'You will need to create a resource directly. Uploaded file at: ' + data._location;
+                var msg = 'Filed uploaded OK but error adding resource: ' + error + '.';
+                msg += 'You may need to create a resource directly. Uploaded file at: ' + data._location;
                 CKAN.View.flash(msg, 'error');
               }
             }
           );
-          CKAN.View.flash('Resource created and added to dataset');
+          self.setMessage('File uploaded OK and resource added', 'success');
+          CKAN.View.flash('File uploaded OK and resource added');
         }
       });
     },
 
-    setMessage: function(msg) {
+    setMessage: function(msg, category) {
+      var category = category || 'notice';
+      this.$messages.removeClass('notice success error');
+      this.$messages.addClass(category);
       this.$messages.show();
       this.$messages.html(msg);
     },

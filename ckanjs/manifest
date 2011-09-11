@@ -1,0 +1,13 @@
+lib/client.js
+lib/model.js
+lib/templates.js
+lib/view.js
+lib/ui.js
+lib/template/dataset-form.js
+lib/template/dataset-view.js
+lib/template/resource-form.js
+lib/template/resource-upload.js
+lib/template/resource-view.js
+lib/view/dataset-listing.js
+lib/view/resource-create.js
+lib/view/resource-upload.js

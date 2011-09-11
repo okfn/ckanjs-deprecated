@@ -1,7 +1,8 @@
-ext/*
-configlocal.js
-sandbox/*
-css/ckan
+ckanjs/ext/*
+ckanjs/configlocal.js
+ckanjs/sandbox/*
+ckanjs/css/ckan
 *.pyc
 *~
 *.swp
+build/*

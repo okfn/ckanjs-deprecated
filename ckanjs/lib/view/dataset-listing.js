@@ -80,7 +80,7 @@ this.CKAN.View || (this.CKAN.View = {});
             {{/if}} \
           </div> \
         </div> \
-        <div class="extract editable-area"> \
+        <div class="extract"> \
           {{html snippet}} \
         </div> \
         <div class="dataset-tags"> \
