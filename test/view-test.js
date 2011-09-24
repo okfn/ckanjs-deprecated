@@ -117,6 +117,7 @@ test("ResourceUpload", function() {
     , _location: "https://commondatastorage.googleapis.com/ckantest/README.rst"
     , _owner: null
     , "uploaded-by": "dbc9423c-3410-436e-a67b-e9fc6440f089"
+    , _checksum: "md5:0d61cf985a2c91c48fa2817ed25a0579"
   };
   sinon.stub(client, 'apiCall', function(options) {
     options.success(_metadata);
@@ -130,6 +131,12 @@ test("ResourceUpload", function() {
   ok($el);
   $('.fixture').append($el);
 
+  var _out = view.makeUploadKey('README.rst');
+  // NB: when running tests this always yields 1970-01-01 (start of unix time)
+  // but in real usage date is now (as wanted)
+  var re = /\d\d\d\d-\d\d-\d\d.*Z\/README.rst/;
+  ok(_out.match(re), _out);
+
   view.updateFormData('README.rst');
   equals($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
   var expectedFields = ['signature', 'policy'];
@@ -142,8 +149,9 @@ test("ResourceUpload", function() {
   view.onUploadComplete('README.rst');
   equals(res.get('url'),  _metadata._location);
   equals(res.get('name'),  'README.rst');
-  equals(res.get('type'),  'file');
+  equals(res.get('type'),  'file.upload');
   equals(res.get('size'),  568);
+  equals(res.get('hash'), _metadata._checksum);
 });
 
 test("ResourceCreate", function() {
