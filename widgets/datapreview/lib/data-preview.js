@@ -419,20 +419,18 @@
         return cells;
       });
     } else {
-      if (data.length) {
-        tabular.columns = $.map(data[0], function(val, key) {
-          return {id: 'header-' + key, name: key, field: 'column-' + key, sortable: true};
-        });
-        tabular.data = $.map(data, function(row, id) {
-          var cells = {id: id};
-          for(i in tabular.columns) {
-            var val = row[tabular.columns[i].name];
-            var isNumeric = isNumericRegex.test(val);
-            cells['column-' + tabular.columns[i].name] = isNumeric ? parseFloat(val) : val;
-          }
-          return cells;
-        });
-      }
+      tabular.columns = $.map(data.keys, function(key, idx) {
+        return {id: 'header-' + key, name: key, field: 'column-' + key, sortable: true};
+      });
+      tabular.data = $.map(data.data, function(row, id) {
+        var cells = {id: id};
+        for(i in row) {
+          var val = row[i];
+          var isNumeric = isNumericRegex.test(val);
+          cells['column-' + tabular.columns[i].name] = isNumeric ? parseFloat(val) : val;
+        }
+        return cells;
+      });
     }
     return tabular;
   };
