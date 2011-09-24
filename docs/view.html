@@ -1,0 +1,380 @@
+<!DOCTYPE html>  <html> <head>   <title>view.js</title>   <meta http-equiv="content-type" content="text/html; charset=UTF-8">   <link rel="stylesheet" media="all" href="docco.css" /> </head> <body>   <div id="container">     <div id="background"></div>          <table cellpadding="0" cellspacing="0">       <thead>         <tr>           <th class="docs">             <h1>               view.js             </h1>           </th>           <th class="code">           </th>         </tr>       </thead>       <tbody>                               <tr id="section-1">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-1">&#182;</a>               </div>                            </td>             <td class="code">               <div class="highlight"><pre><span class="kd">var</span> <span class="nx">CKAN</span> <span class="o">=</span> <span class="nx">CKAN</span> <span class="o">||</span> <span class="p">{};</span>
+
+<span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">var</span> <span class="nx">my</span> <span class="o">=</span> <span class="p">{};</span>
+  <span class="kd">var</span> <span class="nx">showdown</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Showdown</span><span class="p">.</span><span class="nx">converter</span><span class="p">();</span></pre></div>             </td>           </tr>                               <tr id="section-2">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-2">&#182;</a>               </div>               <p>Flash a notification message</p>
+
+<p>Parameters: msg, type. type is set as class on notification and should be one of success, error.
+If type not defined defaults to success</p>             </td>             <td class="code">               <div class="highlight"><pre>  <span class="nx">my</span><span class="p">.</span><span class="nx">flash</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">type</span> <span class="o">===</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">type</span> <span class="o">=</span> <span class="s1">&#39;success&#39;</span>
+    <span class="p">}</span>
+    <span class="nx">$</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;notification&#39;</span><span class="p">,</span> <span class="p">[</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">type</span><span class="p">]);</span>
+  <span class="p">};</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">NotificationView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="s1">&#39;notificationTemplate&#39;</span><span class="p">,</span>
+          <span class="s1">&#39;&lt;div class=&quot;flash-banner ${type}&quot;&gt;${message} &lt;button&gt;X&lt;/button&gt;&lt;/div&gt;&#39;</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">$</span><span class="p">(</span><span class="nb">document</span><span class="p">).</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;notification&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">,</span> <span class="nx">msg</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">render</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;click .flash-banner button&#39;</span><span class="o">:</span> <span class="s1">&#39;hide&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">type</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">_out</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="s1">&#39;notificationTemplate&#39;</span><span class="p">,</span> <span class="p">{</span><span class="s1">&#39;message&#39;</span><span class="o">:</span> <span class="nx">msg</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="o">:</span> <span class="nx">type</span><span class="p">})</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">_out</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">slideDown</span><span class="p">(</span><span class="mi">400</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">hide</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">slideUp</span><span class="p">(</span><span class="mi">200</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">ConfigView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">cfg</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$ckanUrl</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;input[name=ckan-url]&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$apikey</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;input[name=ckan-api-key]&#39;</span><span class="p">);</span>
+
+      <span class="kd">var</span> <span class="nx">cfg</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">config</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$ckanUrl</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">endpoint</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$apikey</span><span class="p">.</span><span class="nx">val</span><span class="p">(</span><span class="nx">cfg</span><span class="p">.</span><span class="nx">apiKey</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;submit #config-form&#39;</span><span class="o">:</span> <span class="s1">&#39;updateConfig&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">updateConfig</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">saveConfig</span><span class="p">();</span>
+      <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Saved configuration&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">saveConfig</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">cfg</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;endpoint&#39;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$ckanUrl</span><span class="p">.</span><span class="nx">val</span><span class="p">(),</span>
+        <span class="s1">&#39;apiKey&#39;</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$apikey</span><span class="p">.</span><span class="nx">val</span><span class="p">()</span>
+      <span class="p">};</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">event</span><span class="p">.</span><span class="nx">trigger</span><span class="p">(</span><span class="s1">&#39;config:update&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">cfg</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">DatasetEditView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;saveData&#39;</span><span class="p">,</span> <span class="s1">&#39;render&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">tmplData</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">dataset</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toTemplateJSON</span><span class="p">()</span>
+      <span class="p">}</span>
+      <span class="kd">var</span> <span class="nx">tmpl</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">datasetForm</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">tmplData</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span> <span class="c1">// edit not add</span>
+        <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#minornavigation&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">minorNavigationDataset</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">));</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;submit form.dataset&#39;</span><span class="o">:</span> <span class="s1">&#39;saveData&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;click .previewable-textarea a&#39;</span><span class="o">:</span> <span class="s1">&#39;togglePreview&#39;</span><span class="p">,</span>
+      <span class="s1">&#39;click .dataset-form-navigation a&#39;</span><span class="o">:</span> <span class="s1">&#39;showFormPart&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">showFormPart</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">)[</span><span class="mi">0</span><span class="p">].</span><span class="nx">href</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">];</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.dataset-form-navigation a&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.dataset-form-navigation a[href=#&#39;</span> <span class="o">+</span> <span class="nx">action</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">saveData</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getData</span><span class="p">());</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">({},</span> <span class="p">{</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Saved dataset&#39;</span><span class="p">);</span>
+          <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">hash</span> <span class="o">=</span> <span class="s1">&#39;#dataset/&#39;</span> <span class="o">+</span> <span class="nx">model</span><span class="p">.</span><span class="nx">id</span> <span class="o">+</span> <span class="s1">&#39;/view&#39;</span><span class="p">;</span>
+        <span class="p">},</span>
+        <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Error saving dataset &#39;</span> <span class="o">+</span> <span class="nx">error</span><span class="p">.</span><span class="nx">responseText</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">getData</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">_data</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;form.dataset&#39;</span><span class="p">).</span><span class="nx">serializeArray</span><span class="p">();</span>
+      <span class="nx">modelData</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_data</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">modelData</span><span class="p">[</span><span class="nx">value</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">value</span>
+      <span class="p">});</span>
+      <span class="k">return</span> <span class="nx">modelData</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">togglePreview</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-3">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-3">&#182;</a>               </div>               <p>set model data as we use it below for notesHtml</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getData</span><span class="p">());</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">target</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">action</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;action&#39;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">div</span> <span class="o">=</span> <span class="nx">el</span><span class="p">.</span><span class="nx">closest</span><span class="p">(</span><span class="s1">&#39;.previewable-textarea&#39;</span><span class="p">);</span>
+      <span class="nx">div</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.tabs a&#39;</span><span class="p">).</span><span class="nx">removeClass</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">);</span>
+      <span class="nx">div</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.tabs a[action=&#39;</span><span class="o">+</span><span class="nx">action</span><span class="o">+</span><span class="s1">&#39;]&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;selected&#39;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">textarea</span> <span class="o">=</span> <span class="nx">div</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;textarea&#39;</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">preview</span> <span class="o">=</span> <span class="nx">div</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.preview&#39;</span><span class="p">);</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">action</span><span class="o">==</span><span class="s1">&#39;preview&#39;</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">preview</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toTemplateJSON</span><span class="p">().</span><span class="nx">notesHtml</span><span class="p">);</span>
+        <span class="nx">textarea</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+        <span class="nx">preview</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">textarea</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+        <span class="nx">preview</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+      <span class="p">}</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">DatasetFullView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s1">&#39;render&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">render</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-4">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-4">&#182;</a>               </div>               <p>slightly painful but we have to set this up here so
+it has access to self because when called this will
+be overridden and refer to the element in dom that
+was being saved</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">saveFromEditable</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">_attribute</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;backbone-attribute&#39;</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">_data</span> <span class="o">=</span> <span class="p">{};</span>
+        <span class="nx">_data</span><span class="p">[</span><span class="nx">_attribute</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="nx">_data</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">({},</span> <span class="p">{</span>
+          <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Saved updated notes&#39;</span><span class="p">);</span>
+          <span class="p">},</span>
+          <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Error saving notes &#39;</span> <span class="o">+</span> <span class="nx">error</span><span class="p">.</span><span class="nx">responseText</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">});</span></pre></div>             </td>           </tr>                               <tr id="section-5">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-5">&#182;</a>               </div>               <p>do not worry too much about what we return here
+because update of model will automatically lead to
+re-render</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="k">return</span> <span class="nx">value</span><span class="p">;</span>
+      <span class="p">};</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;click .action-add-resource&#39;</span><span class="o">:</span> <span class="s1">&#39;showResourceAdd&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">tmplData</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">domain</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">options</span><span class="p">.</span><span class="nx">domain</span><span class="p">,</span>
+        <span class="nx">dataset</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toTemplateJSON</span><span class="p">(),</span>
+      <span class="p">};</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.page-heading&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">tmplData</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">displaytitle</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#minornavigation&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">minorNavigationDataset</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">));</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;#sidebar .widget-list&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">sidebarDatasetView</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">));</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">datasetView</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">));</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">setupEditable</span><span class="p">();</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">setupEditable</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.editable-area&#39;</span><span class="p">).</span><span class="nx">editable</span><span class="p">(</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">saveFromEditable</span><span class="p">,</span> <span class="p">{</span>
+          <span class="nx">type</span>      <span class="o">:</span> <span class="s1">&#39;textarea&#39;</span><span class="p">,</span>
+          <span class="nx">cancel</span>    <span class="o">:</span> <span class="s1">&#39;Cancel&#39;</span><span class="p">,</span>
+          <span class="nx">submit</span>    <span class="o">:</span> <span class="s1">&#39;OK&#39;</span><span class="p">,</span>
+          <span class="nx">tooltip</span>   <span class="o">:</span> <span class="s1">&#39;Click to edit...&#39;</span><span class="p">,</span>
+          <span class="nx">onblur</span>    <span class="o">:</span> <span class="s1">&#39;ignore&#39;</span><span class="p">,</span>
+          <span class="nx">data</span>      <span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">value</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">_attribute</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">).</span><span class="nx">attr</span><span class="p">(</span><span class="s1">&#39;backbone-attribute&#39;</span><span class="p">);</span>
+            <span class="k">return</span> <span class="nx">self</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="nx">_attribute</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">showResourceAdd</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+      <span class="nx">e</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">$el</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;&lt;div /&gt;&#39;</span><span class="p">).</span><span class="nx">addClass</span><span class="p">(</span><span class="s1">&#39;resource-add-dialog&#39;</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;body&#39;</span><span class="p">).</span><span class="nx">append</span><span class="p">(</span><span class="nx">$el</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">resource</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CKAN</span><span class="p">.</span><span class="nx">Model</span><span class="p">.</span><span class="nx">Resource</span><span class="p">({</span>
+          <span class="s1">&#39;dataset&#39;</span><span class="o">:</span> <span class="nx">self</span><span class="p">.</span><span class="nx">model</span>
+          <span class="p">});</span>
+      <span class="kd">function</span> <span class="nx">handleNewResourceSave</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">res</span> <span class="o">=</span> <span class="nx">self</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;resources&#39;</span><span class="p">);</span>
+        <span class="nx">res</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">model</span><span class="p">);</span>
+        <span class="nx">$el</span><span class="p">.</span><span class="nx">dialog</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">);</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">save</span><span class="p">({},</span> <span class="p">{</span>
+          <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Saved dataset&#39;</span><span class="p">);</span></pre></div>             </td>           </tr>                               <tr id="section-6">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-6">&#182;</a>               </div>               <p>TODO: no need to re-render (should happen automatically)</p>             </td>             <td class="code">               <div class="highlight"><pre>            <span class="nx">self</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+          <span class="p">}</span>
+          <span class="p">,</span> <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">flash</span><span class="p">(</span><span class="s1">&#39;Failed to save: &#39;</span> <span class="o">+</span> <span class="nx">error</span><span class="p">,</span> <span class="s1">&#39;error&#39;</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+      <span class="nx">resource</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s1">&#39;change&#39;</span><span class="p">,</span> <span class="nx">handleNewResourceSave</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">resourceView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">ResourceCreate</span><span class="p">({</span>
+        <span class="nx">el</span><span class="o">:</span> <span class="nx">$el</span><span class="p">,</span>
+        <span class="nx">model</span><span class="o">:</span> <span class="nx">resource</span>
+      <span class="p">});</span>
+      <span class="nx">resourceView</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+      <span class="nx">dialogOptions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">autoOpen</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span></pre></div>             </td>           </tr>                               <tr id="section-7">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-7">&#182;</a>               </div>               <p>does not seem to work for width ...</p>             </td>             <td class="code">               <div class="highlight"><pre>        <span class="nx">position</span><span class="o">:</span> <span class="p">[</span><span class="s1">&#39;center&#39;</span><span class="p">,</span> <span class="s1">&#39;center&#39;</span><span class="p">],</span>
+        <span class="nx">buttons</span><span class="o">:</span> <span class="p">[],</span>
+        <span class="nx">width</span><span class="o">:</span>  <span class="mi">660</span><span class="p">,</span>
+        <span class="nx">resize</span><span class="o">:</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span>
+        <span class="nx">modal</span><span class="o">:</span> <span class="kc">false</span><span class="p">,</span>
+        <span class="nx">draggable</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="nx">resizable</span><span class="o">:</span> <span class="kc">true</span>
+      <span class="p">};</span>
+      <span class="nx">dialogOptions</span><span class="p">.</span><span class="nx">title</span> <span class="o">=</span> <span class="s1">&#39;Add Data (File, API, ...)&#39;</span><span class="p">;</span>
+      <span class="nx">$el</span><span class="p">.</span><span class="nx">dialog</span><span class="p">(</span><span class="nx">dialogOptions</span><span class="p">);</span>
+      <span class="nx">$el</span><span class="p">.</span><span class="nx">dialog</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">);</span>
+      <span class="nx">$el</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="s2">&quot;dialogbeforeclose&quot;</span><span class="p">,</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="nx">self</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.resource-add-dialog&#39;</span><span class="p">).</span><span class="nx">remove</span><span class="p">();</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">DatasetSearchView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;submit #search-form&#39;</span><span class="o">:</span> <span class="s1">&#39;onSearch&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">initialize</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">view</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span></pre></div>             </td>           </tr>                               <tr id="section-8">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-8">&#182;</a>               </div>               <p>Temporarily provide the view with access to the client for searching.</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">client</span> <span class="o">=</span> <span class="nx">options</span><span class="p">.</span><span class="nx">client</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$results</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.results&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$datasetList</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">$results</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.datasets&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$dialog</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.dialog&#39;</span><span class="p">);</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">resultView</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">CKAN</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">DatasetListing</span><span class="p">({</span>
+        <span class="nx">collection</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">Collection</span><span class="p">(),</span>
+        <span class="nx">el</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">$datasetList</span>
+      <span class="p">});</span>
+
+      <span class="nx">_</span><span class="p">.</span><span class="nx">bindAll</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="s2">&quot;render&quot;</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.count&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">totalResults</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">hideSpinner</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$results</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">onSearch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">event</span><span class="p">.</span><span class="nx">preventDefault</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">q</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;input.search&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">doSearch</span><span class="p">(</span><span class="nx">q</span><span class="p">);</span>
+    <span class="p">},</span>
+
+    <span class="nx">doSearch</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">q</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;input.search&#39;</span><span class="p">).</span><span class="nx">val</span><span class="p">(</span><span class="nx">q</span><span class="p">),</span>
+          <span class="nx">self</span> <span class="o">=</span> <span class="k">this</span><span class="p">;</span>
+
+      <span class="k">this</span><span class="p">.</span><span class="nx">showSpinner</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$results</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$results</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;.datasets&#39;</span><span class="p">).</span><span class="nx">empty</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">client</span><span class="p">.</span><span class="nx">searchDatasets</span><span class="p">({</span>
+        <span class="nx">query</span><span class="o">:</span> <span class="p">{</span><span class="nx">q</span><span class="o">:</span><span class="nx">q</span><span class="p">},</span>
+        <span class="nx">success</span><span class="o">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">collection</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">totalResults</span> <span class="o">=</span> <span class="nx">collection</span><span class="p">.</span><span class="nx">total</span><span class="p">;</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">resultView</span><span class="p">.</span><span class="nx">setCollection</span><span class="p">(</span><span class="nx">collection</span><span class="p">);</span>
+          <span class="nx">self</span><span class="p">.</span><span class="nx">render</span><span class="p">();</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+    <span class="p">},</span>
+
+    <span class="nx">showSpinner</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$dialog</span><span class="p">.</span><span class="nx">empty</span><span class="p">();</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$dialog</span><span class="p">.</span><span class="nx">html</span><span class="p">(</span><span class="s1">&#39;&lt;h2&gt;Loading results...&lt;/h2&gt;&lt;img src=&quot;http://assets.okfn.org/images/icons/ajaxload-circle.gif&quot; /&gt;&#39;</span><span class="p">);</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$dialog</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+    <span class="p">},</span>
+
+    <span class="nx">hideSpinner</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">$dialog</span><span class="p">.</span><span class="nx">empty</span><span class="p">().</span><span class="nx">hide</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">ResourceView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">resourceData</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toTemplateJSON</span><span class="p">();</span>
+      <span class="kd">var</span> <span class="nx">resourceDetails</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="kd">var</span> <span class="nx">exclude</span> <span class="o">=</span> <span class="p">[</span> <span class="s1">&#39;resource_group_id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;url&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;position&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;id&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;webstore&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;qa&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;dataset&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;displaytitle&#39;</span>
+        <span class="p">];</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">resourceData</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">key</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="o">!</span> <span class="nx">_</span><span class="p">.</span><span class="nx">contains</span><span class="p">(</span><span class="nx">exclude</span><span class="p">,</span> <span class="nx">key</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nx">resourceDetails</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">;</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+      <span class="nx">tmplData</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="nx">dataset</span><span class="o">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s1">&#39;dataset&#39;</span><span class="p">).</span><span class="nx">toTemplateJSON</span><span class="p">(),</span>
+        <span class="nx">resource</span><span class="o">:</span> <span class="nx">resourceData</span><span class="p">,</span>
+        <span class="nx">resourceDetails</span><span class="o">:</span> <span class="nx">resourceDetails</span>
+      <span class="p">};</span>
+      <span class="nx">$</span><span class="p">(</span><span class="s1">&#39;.page-heading&#39;</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">tmplData</span><span class="p">.</span><span class="nx">dataset</span><span class="p">.</span><span class="nx">name</span> <span class="o">+</span> <span class="s1">&#39; / &#39;</span> <span class="o">+</span> <span class="nx">tmplData</span><span class="p">.</span><span class="nx">resource</span><span class="p">.</span><span class="nx">displaytitle</span><span class="p">);</span>
+      <span class="kd">var</span> <span class="nx">tmpl</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">resourceView</span><span class="p">,</span> <span class="nx">tmplData</span><span class="p">);</span>
+      <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+    <span class="p">}</span>
+  <span class="p">});</span>
+
+  <span class="nx">my</span><span class="p">.</span><span class="nx">ResourceEditView</span> <span class="o">=</span> <span class="nx">Backbone</span><span class="p">.</span><span class="nx">View</span><span class="p">.</span><span class="nx">extend</span><span class="p">({</span>
+    <span class="nx">render</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">tmpl</span> <span class="o">=</span> <span class="nx">$</span><span class="p">.</span><span class="nx">tmpl</span><span class="p">(</span><span class="nx">CKAN</span><span class="p">.</span><span class="nx">Templates</span><span class="p">.</span><span class="nx">resourceForm</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">());</span>
+      <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">html</span><span class="p">(</span><span class="nx">tmpl</span><span class="p">);</span>
+      <span class="k">return</span> <span class="k">this</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">events</span><span class="o">:</span> <span class="p">{</span>
+      <span class="s1">&#39;submit form&#39;</span><span class="o">:</span> <span class="s1">&#39;saveData&#39;</span>
+    <span class="p">},</span>
+
+    <span class="nx">saveData</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span></pre></div>             </td>           </tr>                               <tr id="section-9">             <td class="docs">               <div class="pilwrap">                 <a class="pilcrow" href="#section-9">&#182;</a>               </div>               <p>only set rather than save as can only save resources as part of a dataset atm</p>             </td>             <td class="code">               <div class="highlight"><pre>      <span class="k">this</span><span class="p">.</span><span class="nx">model</span><span class="p">.</span><span class="nx">set</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getData</span><span class="p">(),</span> <span class="p">{</span>
+        <span class="nx">error</span><span class="o">:</span> <span class="kd">function</span><span class="p">(</span><span class="nx">model</span><span class="p">,</span> <span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+          <span class="kd">var</span> <span class="nx">msg</span> <span class="o">=</span> <span class="s1">&#39;Failed to save, possibly due to invalid data &#39;</span><span class="p">;</span>
+          <span class="nx">msg</span> <span class="o">+=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+          <span class="nx">alert</span><span class="p">(</span><span class="nx">msg</span><span class="p">);</span>
+        <span class="p">}</span>
+      <span class="p">});</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span>
+    <span class="p">},</span>
+
+    <span class="nx">getData</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">_data</span> <span class="o">=</span> <span class="nx">$</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">el</span><span class="p">).</span><span class="nx">find</span><span class="p">(</span><span class="s1">&#39;form.resource&#39;</span><span class="p">).</span><span class="nx">serializeArray</span><span class="p">();</span>
+      <span class="nx">modelData</span> <span class="o">=</span> <span class="p">{};</span>
+      <span class="nx">$</span><span class="p">.</span><span class="nx">each</span><span class="p">(</span><span class="nx">_data</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">idx</span><span class="p">,</span> <span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">modelData</span><span class="p">[</span><span class="nx">value</span><span class="p">.</span><span class="nx">name</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;--&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">value</span><span class="p">.</span><span class="nx">value</span>
+      <span class="p">});</span>
+      <span class="k">return</span> <span class="nx">modelData</span><span class="p">;</span>
+    <span class="p">}</span>
+
+  <span class="p">});</span>
+
+  <span class="k">return</span> <span class="nx">my</span><span class="p">;</span>
+<span class="p">}(</span><span class="nx">jQuery</span><span class="p">);</span>
+
+</pre></div>             </td>           </tr>                </tbody>     </table>   </div> </body> </html> 
