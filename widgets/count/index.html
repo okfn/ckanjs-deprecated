@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>CKAN Count Widget</title>
+  <script src="../../vendor/jquery/1.6.2/jquery.js"></script>
+  <script type="text/javascript">
+    jQuery(document).ready(function($) {
+      var group = 'economics';
+      var url = 'http://thedatahub.org/api/search/dataset?groups=' + group;
+      $.getJSON(url, function(data) {
+        $('.ckanjs-widget-count').html(data.count);
+      });
+    });
+  </script>
+</head>
+<body>
+  <h1>Count Widget</h1>
+  <h2>Code</h2>
+  <pre>
+// Javascript to load the information (this requires jQuery)
+// You can put this in the head of the page or in the page body.
+&lt;script type="text/javascript">
+jQuery(document).ready(function($) {
+  var group = 'economics';
+  var url = 'http://thedatahub.org/api/search/dataset?groups=' + group;
+  $.getJSON(url, function(data) {
+    // class selector for the page element where info should be inserted
+    $('.ckanjs-widget-count').html(data.count);
+  });
+});
+&lt;/script>
+
+// And somewhere in the body of the html page ...
+// this is where dataset count will be inserted
+&lt;span class="ckanjs-widget-count"&gt;&lt;/span&gt;
+  </pre>
+  <h2>Demo (view source to see HTML and javascript)</h2>
+  Datasets in the group: <strong class="ckanjs-widget-count"></strong> (this number computed live from the API).
+</body>
+</html>
+
