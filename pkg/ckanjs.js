@@ -208,7 +208,6 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
   return Client;
 
 })(this.CKAN, this.$, this._, this.Backbone);
-var showdown = new Showdown.converter();
 this.CKAN = this.CKAN || {};
 
 // Global object that stores all CKAN models.
@@ -399,6 +398,8 @@ CKAN.Model = function ($, _, Backbone, undefined) {
       var title = this.get('title');
       out.displaytitle = title ? title : 'No title ...';
       var notes = this.get('notes');
+      // Don't use a global Showdown; CKAN doesn't need that library
+      var showdown = new Showdown.converter();
       out.notesHtml = showdown.makeHtml(notes ? notes : '');
       out.snippet = this.makeSnippet(out.notesHtml);
       return out;
@@ -544,7 +545,6 @@ var CKAN = CKAN || {};
 
 CKAN.View = function($) {
   var my = {};
-  var showdown = new Showdown.converter();
 
   // Flash a notification message
   // 
