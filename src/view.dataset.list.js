@@ -68,29 +68,29 @@ CKAN.View = CKAN.View || {};
       template: '\
         <div class="header"> \
           <span class="title" > \
-            <a href="${urls.datasetView}" ckan-attrname="title" class="editable">${displaytitle}</a> \
+            <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
           </span> \
           <div class="search_meta"> \
-            {{if formats.length > 0}} \
+            {{#formats}} \
             <ul class="dataset-formats"> \
-              {{each formats}} \
-                <li>${$value}</li> \
-              {{/each}} \
+              {{#formats}} \
+                <li>{{.}}</li> \
+              {{/formats}} \
             </ul> \
-            {{/if}} \
+            {{/formats}} \
           </div> \
         </div> \
         <div class="extract"> \
-          {{html snippet}} \
+          {{{snippet}}} \
         </div> \
         <div class="dataset-tags"> \
-          {{if tags.length}} \
+          {{#tags}} \
           <ul class="dataset-tags"> \
-            {{each tags}} \
-              <li>${$value}</li> \
-            {{/each}} \
+            {{#tags}} \
+              <li>{{.}}</li> \
+            {{/tags}} \
           </ul> \
-          {{/if}} \
+          {{/tags}} \
         </div> \
       '
     },
@@ -114,7 +114,7 @@ CKAN.View = CKAN.View || {};
         formats: this._availableFormats(),
         urls: urls
       });
-      this.el.html($.tmpl(this.options.template, data));
+      this.el.html(Mustache.render(this.options.template, data));
       return this;
     },
 

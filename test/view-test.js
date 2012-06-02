@@ -32,6 +32,7 @@ test("DatasetFullView", function () {
   equals(out.length, 1);
   out = out.find('a').text();
   equals(out, '54b9ee58-d7ab-4db8-a55b-57a22d496ede');
+  view.remove();
 });
 
 test("DatasetEditView", function () {

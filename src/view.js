@@ -14,10 +14,8 @@ CKAN.View = CKAN.View || {};
   };
 
   my.NotificationView = Backbone.View.extend({
+    template: '<div class="flash-banner {{type}}">{{message}} <button>X</button></div>',
     initialize: function() {
-      $.template('notificationTemplate',
-          '<div class="flash-banner ${type}">${message} <button>X</button></div>');
-
       var self = this;
       $(document).bind('notification', function(e, msg, type) {
         self.render(msg, type)
@@ -29,7 +27,7 @@ CKAN.View = CKAN.View || {};
     },
 
     render: function(msg, type) {
-      var _out = $.tmpl('notificationTemplate', {'message': msg, 'type': type})
+      var _out = Mustache.render(this.template, {'message': msg, 'type': type})
       this.el.html(_out);
       this.el.slideDown(400);
     },

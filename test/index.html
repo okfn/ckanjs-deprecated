@@ -15,12 +15,8 @@
   <h2 id="qunit-banner"></h2>
   <h2 id="qunit-userAgent"></h2>
   <ol id="qunit-tests"></ol>
-
-  <div>
-    <a href="#" id="show-fixtures">Show fixtures</a>
   </div>
-  </div>
-  <div class="fixture" style="display:none;">
+  <div class="fixture">
     <!-- search form -->
     <div id="search-page" class="page-view">
       <form id="search-form">
@@ -51,7 +47,7 @@
     </div>
   </div>
   <script src="../vendor/jquery/1.6.2/jquery.js"></script>
-  <script src="../vendor/jquery.tmpl/beta1/jquery.tmpl.min.js"></script>
+  <script src="../vendor/mustache/0.5.0-dev/mustache.js"></script>
   <script src="../vendor/json2.js"></script>
   <script src="../vendor/jqueryui/1.8.4/jquery-ui.min.js"></script>
   <script src="../vendor/underscore/1.1.6/underscore.js"></script>
@@ -89,12 +85,5 @@
   <script src="view/dataset-listing-test.js"></script>
   <script src="widget/search-test.js"></script>
   <script src="view-test.js"></script>
-  <script type="text/javascript">
-    $(document).ready(
-      $('#show-fixtures').click(function(e) {
-        jQuery('.fixture').show();
-      })
-    );
-  </script>
 </body>
 </html>

@@ -43,7 +43,7 @@ CKAN.View = CKAN.View || {};
       this.el.empty();
       tmplData = {
       };
-      var tmpl = $.tmpl(this.template, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       this.el.html(tmpl);
       return this;
     },

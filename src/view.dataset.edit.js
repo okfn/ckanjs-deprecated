@@ -13,7 +13,7 @@ CKAN.View = CKAN.View || {};
         </label> \
       </dt> \
       <dd> \
-        <input id="Dataset--title" name="Dataset--title" type="text" value="${dataset.title}" placeholder="A title (not a description) ..."/> \
+        <input id="Dataset--title" name="Dataset--title" type="text" value="{{dataset.title}}" placeholder="A title (not a description) ..."/> \
       </dd> \
  \
       <dt> \
@@ -25,7 +25,7 @@ CKAN.View = CKAN.View || {};
         </label> \
       </dt> \
       <dd> \
-        <input id="Dataset--name" maxlength="100" name="Dataset--name" type="text" value="${dataset.name}" placeholder="A shortish name usable in urls ..." /> \
+        <input id="Dataset--name" maxlength="100" name="Dataset--name" type="text" value="{{dataset.name}}" placeholder="A shortish name usable in urls ..." /> \
       </dd> \
  \
       <dt> \
@@ -54,7 +54,7 @@ CKAN.View = CKAN.View || {};
             <li><a href="#" action="write" class="selected">Write</a></li> \
             <li><a href="#" action="preview">Preview</a></li> \
           </ul> \
-          <textarea id="Dataset--notes" name="Dataset--notes" placeholder="Start with a summary sentence ...">${dataset.notes}</textarea> \
+          <textarea id="Dataset--notes" name="Dataset--notes" placeholder="Start with a summary sentence ...">{{dataset.notes}}</textarea> \
           <div id="Dataset--notes-preview" class="preview" style="display: none;"> \
           <div> \
         </div> \
@@ -75,7 +75,7 @@ CKAN.View = CKAN.View || {};
       tmplData = {
         dataset: this.model.toTemplateJSON()
       }
-      var tmpl = $.tmpl(this.template, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       $(this.el).html(tmpl);
       return this;
     },

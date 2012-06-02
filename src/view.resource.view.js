@@ -5,12 +5,12 @@ CKAN.View = CKAN.View || {};
 
   my.ResourceView = Backbone.View.extend({
     template: ' \
-  <div class="resource view" resource-id="${resource.id}"> \
+  <div class="resource view" resource-id="{{resource.id}}"> \
     <h3> \
-      <a href="${resource.url}" class="url">${resource.url}</a> [${resource.format}] \
+      <a href="{{resource.url}}" class="url">{{resource.url}}</a> [{{resource.format}}] \
     </h3> \
     <div class="description"> \
-      ${resource.description} \
+      {{resource.description}} \
     </div> \
     \
     <div class="details subsection"> \
@@ -23,12 +23,12 @@ CKAN.View = CKAN.View || {};
           </tr> \
         </thead> \
         <tbody> \
-          {{each resourceDetails}} \
+          {{#resourceDetails}} \
           <tr> \
-            <td class="label">${$index}</td> \
-            <td class="value">${$value}</td> \
+            <td class="label">{{.}}</td> \
+            <td class="value">{{.}}</td> \
           </tr> \
-          {{/each}} \
+          {{/resourceDetails}} \
         </tbody> \
       </table> \
     </div> \
@@ -65,7 +65,7 @@ CKAN.View = CKAN.View || {};
         }
       }
       $('.page-heading').html(tmplData.dataset.name + ' / ' + tmplData.resource.displaytitle);
-      var tmpl = $.tmpl(this.template, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       $(this.el).html(tmpl);
       return this;
     },

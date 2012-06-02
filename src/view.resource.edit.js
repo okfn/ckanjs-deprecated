@@ -13,7 +13,7 @@ CKAN.View = CKAN.View || {};
         </label> \
       </dt> \
       <dd> \
-        <input id="Resource--url" name="Resource--url" type="text" value="${url}" placeholder="http://mydataset.com/file.csv" /> \
+        <input id="Resource--url" name="Resource--url" type="text" value="{{url}}" placeholder="http://mydataset.com/file.csv" /> \
       </dd> \
       <dt> \
         <label class="field_opt" for="Resource--type"> \
@@ -41,7 +41,7 @@ CKAN.View = CKAN.View || {};
         </label> \
       </dt> \
       <dd> \
-        <input id="Resource--description" name="Resource--description" type="text" value="${description}" placeholder="A short description ..."/> \
+        <input id="Resource--description" name="Resource--description" type="text" value="{{description}}" placeholder="A short description ..."/> \
       </dd> \
  \
  \
@@ -51,7 +51,7 @@ CKAN.View = CKAN.View || {};
         </label> \
       </dt> \
       <dd> \
-        <input id="Resource--format" name="Resource--format" type="text" value="${format}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/> \
+        <input id="Resource--format" name="Resource--format" type="text" value="{{format}}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/> \
       </dd> \
     </fieldset> \
  \
@@ -61,7 +61,7 @@ CKAN.View = CKAN.View || {};
   </form> \
 ',
     render: function() {
-      var tmpl = $.tmpl(this.template, this.model.toJSON());
+      var tmpl = Mustache.render(this.template, this.model.toJSON());
       $(this.el).html(tmpl);
       return this;
     },

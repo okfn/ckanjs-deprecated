@@ -5,21 +5,18 @@ CKAN.View = CKAN.View || {};
 
   my.DatasetFullView = Backbone.View.extend({
     template: ' \
-  <div class="dataset view" dataset-id="${dataset.id}"> \
+  <div class="dataset view" dataset-id="{{dataset.id}}"> \
     <div class="extract"> \
-      ${dataset.snippet} \
-      {{if dataset.snippet.length > 50}} \
-      <a href="#anchor-notes">Read more</a> \
-      {{/if}} \
+      {{dataset.snippet}} \
     </div> \
     <div class="tags"> \
-      {{if dataset.tags.length}} \
+      {{#dataset.tags.length}} \
       <ul class="dataset-tags"> \
-        {{each dataset.tags}} \
-          <li>${$value}</li> \
-        {{/each}} \
+        {{#dataset.tags}} \
+          <li>{{.}}</li> \
+        {{/dataset.tags}} \
       </ul> \
-      {{/if}} \
+      {{/dataset.tags.length}} \
     </div> \
     <div class="resources subsection"> \
       <h3>Resources</h3> \
@@ -29,24 +26,23 @@ CKAN.View = CKAN.View || {};
           <th>Format</th> \
           <th>Actions</th> \
         </tr> \
-        {{each dataset.resources}} \
+        {{#dataset.resources}} \
         <tr> \
           <td> \
-            <a href="#dataset/${dataset.id}/resource/${$value.id}"> \
-            {{if $value.description}} \
-            ${$value.description} \
-            {{else}} \
+            <a href="#dataset/{{dataset.id}}/resource/{{id}}"> \
+            {{description}} \
+            {{^description.length}} \
             (No description) \
-            {{/if}} \
+            {{/description.length}} \
             </a> \
           </td> \
-          <td>${$value.format}</td> \
-          <td><a href="${$value.url}" target="_blank" class="resource-download">Download</a> \
+          <td>{{format}}</td> \
+          <td><a href="{{url}}" target="_blank" class="resource-download">Download</a> \
         </tr> \
-        {{/each}} \
-        {{if !dataset.resources.length }} \
+        {{/dataset.resources}} \
+        {{^dataset.resources}} \
         <tr><td>No resources.</td><td></td></tr> \
-        {{/if}} \
+        {{/dataset.resources}} \
       </table> \
       <div class="add-resource"> \
         <a href="#" class="action-add-resource">Add a resource</a> \
@@ -56,9 +52,9 @@ CKAN.View = CKAN.View || {};
       <h3 id="anchor-notes">Notes</h3> \
       <div class="notes-body editable-area" backbone-attribute="notes"> \
         {{html dataset.notesHtml}} \
-        {{if !dataset.notes || dataset.notes.length === 0}} \
+        {{^dataset.notes}} \
         <em>No notes yet. Click to add some ...</em> \
-        {{/if}} \
+        {{/dataset.notes}} \
       </div> \
     </div> \
     <div class="details subsection"> \
@@ -73,18 +69,18 @@ CKAN.View = CKAN.View || {};
         <tbody> \
           <tr> \
             <td>Creator</td> \
-            <td>${dataset.author}</td> \
+            <td>{{dataset.author}}</td> \
           </tr> \
           <tr> \
             <td>Maintainer</td> \
-            <td>${dataset.maintainer}</td> \
+            <td>{{dataset.maintainer}}</td> \
           </tr> \
-          {{each dataset.extras}} \
+          {{#dataset.extras}} \
           <tr> \
-            <td class="package-label" property="rdfs:label">${$index}</td> \
-            <td class="package-details" property="rdf:value">${$value}</td> \
+            <td class="package-label" property="rdfs:label">{{.}}</td> \
+            <td class="package-details" property="rdf:value">{{.}}</td> \
           </tr> \
-          {{/each}} \
+          {{/dataset.extras}} \
         </tbody> \
       </table> \
     </div> \
@@ -95,21 +91,21 @@ CKAN.View = CKAN.View || {};
     <li class="widget-container widget_text"> \
       <h3>Connections</h3> \
       <ul> \
-        {{each dataset.relationships}} \
+        {{#dataset.relationships}} \
         <li> \
-          ${$value.type} dataset \
-          <a href="#dataset/${$value.object}/view">${$value.object}</a> \
-          {{if $value.comment}} \
+          {{type}} dataset \
+          <a href="#dataset/{{object}}/view">{{object}}</a> \
+          {{#comment}} \
           <span class="relationship_comment"> \
-            (${$value.comment}) \
+            ({{comment}}) \
           </span> \
-          {{/if}} \
+          {{/comment}} \
         </li> \
-        {{/each}} \
+        {{/dataset.relationships}} \
       </ul> \
-      {{if dataset.relationships.length == 0}} \
+      {{^dataset.relationships}} \
       No connections to other datasets. \
-      {{/if}} \
+      {{/dataset.relationships}} \
     </li> \
 ',
     initialize: function() {
@@ -151,8 +147,8 @@ CKAN.View = CKAN.View || {};
         dataset: this.model.toTemplateJSON(),
       };
       $('.page-heading').html(tmplData.dataset.displaytitle);
-      $('#sidebar .widget-list').html($.tmpl(this.templateSidebar, tmplData));
-      this.el.html($.tmpl(this.template, tmplData));
+      $('#sidebar .widget-list').html(Mustache.render(this.templateSidebar, tmplData));
+      this.el.html(Mustache.render(this.template, tmplData));
       this.setupEditable();
       return this;
     },

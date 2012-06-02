@@ -39,7 +39,7 @@ CKAN.View = CKAN.View || {};
       this.el.empty();
       tmplData = {
       }
-      var tmpl = $.tmpl(this.template, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       this.el.html(tmpl);
       this.$messages = this.el.find('.messages');
       this.setupFileUpload();
@@ -104,10 +104,10 @@ CKAN.View = CKAN.View || {};
         async: false,
         success: function(data) {
           self.el.find('form').attr('action', data.action);
-          _tmpl = '<input type="hidden" name="${name}" value="${value}" />';
+          _tmpl = '<input type="hidden" name="{{name}}" value="{{value}}" />';
           var $hidden = $(self.el.find('form div.hidden-inputs')[0]);
           $.each(data.fields, function(idx, item) {
-            $hidden.append($.tmpl(_tmpl, item));
+            $hidden.append(Mustache.render(_tmpl, item));
           });
           self.hideMessage();
         },
