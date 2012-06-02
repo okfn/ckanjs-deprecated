@@ -3,6 +3,24 @@ CKAN.View = CKAN.View || {};
 
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.ResourceCreate = Backbone.View.extend({
+    template: ' \
+  <div class="resource-create"> \
+    <table> \
+      <tr class="heading"> \
+        <td> \
+          <h3>Link to data already online</h3> \
+        </td> \
+        <td><h3>or</h3></td> \
+        <td><h3>Upload data</h3></td> \
+      </tr> \
+      <tr> \
+        <td class="edit"></td> \
+        <td class="separator"></td> \
+        <td class="upload"></td> \
+      </tr> \
+    </table> \
+  </div> \
+',
     initialize: function() {
       this.el = $(this.el);
       _.bindAll(this, 'renderMain');
@@ -25,7 +43,7 @@ CKAN.View = CKAN.View || {};
       this.el.empty();
       tmplData = {
       };
-      var tmpl = $.tmpl(CKAN.Templates.resourceCreate, tmplData);
+      var tmpl = $.tmpl(this.template, tmplData);
       this.el.html(tmpl);
       return this;
     },

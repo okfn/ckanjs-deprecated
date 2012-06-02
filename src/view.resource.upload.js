@@ -4,6 +4,25 @@ CKAN.View = CKAN.View || {};
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.ResourceUpload = Backbone.View.extend({
     tagName: 'div',
+    template: ' \
+<div class="fileupload"> \
+  <form action="http://test-ckan-net-storage.commondatastorage.googleapis.com/" class="resource-upload" \
+    enctype="multipart/form-data" \
+    method="POST"> \
+ \
+    <div class="fileupload-buttonbar"> \
+      <div class="hidden-inputs"></div> \
+      <label class="fileinput-button"> \
+        File \
+      </label> \
+      <input type="file" name="file" /> \
+      <span class="fileinfo"></span> \
+      <input type="submit" value="upload" /> \
+    </div> \
+  </form> \
+  <div class="messages" style="display: none;"></div> \
+</div> \
+',
 
     // expects a client arguments in its options
     initialize: function(options) {
@@ -20,7 +39,7 @@ CKAN.View = CKAN.View || {};
       this.el.empty();
       tmplData = {
       }
-      var tmpl = $.tmpl(CKAN.Templates.resourceUpload, tmplData);
+      var tmpl = $.tmpl(this.template, tmplData);
       this.el.html(tmpl);
       this.$messages = this.el.find('.messages');
       this.setupFileUpload();
