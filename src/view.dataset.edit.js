@@ -15,9 +15,6 @@ CKAN.View = CKAN.View || {};
       }
       var tmpl = $.tmpl(CKAN.Templates.datasetForm, tmplData);
       $(this.el).html(tmpl);
-      if (tmplData.dataset.id) { // edit not add
-        $('#minornavigation').html($.tmpl(CKAN.Templates.minorNavigationDataset, tmplData));
-      }
       return this;
     },
 

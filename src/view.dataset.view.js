@@ -43,7 +43,6 @@ CKAN.View = CKAN.View || {};
         dataset: this.model.toTemplateJSON(),
       };
       $('.page-heading').html(tmplData.dataset.displaytitle);
-      $('#minornavigation').html($.tmpl(CKAN.Templates.minorNavigationDataset, tmplData));
       $('#sidebar .widget-list').html($.tmpl(CKAN.Templates.sidebarDatasetView, tmplData));
       this.el.html($.tmpl(CKAN.Templates.datasetView, tmplData));
       this.setupEditable();
