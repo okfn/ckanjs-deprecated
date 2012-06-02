@@ -1,5 +1,5 @@
-this.CKAN || (this.CKAN = {});
-this.CKAN.View || (this.CKAN.View = {});
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
 
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.ResourceCreate = Backbone.View.extend({
