@@ -215,6 +215,25 @@ test(".toJSON()", function () {
   }, 'Expected a "package_id" key to have been set');
 });
 
+// ========================================================
+
+module("Model.Group");
+
+test("new Model.Group()", function () {
+  var indata = {
+    title: 'My Group',
+    description: '## Xyz',
+    datasets: ['abc', 'efg']
+  };
+  var pkg = new CKAN.Model.Group(indata);
+
+  equals(pkg.get('title'), indata.title);
+  var out = pkg.toJSON();
+  equals(out.description, '## Xyz');
+});
+
+// ========================================================
+
 module("Model.SearchCollection");
 
 test('new Model.SearchCollection()', function () {

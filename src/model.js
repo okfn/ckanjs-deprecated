@@ -305,6 +305,15 @@ CKAN.Model = function ($, _, Backbone, undefined) {
     validate: validator('object', 'subject', 'type')
   });
 
+  // A model for working with relationship objects. These are currently just the
+  // realtionship objects returned by the server wrapped in a `Base` model
+  // instance. Currently there is no save or delete functionality.
+  Model.Group = Model.Base.extend({
+    constructor: function Group() {
+      Model.Base.prototype.constructor.apply(this, arguments);
+    }
+  });
+
   // Collection for managing results from the CKAN search API. An additional
   // `options.total` parameter can be provided on initialisation to
   // indicate how many models there are on the server in total. This can
