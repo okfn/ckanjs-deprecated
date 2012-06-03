@@ -533,412 +533,6 @@ CKAN.Model = function ($, _, Backbone, undefined) {
 }(this.jQuery, this._, this.Backbone);
 var CKAN = CKAN || {};
 
-CKAN.Templates = {
-  minorNavigationDataset: ' \
-    <ul class="tabbed"> \
-      <li><a href="#dataset/${dataset.id}/view">View</a></li> \
-      <li><a href="#dataset/${dataset.id}/edit">Edit</a></li> \
-    </ul> \
-    '
-};
-var CKAN = CKAN || {};
-
-CKAN.View = function($) {
-  var my = {};
-
-  // Flash a notification message
-  // 
-  // Parameters: msg, type. type is set as class on notification and should be one of success, error.
-  // If type not defined defaults to success
-  my.flash = function(msg, type) {
-    if (type === undefined) {
-      var type = 'success'
-    }
-    $.event.trigger('notification', [msg, type]);
-  };
-
-  my.NotificationView = Backbone.View.extend({
-    initialize: function() {
-      $.template('notificationTemplate',
-          '<div class="flash-banner ${type}">${message} <button>X</button></div>');
-
-      var self = this;
-      $(document).bind('notification', function(e, msg, type) {
-        self.render(msg, type)
-      });
-    },
-
-    events: {
-      'click .flash-banner button': 'hide'
-    },
-
-    render: function(msg, type) {
-      var _out = $.tmpl('notificationTemplate', {'message': msg, 'type': type})
-      this.el.html(_out);
-      this.el.slideDown(400);
-    },
-
-    hide: function() {
-      this.el.slideUp(200);
-    }
-  });
-
-  my.ConfigView = Backbone.View.extend({
-    initialize: function() {
-      this.cfg = {};
-      this.$ckanUrl = this.el.find('input[name=ckan-url]');
-      this.$apikey = this.el.find('input[name=ckan-api-key]');
-
-      var cfg = this.options.config;
-      this.$ckanUrl.val(cfg.endpoint);
-      this.$apikey.val(cfg.apiKey);
-    },
-
-    events: {
-      'submit #config-form': 'updateConfig'
-    },
-
-    updateConfig: function(e) {
-      e.preventDefault();
-      this.saveConfig();
-      CKAN.View.flash('Saved configuration');
-    },
-
-    saveConfig: function() {
-      this.cfg = {
-        'endpoint': this.$ckanUrl.val(),
-        'apiKey': this.$apikey.val()
-      };
-      $.event.trigger('config:update', this.cfg);
-    }
-  });
-
-  my.DatasetEditView = Backbone.View.extend({
-    initialize: function() {
-      _.bindAll(this, 'saveData', 'render');
-      this.model.bind('change', this.render);
-    },
-
-    render: function() {
-      tmplData = {
-        dataset: this.model.toTemplateJSON()
-      }
-      var tmpl = $.tmpl(CKAN.Templates.datasetForm, tmplData);
-      $(this.el).html(tmpl);
-      if (tmplData.dataset.id) { // edit not add
-        $('#minornavigation').html($.tmpl(CKAN.Templates.minorNavigationDataset, tmplData));
-      }
-      return this;
-    },
-
-    events: {
-      'submit form.dataset': 'saveData',
-      'click .previewable-textarea a': 'togglePreview',
-      'click .dataset-form-navigation a': 'showFormPart'
-    },
-
-    showFormPart: function(e) {
-      e.preventDefault();
-      var action = $(e.target)[0].href.split('#')[1];
-      $('.dataset-form-navigation a').removeClass('selected');
-      $('.dataset-form-navigation a[href=#' + action + ']').addClass('selected');
-    },
-
-    saveData: function(e) {
-      e.preventDefault();
-      this.model.set(this.getData());
-      this.model.save({}, {
-        success: function(model) {
-          CKAN.View.flash('Saved dataset');
-          window.location.hash = '#dataset/' + model.id + '/view';
-        },
-        error: function(model, error) {
-          CKAN.View.flash('Error saving dataset ' + error.responseText, 'error');
-        }
-      });
-    },
-
-    getData: function() {
-      var _data = $(this.el).find('form.dataset').serializeArray();
-      modelData = {};
-      $.each(_data, function(idx, value) {
-        modelData[value.name.split('--')[1]] = value.value
-      });
-      return modelData;
-    },
-
-    togglePreview: function(e) {
-      // set model data as we use it below for notesHtml
-      this.model.set(this.getData());
-      e.preventDefault();
-      var el = $(e.target);
-      var action = el.attr('action');
-      var div = el.closest('.previewable-textarea');
-      div.find('.tabs a').removeClass('selected');
-      div.find('.tabs a[action='+action+']').addClass('selected');
-      var textarea = div.find('textarea');
-      var preview = div.find('.preview');
-      if (action=='preview') {
-        preview.html(this.model.toTemplateJSON().notesHtml);
-        textarea.hide();
-        preview.show();
-      } else {
-        textarea.show();
-        preview.hide();
-      }
-      return false;
-    }
-
-  });
-
-  my.DatasetFullView = Backbone.View.extend({
-    initialize: function() {
-      _.bindAll(this, 'render');
-      this.model.bind('change', this.render);
-
-      // slightly painful but we have to set this up here so
-      // it has access to self because when called this will
-      // be overridden and refer to the element in dom that
-      // was being saved
-      var self = this;
-      this.saveFromEditable = function(value, settings) {
-        var _attribute = $(this).attr('backbone-attribute');
-        var _data = {};
-        _data[_attribute] = value;
-        self.model.set(_data);
-        self.model.save({}, {
-          success: function(model) {
-            CKAN.View.flash('Saved updated notes');
-          },
-          error: function(model, error) {
-            CKAN.View.flash('Error saving notes ' + error.responseText, 'error');
-          }
-        });
-        // do not worry too much about what we return here
-        // because update of model will automatically lead to
-        // re-render
-        return value;
-      };
-    },
-
-    events: {
-      'click .action-add-resource': 'showResourceAdd'
-    },
-
-    render: function() {
-      var tmplData = {
-        domain: this.options.domain,
-        dataset: this.model.toTemplateJSON(),
-      };
-      $('.page-heading').html(tmplData.dataset.displaytitle);
-      $('#minornavigation').html($.tmpl(CKAN.Templates.minorNavigationDataset, tmplData));
-      $('#sidebar .widget-list').html($.tmpl(CKAN.Templates.sidebarDatasetView, tmplData));
-      this.el.html($.tmpl(CKAN.Templates.datasetView, tmplData));
-      this.setupEditable();
-      return this;
-    },
-
-    setupEditable: function() {
-      var self = this;
-      this.el.find('.editable-area').editable(
-        self.saveFromEditable, {
-          type      : 'textarea',
-          cancel    : 'Cancel',
-          submit    : 'OK',
-          tooltip   : 'Click to edit...',
-          onblur    : 'ignore',
-          data      : function(value, settings) {
-            var _attribute = $(this).attr('backbone-attribute');
-            return self.model.get(_attribute);
-          }
-        }
-      );
-    },
-
-    showResourceAdd: function(e) {
-      var self = this;
-      e.preventDefault();
-      var $el = $('<div />').addClass('resource-add-dialog');
-      $('body').append($el);
-      var resource = new CKAN.Model.Resource({
-          'dataset': self.model
-          });
-      function handleNewResourceSave(model) {
-        var res = self.model.get('resources');
-        res.add(model);
-        $el.dialog('close');
-        self.model.save({}, {
-          success: function(model) {
-            CKAN.View.flash('Saved dataset');
-            // TODO: no need to re-render (should happen automatically)
-            self.render();
-          }
-          , error: function(model, error) {
-            CKAN.View.flash('Failed to save: ' + error, 'error');
-          }
-        });
-      }
-      resource.bind('change', handleNewResourceSave);
-      var resourceView = new CKAN.View.ResourceCreate({
-        el: $el,
-        model: resource
-      });
-      resourceView.render();
-      dialogOptions = {
-        autoOpen: false,
-        // does not seem to work for width ...
-        position: ['center', 'center'],
-        buttons: [],
-        width:  660,
-        resize: 'auto',
-        modal: false,
-        draggable: true,
-        resizable: true
-      };
-      dialogOptions.title = 'Add Data (File, API, ...)';
-      $el.dialog(dialogOptions);
-      $el.dialog('open');
-      $el.bind("dialogbeforeclose", function () {
-        self.el.find('.resource-add-dialog').remove();
-      });
-    }
-  });
-
-  my.DatasetSearchView = Backbone.View.extend({
-    events: {
-      'submit #search-form': 'onSearch'
-    },
-
-    initialize: function(options) {
-      var view = this;
-
-      // Temporarily provide the view with access to the client for searching.
-      this.client = options.client;
-      this.$results = this.el.find('.results');
-      this.$datasetList = this.$results.find('.datasets');
-      this.$dialog = this.el.find('.dialog');
-
-      this.resultView = new CKAN.View.DatasetListing({
-        collection: new Backbone.Collection(),
-        el: this.$datasetList
-      });
-
-      _.bindAll(this, "render");
-    },
-
-    render: function() {
-      this.$('.count').html(this.totalResults);
-      this.hideSpinner();
-      this.$results.show();
-      return this;
-    },
-
-    onSearch: function (event) {
-      event.preventDefault();
-      var q = $(this.el).find('input.search').val();
-      this.doSearch(q);
-    },
-
-    doSearch: function (q) {
-      $(this.el).find('input.search').val(q),
-          self = this;
-
-      this.showSpinner();
-      this.$results.hide();
-      this.$results.find('.datasets').empty();
-      this.client.searchDatasets({
-        query: {q:q},
-        success: function (collection) {
-          self.totalResults = collection.total;
-          self.resultView.setCollection(collection);
-          self.render();
-        }
-      });
-    },
-
-    showSpinner: function() {
-      this.$dialog.empty();
-      this.$dialog.html('<h2>Loading results...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
-      this.$dialog.show();
-    },
-
-    hideSpinner: function() {
-      this.$dialog.empty().hide();
-    }
-  });
-
-  my.ResourceView = Backbone.View.extend({
-    render: function() {
-      var resourceData = this.model.toTemplateJSON();
-      var resourceDetails = {};
-      var exclude = [ 'resource_group_id',
-        'description',
-        'url',
-        'position',
-        'id',
-        'webstore',
-        'qa',
-        'dataset',
-        'displaytitle'
-        ];
-      $.each(resourceData, function(key, value) {
-        if (! _.contains(exclude, key)) {
-          resourceDetails[key] = value;
-        }
-      });
-      tmplData = {
-        dataset: this.model.get('dataset').toTemplateJSON(),
-        resource: resourceData,
-        resourceDetails: resourceDetails
-      };
-      $('.page-heading').html(tmplData.dataset.name + ' / ' + tmplData.resource.displaytitle);
-      var tmpl = $.tmpl(CKAN.Templates.resourceView, tmplData);
-      $(this.el).html(tmpl);
-      return this;
-    },
-
-    events: {
-    }
-  });
-
-  my.ResourceEditView = Backbone.View.extend({
-    render: function() {
-      var tmpl = $.tmpl(CKAN.Templates.resourceForm, this.model.toJSON());
-      $(this.el).html(tmpl);
-      return this;
-    },
-
-    events: {
-      'submit form': 'saveData'
-    },
-
-    saveData: function() {
-      // only set rather than save as can only save resources as part of a dataset atm
-      this.model.set(this.getData(), {
-        error: function(model, error) {
-          var msg = 'Failed to save, possibly due to invalid data ';
-          msg += JSON.stringify(error);
-          alert(msg);
-        }
-      });
-      return false;
-    },
-
-    getData: function() {
-      var _data = $(this.el).find('form.resource').serializeArray();
-      modelData = {};
-      $.each(_data, function(idx, value) {
-        modelData[value.name.split('--')[1]] = value.value
-      });
-      return modelData;
-    }
-
-  });
-
-  return my;
-}(jQuery);
-var CKAN = CKAN || {};
-
 CKAN.UI = function($) {
   var my = {};
 
@@ -1109,7 +703,50 @@ CKAN.UI = function($) {
   return my;
 }(jQuery);
 
-CKAN.Templates.datasetForm = ' \
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.ConfigView = Backbone.View.extend({
+    initialize: function() {
+      this.cfg = {};
+      this.$ckanUrl = this.el.find('input[name=ckan-url]');
+      this.$apikey = this.el.find('input[name=ckan-api-key]');
+
+      var cfg = this.options.config;
+      this.$ckanUrl.val(cfg.endpoint);
+      this.$apikey.val(cfg.apiKey);
+    },
+
+    events: {
+      'submit #config-form': 'updateConfig'
+    },
+
+    updateConfig: function(e) {
+      e.preventDefault();
+      this.saveConfig();
+      CKAN.View.flash('Saved configuration');
+    },
+
+    saveConfig: function() {
+      this.cfg = {
+        'endpoint': this.$ckanUrl.val(),
+        'apiKey': this.$apikey.val()
+      };
+      $.event.trigger('config:update', this.cfg);
+    }
+  });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.DatasetEditView = Backbone.View.extend({
+    template: ' \
   <form class="dataset" action="" method="POST"> \
     <dl> \
       <dt> \
@@ -1118,7 +755,7 @@ CKAN.Templates.datasetForm = ' \
         </label> \
       </dt> \
       <dd> \
-        <input id="Dataset--title" name="Dataset--title" type="text" value="${dataset.title}" placeholder="A title (not a description) ..."/> \
+        <input id="Dataset--title" name="Dataset--title" type="text" value="{{dataset.title}}" placeholder="A title (not a description) ..."/> \
       </dd> \
  \
       <dt> \
@@ -1130,7 +767,7 @@ CKAN.Templates.datasetForm = ' \
         </label> \
       </dt> \
       <dd> \
-        <input id="Dataset--name" maxlength="100" name="Dataset--name" type="text" value="${dataset.name}" placeholder="A shortish name usable in urls ..." /> \
+        <input id="Dataset--name" maxlength="100" name="Dataset--name" type="text" value="{{dataset.name}}" placeholder="A shortish name usable in urls ..." /> \
       </dd> \
  \
       <dt> \
@@ -1159,7 +796,7 @@ CKAN.Templates.datasetForm = ' \
             <li><a href="#" action="write" class="selected">Write</a></li> \
             <li><a href="#" action="preview">Preview</a></li> \
           </ul> \
-          <textarea id="Dataset--notes" name="Dataset--notes" placeholder="Start with a summary sentence ...">${dataset.notes}</textarea> \
+          <textarea id="Dataset--notes" name="Dataset--notes" placeholder="Start with a summary sentence ...">{{dataset.notes}}</textarea> \
           <div id="Dataset--notes-preview" class="preview" style="display: none;"> \
           <div> \
         </div> \
@@ -1170,260 +807,85 @@ CKAN.Templates.datasetForm = ' \
       <input id="save" name="save" type="submit" value="Save" /> \
     </div> \
   </form> \
-';
+',
+    initialize: function() {
+      _.bindAll(this, 'saveData', 'render');
+      this.model.bind('change', this.render);
+    },
 
-CKAN.Templates.datasetFormSidebar = ' \
-  <div class="dataset-form-navigation"> \
-    <ul> \
-      <li> \
-        <a href="#basics" class="selected">Basics</a> \
-      </li> \
-      <li> \
-        <a href="#data">The Data</a> \
-      </li> \
-      <li> \
-        <a href="#additional"> \
-          Additional Information \
-        </a> \
-      </li> \
-    </ul> \
-  </div> \
-';
-CKAN.Templates.datasetView = ' \
-  <div class="dataset view" dataset-id="${dataset.id}"> \
-    <div class="extract"> \
-      ${dataset.snippet} \
-      {{if dataset.snippet.length > 50}} \
-      <a href="#anchor-notes">Read more</a> \
-      {{/if}} \
-    </div> \
-    <div class="tags"> \
-      {{if dataset.tags.length}} \
-      <ul class="dataset-tags"> \
-        {{each dataset.tags}} \
-          <li>${$value}</li> \
-        {{/each}} \
-      </ul> \
-      {{/if}} \
-    </div> \
-    <div class="resources subsection"> \
-      <h3>Resources</h3> \
-      <table> \
-        <tr> \
-          <th>Description</th> \
-          <th>Format</th> \
-          <th>Actions</th> \
-        </tr> \
-        {{each dataset.resources}} \
-        <tr> \
-          <td> \
-            <a href="#dataset/${dataset.id}/resource/${$value.id}"> \
-            {{if $value.description}} \
-            ${$value.description} \
-            {{else}} \
-            (No description) \
-            {{/if}} \
-            </a> \
-          </td> \
-          <td>${$value.format}</td> \
-          <td><a href="${$value.url}" target="_blank" class="resource-download">Download</a> \
-        </tr> \
-        {{/each}} \
-        {{if !dataset.resources.length }} \
-        <tr><td>No resources.</td><td></td></tr> \
-        {{/if}} \
-      </table> \
-      <div class="add-resource"> \
-        <a href="#" class="action-add-resource">Add a resource</a> \
-      </div> \
-    </div> \
-    <div class="notes subsection"> \
-      <h3 id="anchor-notes">Notes</h3> \
-      <div class="notes-body editable-area" backbone-attribute="notes"> \
-        {{html dataset.notesHtml}} \
-        {{if !dataset.notes || dataset.notes.length === 0}} \
-        <em>No notes yet. Click to add some ...</em> \
-        {{/if}} \
-      </div> \
-    </div> \
-    <div class="details subsection"> \
-      <h3>Additional Information</h3> \
-      <table> \
-        <thead> \
-          <tr> \
-            <th>Field</th> \
-            <th>Value</th> \
-          </tr> \
-        </thead> \
-        <tbody> \
-          <tr> \
-            <td>Creator</td> \
-            <td>${dataset.author}</td> \
-          </tr> \
-          <tr> \
-            <td>Maintainer</td> \
-            <td>${dataset.maintainer}</td> \
-          </tr> \
-          {{each dataset.extras}} \
-          <tr> \
-            <td class="package-label" property="rdfs:label">${$index}</td> \
-            <td class="package-details" property="rdf:value">${$value}</td> \
-          </tr> \
-          {{/each}} \
-        </tbody> \
-      </table> \
-    </div> \
-  </div> \
-';
+    render: function() {
+      tmplData = {
+        dataset: this.model.toTemplateJSON()
+      }
+      var tmpl = Mustache.render(this.template, tmplData);
+      $(this.el).html(tmpl);
+      return this;
+    },
 
-CKAN.Templates.sidebarDatasetView = ' \
-    <li class="widget-container widget_text"> \
-      <h3>Connections</h3> \
-      <ul> \
-        {{each dataset.relationships}} \
-        <li> \
-          ${$value.type} dataset \
-          <a href="#dataset/${$value.object}/view">${$value.object}</a> \
-          {{if $value.comment}} \
-          <span class="relationship_comment"> \
-            (${$value.comment}) \
-          </span> \
-          {{/if}} \
-        </li> \
-        {{/each}} \
-      </ul> \
-      {{if dataset.relationships.length == 0}} \
-      No connections to other datasets. \
-      {{/if}} \
-    </li> \
-';
-CKAN.Templates.resourceForm = ' \
-  <form class="resource" action="" method="POST"> \
-    <dl> \
-      <dt> \
-        <label class="field_opt" for="Resource--url"> \
-          Link \
-        </label> \
-      </dt> \
-      <dd> \
-        <input id="Resource--url" name="Resource--url" type="text" value="${url}" placeholder="http://mydataset.com/file.csv" /> \
-      </dd> \
-      <dt> \
-        <label class="field_opt" for="Resource--type"> \
-          Kind \
-        </label> \
-      </dt> \
-      <dd> \
-        <select id="Resource--type" name="Resource--type"> \
-          <option selected="selected" value="file">File</option> \
-          <option value="api">API</option> \
-          <option value="listing">Listing</option> \
-          <option value="example">Example</option> \
-        </select> \
-      </dd> \
-    </dl> \
- \
-  <fieldset> \
-    <legend> \
-      <h3>Optional Info</h3> \
-    </legend> \
-    <dl> \
-      <dt> \
-        <label class="field_opt" for="Resource--description"> \
-          Description \
-        </label> \
-      </dt> \
-      <dd> \
-        <input id="Resource--description" name="Resource--description" type="text" value="${description}" placeholder="A short description ..."/> \
-      </dd> \
- \
- \
-      <dt> \
-        <label class="field_opt" for="Resource--format"> \
-          Format \
-        </label> \
-      </dt> \
-      <dd> \
-        <input id="Resource--format" name="Resource--format" type="text" value="${format}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/> \
-      </dd> \
-    </fieldset> \
- \
-    <div class="submit"> \
-      <input id="save" name="save" type="submit" value="Save" /> \
-    </div> \
-  </form> \
-';
+    events: {
+      'submit form.dataset': 'saveData',
+      'click .previewable-textarea a': 'togglePreview',
+      'click .dataset-form-navigation a': 'showFormPart'
+    },
 
-CKAN.Templates.resourceCreate = ' \
-  <div class="resource-create"> \
-    <table> \
-      <tr class="heading"> \
-        <td> \
-          <h3>Link to data already online</h3> \
-        </td> \
-        <td><h3>or</h3></td> \
-        <td><h3>Upload data</h3></td> \
-      </tr> \
-      <tr> \
-        <td class="edit"></td> \
-        <td class="separator"></td> \
-        <td class="upload"></td> \
-      </tr> \
-    </table> \
-  </div> \
-';
-CKAN.Templates.resourceUpload = ' \
-<div class="fileupload"> \
-  <form action="http://test-ckan-net-storage.commondatastorage.googleapis.com/" class="resource-upload" \
-    enctype="multipart/form-data" \
-    method="POST"> \
- \
-    <div class="fileupload-buttonbar"> \
-      <div class="hidden-inputs"></div> \
-      <label class="fileinput-button"> \
-        File \
-      </label> \
-      <input type="file" name="file" /> \
-      <span class="fileinfo"></span> \
-      <input type="submit" value="upload" /> \
-    </div> \
-  </form> \
-  <div class="messages" style="display: none;"></div> \
-</div> \
-';
+    showFormPart: function(e) {
+      e.preventDefault();
+      var action = $(e.target)[0].href.split('#')[1];
+      $('.dataset-form-navigation a').removeClass('selected');
+      $('.dataset-form-navigation a[href=#' + action + ']').addClass('selected');
+    },
 
-CKAN.Templates.resourceView = ' \
-  <div class="resource view" resource-id="${resource.id}"> \
-    <h3> \
-      <a href="${resource.url}" class="url">${resource.url}</a> [${resource.format}] \
-    </h3> \
-    <div class="description"> \
-      ${resource.description} \
-    </div> \
-    \
-    <div class="details subsection"> \
-      <h3>Additional Information</h3> \
-      <table> \
-        <thead> \
-          <tr> \
-            <th>Field</th> \
-            <th>Value</th> \
-          </tr> \
-        </thead> \
-        <tbody> \
-          {{each resourceDetails}} \
-          <tr> \
-            <td class="label">${$index}</td> \
-            <td class="value">${$value}</td> \
-          </tr> \
-          {{/each}} \
-        </tbody> \
-      </table> \
-    </div> \
-  </div> \
-';
-this.CKAN || (this.CKAN = {});
-this.CKAN.View || (this.CKAN.View = {});
+    saveData: function(e) {
+      e.preventDefault();
+      this.model.set(this.getData());
+      this.model.save({}, {
+        success: function(model) {
+          CKAN.View.flash('Saved dataset');
+          window.location.hash = '#dataset/' + model.id + '/view';
+        },
+        error: function(model, error) {
+          CKAN.View.flash('Error saving dataset ' + error.responseText, 'error');
+        }
+      });
+    },
+
+    getData: function() {
+      var _data = $(this.el).find('form.dataset').serializeArray();
+      modelData = {};
+      $.each(_data, function(idx, value) {
+        modelData[value.name.split('--')[1]] = value.value
+      });
+      return modelData;
+    },
+
+    togglePreview: function(e) {
+      // set model data as we use it below for notesHtml
+      this.model.set(this.getData());
+      e.preventDefault();
+      var el = $(e.target);
+      var action = el.attr('action');
+      var div = el.closest('.previewable-textarea');
+      div.find('.tabs a').removeClass('selected');
+      div.find('.tabs a[action='+action+']').addClass('selected');
+      var textarea = div.find('textarea');
+      var preview = div.find('.preview');
+      if (action=='preview') {
+        preview.html(this.model.toTemplateJSON().notesHtml);
+        textarea.hide();
+        preview.show();
+      } else {
+        textarea.show();
+        preview.hide();
+      }
+      return false;
+    }
+
+  });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
 
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.DatasetListing = Backbone.View.extend({
@@ -1492,29 +954,29 @@ this.CKAN.View || (this.CKAN.View = {});
       template: '\
         <div class="header"> \
           <span class="title" > \
-            <a href="${urls.datasetView}" ckan-attrname="title" class="editable">${displaytitle}</a> \
+            <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
           </span> \
           <div class="search_meta"> \
-            {{if formats.length > 0}} \
+            {{#formats}} \
             <ul class="dataset-formats"> \
-              {{each formats}} \
-                <li>${$value}</li> \
-              {{/each}} \
+              {{#formats}} \
+                <li>{{.}}</li> \
+              {{/formats}} \
             </ul> \
-            {{/if}} \
+            {{/formats}} \
           </div> \
         </div> \
         <div class="extract"> \
-          {{html snippet}} \
+          {{{snippet}}} \
         </div> \
         <div class="dataset-tags"> \
-          {{if tags.length}} \
+          {{#tags}} \
           <ul class="dataset-tags"> \
-            {{each tags}} \
-              <li>${$value}</li> \
-            {{/each}} \
+            {{#tags}} \
+              <li>{{.}}</li> \
+            {{/tags}} \
           </ul> \
-          {{/if}} \
+          {{/tags}} \
         </div> \
       '
     },
@@ -1538,7 +1000,7 @@ this.CKAN.View || (this.CKAN.View = {});
         formats: this._availableFormats(),
         urls: urls
       });
-      this.el.html($.tmpl(this.options.template, data));
+      this.el.html(Mustache.render(this.options.template, data));
       return this;
     },
 
@@ -1550,11 +1012,364 @@ this.CKAN.View || (this.CKAN.View = {});
     }
   });
 })(CKAN, $, _, Backbone, undefined);
-this.CKAN || (this.CKAN = {});
-this.CKAN.View || (this.CKAN.View = {});
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.DatasetSearchView = Backbone.View.extend({
+    events: {
+      'submit #search-form': 'onSearch'
+    },
+
+    initialize: function(options) {
+      var view = this;
+
+      // Temporarily provide the view with access to the client for searching.
+      this.client = options.client;
+      this.$results = this.el.find('.results');
+      this.$datasetList = this.$results.find('.datasets');
+      this.$dialog = this.el.find('.dialog');
+
+      this.resultView = new CKAN.View.DatasetListing({
+        collection: new Backbone.Collection(),
+        el: this.$datasetList
+      });
+
+      _.bindAll(this, "render");
+    },
+
+    render: function() {
+      this.$('.count').html(this.totalResults);
+      this.hideSpinner();
+      this.$results.show();
+      return this;
+    },
+
+    onSearch: function (event) {
+      event.preventDefault();
+      var q = $(this.el).find('input.search').val();
+      this.doSearch(q);
+    },
+
+    doSearch: function (q) {
+      $(this.el).find('input.search').val(q),
+          self = this;
+
+      this.showSpinner();
+      this.$results.hide();
+      this.$results.find('.datasets').empty();
+      this.client.searchDatasets({
+        query: {q:q},
+        success: function (collection) {
+          self.totalResults = collection.total;
+          self.resultView.setCollection(collection);
+          self.render();
+        }
+      });
+    },
+
+    showSpinner: function() {
+      this.$dialog.empty();
+      this.$dialog.html('<h2>Loading results...</h2><img src="http://assets.okfn.org/images/icons/ajaxload-circle.gif" />');
+      this.$dialog.show();
+    },
+
+    hideSpinner: function() {
+      this.$dialog.empty().hide();
+    }
+  });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.DatasetFullView = Backbone.View.extend({
+    template: ' \
+  <div class="dataset view" dataset-id="{{dataset.id}}"> \
+    <div class="extract"> \
+      {{dataset.snippet}} \
+    </div> \
+    <div class="tags"> \
+      {{#dataset.tags.length}} \
+      <ul class="dataset-tags"> \
+        {{#dataset.tags}} \
+          <li>{{.}}</li> \
+        {{/dataset.tags}} \
+      </ul> \
+      {{/dataset.tags.length}} \
+    </div> \
+    <div class="resources subsection"> \
+      <h3>Resources</h3> \
+      <table> \
+        <tr> \
+          <th>Description</th> \
+          <th>Format</th> \
+          <th>Actions</th> \
+        </tr> \
+        {{#dataset.resources}} \
+        <tr> \
+          <td> \
+            <a href="#dataset/{{dataset.id}}/resource/{{id}}"> \
+            {{description}} \
+            {{^description.length}} \
+            (No description) \
+            {{/description.length}} \
+            </a> \
+          </td> \
+          <td>{{format}}</td> \
+          <td><a href="{{url}}" target="_blank" class="resource-download">Download</a> \
+        </tr> \
+        {{/dataset.resources}} \
+        {{^dataset.resources}} \
+        <tr><td>No resources.</td><td></td></tr> \
+        {{/dataset.resources}} \
+      </table> \
+      <div class="add-resource"> \
+        <a href="#" class="action-add-resource">Add a resource</a> \
+      </div> \
+    </div> \
+    <div class="notes subsection"> \
+      <h3 id="anchor-notes">Notes</h3> \
+      <div class="notes-body editable-area" backbone-attribute="notes"> \
+        {{html dataset.notesHtml}} \
+        {{^dataset.notes}} \
+        <em>No notes yet. Click to add some ...</em> \
+        {{/dataset.notes}} \
+      </div> \
+    </div> \
+    <div class="details subsection"> \
+      <h3>Additional Information</h3> \
+      <table> \
+        <thead> \
+          <tr> \
+            <th>Field</th> \
+            <th>Value</th> \
+          </tr> \
+        </thead> \
+        <tbody> \
+          <tr> \
+            <td>Creator</td> \
+            <td>{{dataset.author}}</td> \
+          </tr> \
+          <tr> \
+            <td>Maintainer</td> \
+            <td>{{dataset.maintainer}}</td> \
+          </tr> \
+          {{#dataset.extras}} \
+          <tr> \
+            <td class="package-label" property="rdfs:label">{{.}}</td> \
+            <td class="package-details" property="rdf:value">{{.}}</td> \
+          </tr> \
+          {{/dataset.extras}} \
+        </tbody> \
+      </table> \
+    </div> \
+  </div> \
+',
+
+    templateSidebar: ' \
+    <li class="widget-container widget_text"> \
+      <h3>Connections</h3> \
+      <ul> \
+        {{#dataset.relationships}} \
+        <li> \
+          {{type}} dataset \
+          <a href="#dataset/{{object}}/view">{{object}}</a> \
+          {{#comment}} \
+          <span class="relationship_comment"> \
+            ({{comment}}) \
+          </span> \
+          {{/comment}} \
+        </li> \
+        {{/dataset.relationships}} \
+      </ul> \
+      {{^dataset.relationships}} \
+      No connections to other datasets. \
+      {{/dataset.relationships}} \
+    </li> \
+',
+    initialize: function() {
+      _.bindAll(this, 'render');
+      this.model.bind('change', this.render);
+
+      // slightly painful but we have to set this up here so
+      // it has access to self because when called this will
+      // be overridden and refer to the element in dom that
+      // was being saved
+      var self = this;
+      this.saveFromEditable = function(value, settings) {
+        var _attribute = $(this).attr('backbone-attribute');
+        var _data = {};
+        _data[_attribute] = value;
+        self.model.set(_data);
+        self.model.save({}, {
+          success: function(model) {
+            CKAN.View.flash('Saved updated notes');
+          },
+          error: function(model, error) {
+            CKAN.View.flash('Error saving notes ' + error.responseText, 'error');
+          }
+        });
+        // do not worry too much about what we return here
+        // because update of model will automatically lead to
+        // re-render
+        return value;
+      };
+    },
+
+    events: {
+      'click .action-add-resource': 'showResourceAdd'
+    },
+
+    render: function() {
+      var tmplData = {
+        domain: this.options.domain,
+        dataset: this.model.toTemplateJSON(),
+      };
+      $('.page-heading').html(tmplData.dataset.displaytitle);
+      $('#sidebar .widget-list').html(Mustache.render(this.templateSidebar, tmplData));
+      this.el.html(Mustache.render(this.template, tmplData));
+      this.setupEditable();
+      return this;
+    },
+
+    setupEditable: function() {
+      var self = this;
+      this.el.find('.editable-area').editable(
+        self.saveFromEditable, {
+          type      : 'textarea',
+          cancel    : 'Cancel',
+          submit    : 'OK',
+          tooltip   : 'Click to edit...',
+          onblur    : 'ignore',
+          data      : function(value, settings) {
+            var _attribute = $(this).attr('backbone-attribute');
+            return self.model.get(_attribute);
+          }
+        }
+      );
+    },
+
+    showResourceAdd: function(e) {
+      var self = this;
+      e.preventDefault();
+      var $el = $('<div />').addClass('resource-add-dialog');
+      $('body').append($el);
+      var resource = new CKAN.Model.Resource({
+          'dataset': self.model
+          });
+      function handleNewResourceSave(model) {
+        var res = self.model.get('resources');
+        res.add(model);
+        $el.dialog('close');
+        self.model.save({}, {
+          success: function(model) {
+            CKAN.View.flash('Saved dataset');
+            // TODO: no need to re-render (should happen automatically)
+            self.render();
+          }
+          , error: function(model, error) {
+            CKAN.View.flash('Failed to save: ' + error, 'error');
+          }
+        });
+      }
+      resource.bind('change', handleNewResourceSave);
+      var resourceView = new CKAN.View.ResourceCreate({
+        el: $el,
+        model: resource
+      });
+      resourceView.render();
+      dialogOptions = {
+        autoOpen: false,
+        // does not seem to work for width ...
+        position: ['center', 'center'],
+        buttons: [],
+        width:  660,
+        resize: 'auto',
+        modal: false,
+        draggable: true,
+        resizable: true
+      };
+      dialogOptions.title = 'Add Data (File, API, ...)';
+      $el.dialog(dialogOptions);
+      $el.dialog('open');
+      $el.bind("dialogbeforeclose", function () {
+        self.el.find('.resource-add-dialog').remove();
+      });
+    }
+  });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+  // Flash a notification message
+  // 
+  // Parameters: msg, type. type is set as class on notification and should be one of success, error.
+  // If type not defined defaults to success
+  my.flash = function(msg, type) {
+    if (type === undefined) {
+      var type = 'success'
+    }
+    $.event.trigger('notification', [msg, type]);
+  };
+
+  my.NotificationView = Backbone.View.extend({
+    template: '<div class="flash-banner {{type}}">{{message}} <button>X</button></div>',
+    initialize: function() {
+      var self = this;
+      $(document).bind('notification', function(e, msg, type) {
+        self.render(msg, type)
+      });
+    },
+
+    events: {
+      'click .flash-banner button': 'hide'
+    },
+
+    render: function(msg, type) {
+      var _out = Mustache.render(this.template, {'message': msg, 'type': type})
+      this.el.html(_out);
+      this.el.slideDown(400);
+    },
+
+    hide: function() {
+      this.el.slideUp(200);
+    }
+  });
+
+  return my;
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
 
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.ResourceCreate = Backbone.View.extend({
+    template: ' \
+  <div class="resource-create"> \
+    <table> \
+      <tr class="heading"> \
+        <td> \
+          <h3>Link to data already online</h3> \
+        </td> \
+        <td><h3>or</h3></td> \
+        <td><h3>Upload data</h3></td> \
+      </tr> \
+      <tr> \
+        <td class="edit"></td> \
+        <td class="separator"></td> \
+        <td class="upload"></td> \
+      </tr> \
+    </table> \
+  </div> \
+',
     initialize: function() {
       this.el = $(this.el);
       _.bindAll(this, 'renderMain');
@@ -1577,7 +1392,7 @@ this.CKAN.View || (this.CKAN.View = {});
       this.el.empty();
       tmplData = {
       };
-      var tmpl = $.tmpl(CKAN.Templates.resourceCreate, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       this.el.html(tmpl);
       return this;
     },
@@ -1590,12 +1405,128 @@ this.CKAN.View || (this.CKAN.View = {});
 
 })(CKAN, $, _, Backbone, undefined);
 
-this.CKAN || (this.CKAN = {});
-this.CKAN.View || (this.CKAN.View = {});
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.ResourceEditView = Backbone.View.extend({
+    template: ' \
+  <form class="resource" action="" method="POST"> \
+    <dl> \
+      <dt> \
+        <label class="field_opt" for="Resource--url"> \
+          Link \
+        </label> \
+      </dt> \
+      <dd> \
+        <input id="Resource--url" name="Resource--url" type="text" value="{{url}}" placeholder="http://mydataset.com/file.csv" /> \
+      </dd> \
+      <dt> \
+        <label class="field_opt" for="Resource--type"> \
+          Kind \
+        </label> \
+      </dt> \
+      <dd> \
+        <select id="Resource--type" name="Resource--type"> \
+          <option selected="selected" value="file">File</option> \
+          <option value="api">API</option> \
+          <option value="listing">Listing</option> \
+          <option value="example">Example</option> \
+        </select> \
+      </dd> \
+    </dl> \
+ \
+  <fieldset> \
+    <legend> \
+      <h3>Optional Info</h3> \
+    </legend> \
+    <dl> \
+      <dt> \
+        <label class="field_opt" for="Resource--description"> \
+          Description \
+        </label> \
+      </dt> \
+      <dd> \
+        <input id="Resource--description" name="Resource--description" type="text" value="{{description}}" placeholder="A short description ..."/> \
+      </dd> \
+ \
+ \
+      <dt> \
+        <label class="field_opt" for="Resource--format"> \
+          Format \
+        </label> \
+      </dt> \
+      <dd> \
+        <input id="Resource--format" name="Resource--format" type="text" value="{{format}}" placeholder="e.g. csv, zip:csv (zipped csv), sparql"/> \
+      </dd> \
+    </fieldset> \
+ \
+    <div class="submit"> \
+      <input id="save" name="save" type="submit" value="Save" /> \
+    </div> \
+  </form> \
+',
+    render: function() {
+      var tmpl = Mustache.render(this.template, this.model.toJSON());
+      $(this.el).html(tmpl);
+      return this;
+    },
+
+    events: {
+      'submit form': 'saveData'
+    },
+
+    saveData: function() {
+      // only set rather than save as can only save resources as part of a dataset atm
+      this.model.set(this.getData(), {
+        error: function(model, error) {
+          var msg = 'Failed to save, possibly due to invalid data ';
+          msg += JSON.stringify(error);
+          alert(msg);
+        }
+      });
+      return false;
+    },
+
+    getData: function() {
+      var _data = $(this.el).find('form.resource').serializeArray();
+      modelData = {};
+      $.each(_data, function(idx, value) {
+        modelData[value.name.split('--')[1]] = value.value
+      });
+      return modelData;
+    }
+
+  });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
 
 (function (CKAN, $, _, Backbone, undefined) {
   CKAN.View.ResourceUpload = Backbone.View.extend({
     tagName: 'div',
+    template: ' \
+<div class="fileupload"> \
+  <form action="http://test-ckan-net-storage.commondatastorage.googleapis.com/" class="resource-upload" \
+    enctype="multipart/form-data" \
+    method="POST"> \
+ \
+    <div class="fileupload-buttonbar"> \
+      <div class="hidden-inputs"></div> \
+      <label class="fileinput-button"> \
+        File \
+      </label> \
+      <input type="file" name="file" /> \
+      <span class="fileinfo"></span> \
+      <input type="submit" value="upload" /> \
+    </div> \
+  </form> \
+  <div class="messages" style="display: none;"></div> \
+</div> \
+',
 
     // expects a client arguments in its options
     initialize: function(options) {
@@ -1612,7 +1543,7 @@ this.CKAN.View || (this.CKAN.View = {});
       this.el.empty();
       tmplData = {
       }
-      var tmpl = $.tmpl(CKAN.Templates.resourceUpload, tmplData);
+      var tmpl = Mustache.render(this.template, tmplData);
       this.el.html(tmpl);
       this.$messages = this.el.find('.messages');
       this.setupFileUpload();
@@ -1677,10 +1608,10 @@ this.CKAN.View || (this.CKAN.View = {});
         async: false,
         success: function(data) {
           self.el.find('form').attr('action', data.action);
-          _tmpl = '<input type="hidden" name="${name}" value="${value}" />';
+          _tmpl = '<input type="hidden" name="{{name}}" value="{{value}}" />';
           var $hidden = $(self.el.find('form div.hidden-inputs')[0]);
           $.each(data.fields, function(idx, item) {
-            $hidden.append($.tmpl(_tmpl, item));
+            $hidden.append(Mustache.render(_tmpl, item));
           });
           self.hideMessage();
         },
@@ -1752,3 +1683,81 @@ this.CKAN.View || (this.CKAN.View = {});
   });
 
 })(CKAN, $, _, Backbone, undefined);
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+  my.ResourceView = Backbone.View.extend({
+    template: ' \
+  <div class="resource view" resource-id="{{resource.id}}"> \
+    <h3> \
+      <a href="{{resource.url}}" class="url">{{resource.url}}</a> [{{resource.format}}] \
+    </h3> \
+    <div class="description"> \
+      {{resource.description}} \
+    </div> \
+    \
+    <div class="details subsection"> \
+      <h3>Additional Information</h3> \
+      <table> \
+        <thead> \
+          <tr> \
+            <th>Field</th> \
+            <th>Value</th> \
+          </tr> \
+        </thead> \
+        <tbody> \
+          {{#resourceDetails}} \
+          <tr> \
+            <td class="label">{{.}}</td> \
+            <td class="value">{{.}}</td> \
+          </tr> \
+          {{/resourceDetails}} \
+        </tbody> \
+      </table> \
+    </div> \
+  </div> \
+',
+    render: function() {
+      var resourceData = this.model.toTemplateJSON();
+      var resourceDetails = {};
+      var exclude = [ 'resource_group_id',
+        'description',
+        'url',
+        'position',
+        'id',
+        'webstore',
+        'qa',
+        'dataset',
+        'displaytitle'
+        ];
+      $.each(resourceData, function(key, value) {
+        if (! _.contains(exclude, key)) {
+          resourceDetails[key] = value;
+        }
+      });
+      tmplData = {
+        resource: resourceData,
+        resourceDetails: resourceDetails
+      };
+      // HACK - for tests ...
+      if (this.model.get('dataset')) {
+        tmplData.dataset = this.model.get('dataset').toTemplateJSON();
+      } else {
+        tmplData.dataset = {
+          name: 'unknown'
+        }
+      }
+      $('.page-heading').html(tmplData.dataset.name + ' / ' + tmplData.resource.displaytitle);
+      var tmpl = Mustache.render(this.template, tmplData);
+      $(this.el).html(tmpl);
+      return this;
+    },
+
+    events: {
+    }
+  });
+
+}(CKAN.View, jQuery));
+
