@@ -22,7 +22,8 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
   _.extend(Client.prototype, Backbone.Events, {
 
     cache: {
-      dataset: new Backbone.Collection()
+      dataset: new Backbone.Collection(),
+      group: new Backbone.Collection()
     },
 
     // Allows the implementor to specify an object literal of settings to
@@ -172,6 +173,84 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
       return new CKAN.Model.SearchCollection(models, {total: json.count});
     },
 
+    getGroupById: function (id, options) {
+      var cache   = this.cache.group,
+          group = cache.get(id);
+      var ourOptions = options || {};
+
+      if (!group) {
+        group = this.createGroup({id: id});
+
+        // Add the stub group to the global cache to ensure that only one
+        // is ever created.
+        cache.add(group);
+        
+        // Fetch the group from the server passing in any options provided.
+        // Also set up a callback to remove the model from the cache in
+        // case of error.
+        ourOptions.error = function () {
+          cache.remove(group);
+        };
+        // TODO: RP not sure i understand what this does and why it is needed
+        group.fetch(ourOptions);
+      }
+      return group;
+    },
+
+    createGroup: function (attributes) {
+      return (new CKAN.Model.Group(attributes)).bind('sync', this.syncGroup);
+    },
+
+    // A wrapper around Backbone.sync() that adds additional ajax options to
+    // each request. These include the API key and the request url rather than
+    // using the model to generate it.
+    syncGroup: function (method, model, options) {
+      // Get the package url.
+      var url = this.environment('restEndpoint') + '/group';
+
+      // Add additional request options.
+      options = _.extend({}, {
+        url: model.isNew() ? url : url + '/' + model.id,
+        headers: {
+          'X-CKAN-API-KEY': this.environment('apiKey')
+        }
+      }, options);
+
+      Backbone.sync(method, model, options);
+      return this;
+    },
+
+    searchGroups: function (options) {
+      options = options || {};
+      options.data = _.defaults(options.query, {'limit': 10, 'all_fields': 1});
+      delete options.query;
+
+      return $.ajax(_.extend({
+        url: this.environment('searchEndpoint') + '/package',
+        converters: {
+          'text json': this._datasetConverter
+        }
+      }, options));
+    },
+
+    // Get a list of Groups by dataset count with option to filter by a specific existing group.
+    getTopGroups: function(filterGroup, success, error) {
+      var data = {
+        'facet.field': 'groups',
+        'rows': 0
+      };
+      if (filterGroup) {
+        data.fq = 'groups:' + filterGroup;
+      }
+      var options = {
+        type: 'POST',
+        offset: '/action/package_search',
+        data: JSON.stringify(data),
+        success: success
+      };
+      return this.apiCall(options);
+    },
+
     // Performs a query on CKAN API.
     // The `options` argument can contain any keys supported by jQuery.ajax().
     // In addition it should contain either a url or offset variable. If
@@ -185,9 +264,11 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
     // with .success() and .error().
     apiCall: function (options) {
       options = options || {};
+      var offset = options.offset || '';
+      delete options.offset;
       // Add additional request options.
       options = _.extend({}, {
-        url: this.environment('endpoint') + '/api' + options.offset,
+        url: this.environment('endpoint') + '/api' + offset,
         headers: {
           'X-CKAN-API-KEY': this.environment('apiKey')
         }
@@ -513,6 +594,15 @@ CKAN.Model = function ($, _, Backbone, undefined) {
     // Validates the provided attributes. Returns an object literal of
     // attribute/error pairs if invalid, `undefined` otherwise.
     validate: validator('object', 'subject', 'type')
+  });
+
+  // A model for working with relationship objects. These are currently just the
+  // realtionship objects returned by the server wrapped in a `Base` model
+  // instance. Currently there is no save or delete functionality.
+  Model.Group = Model.Base.extend({
+    constructor: function Group() {
+      Model.Base.prototype.constructor.apply(this, arguments);
+    }
   });
 
   // Collection for managing results from the CKAN search API. An additional
