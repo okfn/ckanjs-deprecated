@@ -311,6 +311,22 @@ CKAN.Model = function ($, _, Backbone, undefined) {
   Model.Group = Model.Base.extend({
     constructor: function Group() {
       Model.Base.prototype.constructor.apply(this, arguments);
+    },
+    toTemplateJSON: function () {
+      var out = this.toJSON();
+      var description = this.get('description');
+      var showdown = new Showdown.converter();
+      out.descriptionHTML = showdown.makeHtml(description ? description : '');
+      out.snippet = this.makeSnippet(out.descriptionHTML);
+      return out;
+    },
+
+    makeSnippet: function (notesHtml) {
+      var out = $(notesHtml).text();
+      if (out.length > 190) {
+        out = out.slice(0, 190) + ' ...';
+      }
+      return out;
     }
   });
 

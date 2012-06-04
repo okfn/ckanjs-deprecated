@@ -8,7 +8,7 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
     this._environment = {};
     this.configure(config || Client.defaults);
 
-    _.bindAll(this, 'syncDataset', '_datasetConverter');
+    _.bindAll(this, 'syncDataset', '_datasetConverter', 'syncGroup');
   }
 
   // Default config parameters for the Client.
@@ -235,6 +235,7 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
 
     // Get a list of Groups by dataset count with option to filter by a specific existing group.
     getTopGroups: function(filterGroup, success, error) {
+      var self = this;
       var data = {
         'facet.field': 'groups',
         'rows': 0
@@ -246,9 +247,28 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
         type: 'POST',
         offset: '/action/package_search',
         data: JSON.stringify(data),
-        success: success
+        success: function(data) {
+          var groups = processResults(data);
+          success(groups);
+        }
       };
-      return this.apiCall(options);
+      function processResults(data) {
+        var groups = _.map(data.result.facets.groups, function(count, key) {
+          return {
+            id: key,
+            count: count
+          };
+        });
+        groups = _.sortBy(groups, function(item) {
+          return -item.count;
+        });
+        // TODO: exclude the group we filtered by ...
+        var groupObjs = _.map(groups, function(groupInfo) {
+          return self.getGroupById(groupInfo.id);
+        });
+        return groupObjs;
+      }
+      this.apiCall(options);
     },
 
     // Performs a query on CKAN API.
@@ -602,6 +622,22 @@ CKAN.Model = function ($, _, Backbone, undefined) {
   Model.Group = Model.Base.extend({
     constructor: function Group() {
       Model.Base.prototype.constructor.apply(this, arguments);
+    },
+    toTemplateJSON: function () {
+      var out = this.toJSON();
+      var description = this.get('description');
+      var showdown = new Showdown.converter();
+      out.descriptionHTML = showdown.makeHtml(description ? description : '');
+      out.snippet = this.makeSnippet(out.descriptionHTML);
+      return out;
+    },
+
+    makeSnippet: function (notesHtml) {
+      var out = $(notesHtml).text();
+      if (out.length > 190) {
+        out = out.slice(0, 190) + ' ...';
+      }
+      return out;
     }
   });
 

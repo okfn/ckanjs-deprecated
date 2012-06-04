@@ -63,10 +63,11 @@ test(".getTopGroups()", function () {
   this.stub($, 'ajax').returns(mockPromise);
   this.stub(client, 'environment').returns('stubbed');
 
-  returned = client.getTopGroups('openspending', success);
-  equal(returned, mockPromise, 'Expect it to return the jQuery promise');
+  client.getTopGroups('openspending', success);
   ok($.ajax.calledOnce, 'Expect it to call $.ajax()');
-  deepEqual($.ajax.args[0][0], {
+  var called = $.ajax.args[0][0];
+  delete called.success;
+  deepEqual(called, {
     url: 'stubbed/api/action/package_search',
     headers: {
       "X-CKAN-API-KEY": "stubbed"
@@ -76,8 +77,7 @@ test(".getTopGroups()", function () {
       'rows': 0, 
       fq: 'groups:openspending'
     }),
-    type: 'POST',
-    success: success
+    type: 'POST'
   }, 'Expect it to work!');
 });
 
