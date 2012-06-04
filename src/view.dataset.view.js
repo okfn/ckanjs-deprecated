@@ -6,12 +6,15 @@ CKAN.View = CKAN.View || {};
   my.DatasetFullView = Backbone.View.extend({
     template: ' \
   <div class="dataset view" dataset-id="{{dataset.id}}"> \
+    <div class="page-header"> \
+      <h1>{{displaytitle}}</h1> \
+    </div \
     <div class="extract"> \
       {{dataset.snippet}} \
     </div> \
     <div class="tags"> \
       {{#dataset.tags.length}} \
-      <ul class="dataset-tags"> \
+      <ul class="tags"> \
         {{#dataset.tags}} \
           <li>{{.}}</li> \
         {{/dataset.tags}} \
@@ -44,9 +47,6 @@ CKAN.View = CKAN.View || {};
         <tr><td>No resources.</td><td></td></tr> \
         {{/dataset.resources}} \
       </table> \
-      <div class="add-resource"> \
-        <a href="#" class="action-add-resource">Add a resource</a> \
-      </div> \
     </div> \
     <div class="notes subsection"> \
       <h3 id="anchor-notes">Notes</h3> \

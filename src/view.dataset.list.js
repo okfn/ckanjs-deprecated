@@ -61,42 +61,38 @@ CKAN.View = CKAN.View || {};
   
   CKAN.View.DatasetListingItem = Backbone.View.extend({
     tagName: 'li',
-
     className: 'dataset summary',
 
-    options: {
-      template: '\
-        <div class="header"> \
-          <span class="title" > \
-            <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
-          </span> \
-          <div class="search_meta"> \
+    template: '\
+      <div class="header"> \
+        <span class="title" > \
+          <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
+        </span> \
+        <div class="formats"> \
+          {{#formats.length}} \
+          <ul class="formats"> \
             {{#formats}} \
-            <ul class="dataset-formats"> \
-              {{#formats}} \
-                <li>{{.}}</li> \
-              {{/formats}} \
-            </ul> \
-            {{/formats}} \
-          </div> \
-        </div> \
-        <div class="extract"> \
-          {{{snippet}}} \
-        </div> \
-        <div class="dataset-tags"> \
-          {{#tags}} \
-          <ul class="dataset-tags"> \
-            {{#tags}} \
               <li>{{.}}</li> \
-            {{/tags}} \
+            {{/formats}} \
           </ul> \
-          {{/tags}} \
+          {{/formats.length}} \
         </div> \
-      '
-    },
+      </div> \
+      <div class="extract"> \
+        {{{snippet}}} \
+      </div> \
+      <div class="tags"> \
+        {{#tags.length}} \
+        <ul class="tags"> \
+          {{#tags}} \
+            <li>{{.}}</li> \
+          {{/tags}} \
+        </ul> \
+        {{/tags.length}} \
+      </div> \
+    ',
 
-    constructor: function DatasetListingItem() {
-      Backbone.View.prototype.constructor.apply(this, arguments);
+    initialize: function() {
       this.el = $(this.el);
     },
 
@@ -114,7 +110,7 @@ CKAN.View = CKAN.View || {};
         formats: this._availableFormats(),
         urls: urls
       });
-      this.el.html(Mustache.render(this.options.template, data));
+      this.el.html(Mustache.render(this.template, data));
       return this;
     },
 

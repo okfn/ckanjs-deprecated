@@ -14,19 +14,6 @@ test("DatasetFullView", function () {
   var tags = tmpl.find('div.tags ul > li').text();
   equals(tags, 'russiantolstoy');
 
-  this.spy(pkg, 'save');
-  $('.action-add-resource').click();
-  var dialog = $('.resource-add-dialog');
-  var out = dialog.find('form.resource');
-  equals(out.length, 1, 'Did not find resource form');
-  dialog.find('form input[name=Resource--url]').val('http://xyz.org');
-  dialog.find('form.resource').submit();
-  equals(pkg.get('resources').length, 3);
-  ok(pkg.save.calledOnce, 'Expect resource add to have been saved');
-
-  var out = $view.find('.resources table tr:last td:first').text();
-  ok(out.indexOf('(No description)')!=-1, 'Did not find required string');
-
   // connections in sidebar
   var out = $('#sidebar .widget-list ul li');
   equals(out.length, 1);

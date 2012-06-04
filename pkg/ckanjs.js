@@ -1037,42 +1037,38 @@ CKAN.View = CKAN.View || {};
   
   CKAN.View.DatasetListingItem = Backbone.View.extend({
     tagName: 'li',
-
     className: 'dataset summary',
 
-    options: {
-      template: '\
-        <div class="header"> \
-          <span class="title" > \
-            <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
-          </span> \
-          <div class="search_meta"> \
+    template: '\
+      <div class="header"> \
+        <span class="title" > \
+          <a href="{{urls.datasetView}}" ckan-attrname="title" class="editable">{{displaytitle}}</a> \
+        </span> \
+        <div class="formats"> \
+          {{#formats.length}} \
+          <ul class="formats"> \
             {{#formats}} \
-            <ul class="dataset-formats"> \
-              {{#formats}} \
-                <li>{{.}}</li> \
-              {{/formats}} \
-            </ul> \
-            {{/formats}} \
-          </div> \
-        </div> \
-        <div class="extract"> \
-          {{{snippet}}} \
-        </div> \
-        <div class="dataset-tags"> \
-          {{#tags}} \
-          <ul class="dataset-tags"> \
-            {{#tags}} \
               <li>{{.}}</li> \
-            {{/tags}} \
+            {{/formats}} \
           </ul> \
-          {{/tags}} \
+          {{/formats.length}} \
         </div> \
-      '
-    },
+      </div> \
+      <div class="extract"> \
+        {{{snippet}}} \
+      </div> \
+      <div class="tags"> \
+        {{#tags.length}} \
+        <ul class="tags"> \
+          {{#tags}} \
+            <li>{{.}}</li> \
+          {{/tags}} \
+        </ul> \
+        {{/tags.length}} \
+      </div> \
+    ',
 
-    constructor: function DatasetListingItem() {
-      Backbone.View.prototype.constructor.apply(this, arguments);
+    initialize: function() {
       this.el = $(this.el);
     },
 
@@ -1090,7 +1086,7 @@ CKAN.View = CKAN.View || {};
         formats: this._availableFormats(),
         urls: urls
       });
-      this.el.html(Mustache.render(this.options.template, data));
+      this.el.html(Mustache.render(this.template, data));
       return this;
     },
 
@@ -1180,12 +1176,15 @@ CKAN.View = CKAN.View || {};
   my.DatasetFullView = Backbone.View.extend({
     template: ' \
   <div class="dataset view" dataset-id="{{dataset.id}}"> \
+    <div class="page-header"> \
+      <h1>{{displaytitle}}</h1> \
+    </div \
     <div class="extract"> \
       {{dataset.snippet}} \
     </div> \
     <div class="tags"> \
       {{#dataset.tags.length}} \
-      <ul class="dataset-tags"> \
+      <ul class="tags"> \
         {{#dataset.tags}} \
           <li>{{.}}</li> \
         {{/dataset.tags}} \
@@ -1218,9 +1217,6 @@ CKAN.View = CKAN.View || {};
         <tr><td>No resources.</td><td></td></tr> \
         {{/dataset.resources}} \
       </table> \
-      <div class="add-resource"> \
-        <a href="#" class="action-add-resource">Add a resource</a> \
-      </div> \
     </div> \
     <div class="notes subsection"> \
       <h3 id="anchor-notes">Notes</h3> \
