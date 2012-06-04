@@ -71,9 +71,11 @@ test(".getTopGroups()", function () {
     headers: {
       "X-CKAN-API-KEY": "stubbed"
     },
-    data: {
-      'rows': 0, 'facet.field': 'groups', fq: 'openspending'
-    },
+    data: JSON.stringify({
+      'facet.field': 'groups',
+      'rows': 0, 
+      fq: 'groups:openspending'
+    }),
     type: 'POST',
     success: success
   }, 'Expect it to work!');
