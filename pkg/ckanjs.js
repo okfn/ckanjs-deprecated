@@ -1214,81 +1214,88 @@ CKAN.View = CKAN.View || {};
   <div class="dataset view" dataset-id="{{dataset.id}}"> \
     <div class="page-header"> \
       <h1>{{dataset.title}}</h1> \
-    </div \
-    <div class="extract"> \
-      {{dataset.snippet}} \
     </div> \
-    <div class="tags"> \
-      {{#dataset.tags.length}} \
-      <ul class="tags"> \
-        {{#dataset.tags}} \
-          <li>{{.}}</li> \
-        {{/dataset.tags}} \
-      </ul> \
-      {{/dataset.tags.length}} \
-    </div> \
-    <div class="resources subsection"> \
-      <h3>Resources</h3> \
-      <table> \
-        <tr> \
-          <th>Description</th> \
-          <th>Format</th> \
-          <th>Actions</th> \
-        </tr> \
-        {{#dataset.resources}} \
-        <tr> \
-          <td> \
-            <a href="#dataset/{{dataset.id}}/resource/{{id}}"> \
-            {{description}} \
-            {{^description.length}} \
-            (No description) \
-            {{/description.length}} \
-            </a> \
-          </td> \
-          <td>{{format}}</td> \
-          <td><a href="{{url}}" target="_blank" class="resource-download">Download</a> \
-        </tr> \
-        {{/dataset.resources}} \
-        {{^dataset.resources}} \
-        <tr><td>No resources.</td><td></td></tr> \
-        {{/dataset.resources}} \
-      </table> \
-    </div> \
-    <div class="notes subsection"> \
-      <h3 id="anchor-notes">Notes</h3> \
-      <div class="notes-body editable-area" backbone-attribute="notes"> \
-        {{html dataset.notesHtml}} \
-        {{^dataset.notes}} \
-        <em>No notes yet. Click to add some ...</em> \
-        {{/dataset.notes}} \
+    <div class="row"> \
+      <div class="span8"> \
+        <div class="extract"> \
+          {{dataset.snippet}} \
+        </div> \
+        <div class="resources subsection"> \
+          <h3>Resources</h3> \
+          <table> \
+            <tr> \
+              <th>Description</th> \
+              <th>Format</th> \
+              <th>Actions</th> \
+            </tr> \
+            {{#dataset.resources}} \
+            <tr> \
+              <td> \
+                <a href="#dataset/{{dataset.id}}/resource/{{id}}"> \
+                {{description}} \
+                {{^description.length}} \
+                (No description) \
+                {{/description.length}} \
+                </a> \
+              </td> \
+              <td>{{format}}</td> \
+              <td><a href="{{url}}" target="_blank" class="resource-download">Download</a> \
+            </tr> \
+            {{/dataset.resources}} \
+            {{^dataset.resources}} \
+            <tr><td>No resources.</td><td></td></tr> \
+            {{/dataset.resources}} \
+          </table> \
+        </div> \
+        <div class="notes subsection"> \
+          <h3 id="anchor-notes">Notes</h3> \
+          <div class="notes-body editable-area" backbone-attribute="notes"> \
+            {{html dataset.notesHtml}} \
+            {{^dataset.notes}} \
+            <em>No notes yet. Click to add some ...</em> \
+            {{/dataset.notes}} \
+          </div> \
+        </div> \
+        <div class="details subsection"> \
+          <h3>Additional Information</h3> \
+          <table> \
+            <thead> \
+              <tr> \
+                <th>Field</th> \
+                <th>Value</th> \
+              </tr> \
+            </thead> \
+            <tbody> \
+              <tr> \
+                <td>Creator</td> \
+                <td>{{dataset.author}}</td> \
+              </tr> \
+              <tr> \
+                <td>Maintainer</td> \
+                <td>{{dataset.maintainer}}</td> \
+              </tr> \
+              {{#dataset.extras}} \
+              <tr> \
+                <td class="package-label" property="rdfs:label">{{.}}</td> \
+                <td class="package-details" property="rdf:value">{{.}}</td> \
+              </tr> \
+              {{/dataset.extras}} \
+            </tbody> \
+          </table> \
+        </div> \
       </div> \
-    </div> \
-    <div class="details subsection"> \
-      <h3>Additional Information</h3> \
-      <table> \
-        <thead> \
-          <tr> \
-            <th>Field</th> \
-            <th>Value</th> \
-          </tr> \
-        </thead> \
-        <tbody> \
-          <tr> \
-            <td>Creator</td> \
-            <td>{{dataset.author}}</td> \
-          </tr> \
-          <tr> \
-            <td>Maintainer</td> \
-            <td>{{dataset.maintainer}}</td> \
-          </tr> \
-          {{#dataset.extras}} \
-          <tr> \
-            <td class="package-label" property="rdfs:label">{{.}}</td> \
-            <td class="package-details" property="rdf:value">{{.}}</td> \
-          </tr> \
-          {{/dataset.extras}} \
-        </tbody> \
-      </table> \
+      <div class="span4"> \
+        <h3>Tags</h3> \
+        <div class="tags"> \
+        {{#dataset.tags.length}} \
+        <ul class="tags"> \
+          {{#dataset.tags}} \
+            <li>{{.}}</li> \
+          {{/dataset.tags}} \
+        </ul> \
+        {{/dataset.tags.length}} \
+        </div> \
+      </div> \
     </div> \
   </div> \
 ',
