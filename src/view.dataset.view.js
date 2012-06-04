@@ -7,7 +7,7 @@ CKAN.View = CKAN.View || {};
     template: ' \
   <div class="dataset view" dataset-id="{{dataset.id}}"> \
     <div class="page-header"> \
-      <h1>{{displaytitle}}</h1> \
+      <h1>{{dataset.title}}</h1> \
     </div \
     <div class="extract"> \
       {{dataset.snippet}} \
