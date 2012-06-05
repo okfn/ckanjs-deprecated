@@ -1,6 +1,7 @@
 module("View");
 
-CKAN.UI.initialize()
+// create global CKAN.UI.workspace
+new CKAN.UI.Workspace();
 
 test("DatasetFullView", function () {
   var pkg = new CKAN.Model.Dataset(datasets[1]);

@@ -100,8 +100,8 @@ CKAN.View = CKAN.View || {};
       var dataset = this.model.toTemplateJSON();
       // if 'UI' mode ...
       var urls = {};
-      if (CKAN.UI && CKAN.UI.workspace) {
-        urls.datasetView = CKAN.UI.workspace.url('dataset', 'view', this.model.id);
+      if (CKAN.UI) {
+        urls.datasetView = CKAN.UI.url('dataset', 'view', this.model.id);
       } else {
         urls.datasetView = dataset.ckan_url;
       }
