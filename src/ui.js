@@ -24,8 +24,8 @@ CKAN.UI = function($) {
         apiKey: ''
       };
 
-      var config = options.config || defaultConfig;
-      this.client = new CKAN.Client(config);
+      this.config = options.config || defaultConfig;
+      this.client = new CKAN.Client(this.config);
       if (options.fixtures && options.fixtures.datasets) {
         $.each(options.fixtures.datasets, function(idx, obj) {
           var collection = self.client.cache.dataset;
@@ -59,7 +59,7 @@ CKAN.UI = function($) {
 
       var configView = new CKAN.View.ConfigView({
         el: $('#config-page'),
-        config: config
+        config: this.config
       });
       $(document).bind('config:update', function(e, cfg) {
         self.client.configure(cfg);
