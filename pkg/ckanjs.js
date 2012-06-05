@@ -264,7 +264,9 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
         });
         // TODO: exclude the group we filtered by ...
         var groupObjs = _.map(groups, function(groupInfo) {
-          return self.getGroupById(groupInfo.id);
+          var group = self.getGroupById(groupInfo.id);
+          group.set({filtered_dataset_count: groupInfo.count});
+          return group;
         });
         return groupObjs;
       }
@@ -629,6 +631,7 @@ CKAN.Model = function ($, _, Backbone, undefined) {
       var showdown = new Showdown.converter();
       out.descriptionHTML = showdown.makeHtml(description ? description : '');
       out.snippet = this.makeSnippet(out.descriptionHTML);
+      out.dataset_count = this.get('filtered_dataset_count') || this.get('packages').length;
       return out;
     },
 
@@ -638,6 +641,12 @@ CKAN.Model = function ($, _, Backbone, undefined) {
         out = out.slice(0, 190) + ' ...';
       }
       return out;
+    }
+  });
+
+  Model.GroupCollection = Backbone.Collection.extend({
+    constructor: function GroupCollection(models, options) {
+      Backbone.Collection.prototype.constructor.apply(this, arguments);
     }
   });
 
@@ -683,8 +692,8 @@ CKAN.UI = function($) {
         apiKey: ''
       };
 
-      var config = options.config || defaultConfig;
-      this.client = new CKAN.Client(config);
+      this.config = options.config || defaultConfig;
+      this.client = new CKAN.Client(this.config);
       if (options.fixtures && options.fixtures.datasets) {
         $.each(options.fixtures.datasets, function(idx, obj) {
           var collection = self.client.cache.dataset;
@@ -718,7 +727,7 @@ CKAN.UI = function($) {
 
       var configView = new CKAN.View.ConfigView({
         el: $('#config-page'),
-        config: config
+        config: this.config
       });
       $(document).bind('config:update', function(e, cfg) {
         self.client.configure(cfg);
@@ -821,11 +830,6 @@ CKAN.UI = function($) {
       }
     }
   });
-
-  my.initialize = function(options) {
-    my.workspace = new my.Workspace(options);
-    Backbone.history.start()
-  };
 
   return my;
 }(jQuery);
@@ -1471,6 +1475,45 @@ Handlebars.registerHelper('eachkeys', function(context, options) {
       });
     }
   });
+
+}(CKAN.View, jQuery));
+
+var CKAN = CKAN || {};
+CKAN.View = CKAN.View || {};
+
+(function(my, $) {
+
+my.GroupSummaryList = Backbone.View.extend({
+  className: 'groups list',
+
+  template: '\
+    {{#groups}} \
+    <div class="span4"> \
+      <div class="well group summary"> \
+        <h3> \
+          {{title}} \
+        </h3> \
+        <p>{{snippet}}</p> \
+        <span class="dataset-count">Datasets {{dataset_count}}</span> \
+      </div> \
+    </div> \
+    {{/groups}} \
+  ',
+
+  initialize: function() {
+    this.el = $(this.el);
+    _.bindAll(this, 'render');
+    this.collection.bind('change', this.render);
+  },
+
+  render: function() {
+    var tmplData = {
+      groups: this.collection.map(function(x) { return x.toTemplateJSON()})
+    };
+    var html = Mustache.render(this.template, tmplData);
+    this.el.html(html);
+  }
+});
 
 }(CKAN.View, jQuery));
 
