@@ -6,9 +6,9 @@ CKAN.UI = function($) {
   my.Workspace = Backbone.Router.extend({
     routes: {
       "": "index",
-      "search": "search",
-      "search/:query": "search",
       "search/:query/p:page": "search",
+      "search/:query": "search",
+      "search": "search",
       "dataset/:id/view": "datasetView",
       "dataset/:id/edit": "datasetEdit",
       "dataset/:datasetId/resource/:resourceId": "resourceView",
@@ -43,17 +43,16 @@ CKAN.UI = function($) {
       var newResourceEditView = new CKAN.View.ResourceEditView({model: newResource, el: $('#add-resource-page')});
       newResourceEditView.render();
 
-      var searchView = this.searchView =  new CKAN.View.DatasetSearchView({
+      this.searchView =  new CKAN.View.DatasetSearchView({
         client: this.client,
         el: $('#search-page')
       });
 
       // set up top bar search
-      $('#menusearch').find('form').submit(function(e) {
+      $('.search-form').submit(function(e) {
         e.preventDefault();
         var _el = $(e.target);
         var _q = _el.find('input[name="q"]').val();
-        searchView.doSearch(_q);
         self.search(_q);
       });
 
@@ -79,10 +78,12 @@ CKAN.UI = function($) {
     },
 
     index: function(query, page) {
-      this.search();
+      //this.search();
     },
 
     search: function(query, page) {
+      this.searchView.doSearch(query);
+      this.navigate('search' + '/' + query);
       this.switchView('search');
       $('.page-heading').html('Search');
     },
@@ -161,7 +162,7 @@ CKAN.UI = function($) {
       }
     }
   });
-  
+
   my.initialize = function(options) {
     my.workspace = new my.Workspace(options);
     Backbone.history.start()
