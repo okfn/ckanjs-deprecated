@@ -78,7 +78,7 @@ CKAN.UI = function($) {
     },
 
     index: function(query, page) {
-      //this.search();
+      this.switchView("home");
     },
 
     search: function(query, page) {
