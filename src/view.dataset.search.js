@@ -5,7 +5,7 @@ CKAN.View = CKAN.View || {};
 
   my.DatasetSearchView = Backbone.View.extend({
     events: {
-      'submit #search-form': 'onSearch'
+      'submit .search-form': 'onSearch'
     },
 
     initialize: function(options) {
