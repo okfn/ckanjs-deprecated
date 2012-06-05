@@ -163,11 +163,6 @@ CKAN.UI = function($) {
     }
   });
 
-  my.initialize = function(options) {
-    my.workspace = new my.Workspace(options);
-    Backbone.history.start()
-  };
-
   return my;
 }(jQuery);
 
