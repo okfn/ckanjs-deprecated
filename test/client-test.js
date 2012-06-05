@@ -56,7 +56,7 @@
     returned = client.environment('url', url);
 
     equal(client._environment.url, url, 'Expect the "url" key to have been set on the .env property');
-    same(returned, client, 'Expect the client object to have been returned');
+    deepEqual(returned, client, 'Expect the client object to have been returned');
   });
 
   test(".environment(keys)", function () {
@@ -68,7 +68,7 @@
     returned = client.environment(keys);
 
     deepEqual(client._environment, keys, 'Expect the "url" and "apiKey" keys to have been set on the .env property');
-    same(returned, client, 'Expect the client object to have been returned');
+    deepEqual(returned, client, 'Expect the client object to have been returned');
   });
 
   test(".getDatasetById()", function () {

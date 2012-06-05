@@ -57,15 +57,15 @@ test("new Model.Dataset()", function () {
   };
   var pkg = new CKAN.Model.Dataset(indata);
 
-  equals(pkg.get('title'), indata.title);
+  equal(pkg.get('title'), indata.title);
   var out = pkg.toTemplateJSON();
-  equals(out.notesHtml, '<h2>Xyz</h2>');
-  equals(out.displaytitle, indata.title);
+  equal(out.notesHtml, '<h2>Xyz</h2>');
+  equal(out.displaytitle, indata.title);
 });
 
 test("new Model.Dataset({resources: []})", function () {
   var dataset = new CKAN.Model.Dataset({resources: []});
-  equals(dataset.get('resources').constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+  equal(dataset.get('resources').constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
 });
 
 test(".set({resources: []})", function () {
@@ -77,11 +77,11 @@ test(".set({resources: []})", function () {
   this.spy(dataset, '_createChildren');
   this.spy(dataset, '_updateChildren');
 
-  equals(resources.length, 0, 'The resources collection should be empty');
+  equal(resources.length, 0, 'The resources collection should be empty');
 
   dataset.set({});
-  equals(dataset._createChildren.callCount, 1, 'Expected dataset._updateChildren() to have been called');
-  equals(dataset._updateChildren.callCount, 0, 'Expected collection._updateChildren() NOT to have been called');
+  equal(dataset._createChildren.callCount, 1, 'Expected dataset._updateChildren() to have been called');
+  equal(dataset._updateChildren.callCount, 0, 'Expected collection._updateChildren() NOT to have been called');
 
   dataset.set({resources: newResources});
   equal(dataset._updateChildren.callCount, 0, 'Expected collection._updateChildren() NOT to have been called');
@@ -89,7 +89,7 @@ test(".set({resources: []})", function () {
 
   args = [{url: "http://pathtonewresource.com/download"}];
   dataset.set({resources: args});
-  equals(dataset._updateChildren.callCount, 1, 'Expected collection._updateChildren() to have been called');
+  equal(dataset._updateChildren.callCount, 1, 'Expected collection._updateChildren() to have been called');
   ok(dataset._updateChildren.calledWith({resources: args}), 'Expected collection._updateChildren() to have been called with array of resources');
 
   dataset.set({resources: []});
@@ -103,11 +103,11 @@ test("._createChildren()", function () {
   returned = dataset._createChildren();
 
   ok(dataset, returned, 'Expected it to return itself');
-  equals(attrs.resources.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
-  equals(attrs.resources.model, CKAN.Model.Resource, 'Should create Resource instances');
+  equal(attrs.resources.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+  equal(attrs.resources.model, CKAN.Model.Resource, 'Should create Resource instances');
 
-  equals(attrs.relationships.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
-  equals(attrs.relationships.model, CKAN.Model.Relationship, 'Should create Resource instances');
+  equal(attrs.relationships.constructor, Backbone.Collection, 'The resources attribute should be a Backbone collection');
+  equal(attrs.relationships.model, CKAN.Model.Relationship, 'Should create Resource instances');
 });
 
 test("._updateChildren()", function () {
@@ -227,9 +227,9 @@ test("new Model.Group()", function () {
   };
   var pkg = new CKAN.Model.Group(indata);
 
-  equals(pkg.get('title'), indata.title);
+  equal(pkg.get('title'), indata.title);
   var out = pkg.toJSON();
-  equals(out.description, '## Xyz');
+  equal(out.description, '## Xyz');
 });
 
 // ========================================================

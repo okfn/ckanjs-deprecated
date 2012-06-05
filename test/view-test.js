@@ -12,13 +12,13 @@ test("DatasetFullView", function () {
   view.render();
   var tmpl = $(view.el);
   var tags = tmpl.find('div.tags ul > li').text();
-  equals(tags, 'russiantolstoy');
+  equal(tags, 'russiantolstoy');
 
   // connections in sidebar
   var out = $('#sidebar .widget-list ul li');
-  equals(out.length, 1);
+  equal(out.length, 1);
   out = out.find('a').text();
-  equals(out, '54b9ee58-d7ab-4db8-a55b-57a22d496ede');
+  equal(out, '54b9ee58-d7ab-4db8-a55b-57a22d496ede');
   view.remove();
 });
 
@@ -32,9 +32,9 @@ test("DatasetEditView", function () {
   view.render();
   var tmpl = $(view.el);
   out = tmpl.find('#Dataset--title').val();
-  equals(out, 'A Novel By Tolstoy');
+  equal(out, 'A Novel By Tolstoy');
   out = tmpl.find('#Dataset--name').val();
-  equals(out, pkg.get('name'));
+  equal(out, pkg.get('name'));
 });
 
 test("DatasetSearchView", function () {
@@ -58,10 +58,10 @@ test("DatasetSearchView", function () {
   };
   view.onSearch(_event);
   var count = view.el.find('.count').text();
-  equals(count, '2');
+  equal(count, '2');
   var title = $('.datasets li .title a').last();
-  equals(title.text(), 'A Novel By Tolstoy');
-  equals(title.attr('href'), '#dataset/' + _models[1].id + '/view');
+  equal(title.text(), 'A Novel By Tolstoy');
+  equal(title.attr('href'), '#dataset/' + _models[1].id + '/view');
 });
 
 test("ResourceView", function() {
@@ -126,20 +126,20 @@ test("ResourceUpload", function() {
   ok(_out.match(re), _out);
 
   view.updateFormData('README.rst');
-  equals($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
+  equal($el.find('form').attr('action'), 'http://ckantest.commondatastorage.googleapis.com/');
   var expectedFields = ['signature', 'policy'];
   $.each(expectedFields, function(idx, fieldName) {
     var _found = $el.find('input[name="' + fieldName + '"]');
-    equals(_found.length, 1, 'Failed to find input ' + fieldName);
+    equal(_found.length, 1, 'Failed to find input ' + fieldName);
   });
 
   // test successful submit ...
   view.onUploadComplete('README.rst');
-  equals(res.get('url'),  _metadata._location);
-  equals(res.get('name'),  'README.rst');
-  // equals(res.get('type'),  'file.upload');
-  equals(res.get('size'),  568);
-  equals(res.get('hash'), _metadata._checksum);
+  equal(res.get('url'),  _metadata._location);
+  equal(res.get('name'),  'README.rst');
+  // equal(res.get('type'),  'file.upload');
+  equal(res.get('size'),  568);
+  equal(res.get('hash'), _metadata._checksum);
 });
 
 test("ResourceCreate", function() {
@@ -152,8 +152,8 @@ test("ResourceCreate", function() {
   });
   view.render();
   var field = $el.find('form.resource input#Resource--url');
-  equals(field.length, 1, 'Failed to find Resource Create Link to (Edit) form');
+  equal(field.length, 1, 'Failed to find Resource Create Link to (Edit) form');
   var field = $el.find('.resource-upload');
-  equals(field.length, 1, 'Failed to find Resource Upload form');
+  equal(field.length, 1, 'Failed to find Resource Upload form');
 });
 
