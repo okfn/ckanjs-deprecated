@@ -264,7 +264,9 @@ this.CKAN.Client = (function (CKAN, $, _, Backbone, undefined) {
         });
         // TODO: exclude the group we filtered by ...
         var groupObjs = _.map(groups, function(groupInfo) {
-          return self.getGroupById(groupInfo.id);
+          var group = self.getGroupById(groupInfo.id);
+          group.set({filtered_dataset_count: groupInfo.count});
+          return group;
         });
         return groupObjs;
       }

@@ -318,6 +318,7 @@ CKAN.Model = function ($, _, Backbone, undefined) {
       var showdown = new Showdown.converter();
       out.descriptionHTML = showdown.makeHtml(description ? description : '');
       out.snippet = this.makeSnippet(out.descriptionHTML);
+      out.dataset_count = this.get('filtered_dataset_count') || this.get('packages').length;
       return out;
     },
 
@@ -327,6 +328,12 @@ CKAN.Model = function ($, _, Backbone, undefined) {
         out = out.slice(0, 190) + ' ...';
       }
       return out;
+    }
+  });
+
+  Model.GroupCollection = Backbone.Collection.extend({
+    constructor: function GroupCollection(models, options) {
+      Backbone.Collection.prototype.constructor.apply(this, arguments);
     }
   });
 
