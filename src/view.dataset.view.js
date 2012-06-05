@@ -1,6 +1,32 @@
 var CKAN = CKAN || {};
 CKAN.View = CKAN.View || {};
 
+// http://stackoverflow.com/questions/8961939
+// TODO: Move this somewhere more central if reused?
+Handlebars.registerHelper('eachkeys', function(context, options) {
+  var fn = options.fn, inverse = options.inverse;
+  var ret = "";
+
+  var empty = true;
+  var value;
+
+  for (key in context) { empty = false; break; }
+
+  if (!empty) {
+    for (key in context) {
+      value = context[key];
+      // Make links clickable.
+      if (value.match(/^http/)) {
+        value = new Handlebars.SafeString("<a href='" + value + "'>" + value + "</a>");
+      }
+      ret = ret + fn({ 'key': key, 'value': value});
+    }
+  } else {
+    ret = inverse(this);
+  }
+  return ret;
+});
+
 (function(my, $) {
 
   my.DatasetFullView = Backbone.View.extend({
@@ -11,12 +37,14 @@ CKAN.View = CKAN.View || {};
     </div> \
     <div class="row"> \
       <div class="span8"> \
-        <div class="extract"> \
+        <div class="extract subsection"> \
+          <h3>Description</h3> \
           {{dataset.snippet}} \
         </div> \
+        {{#if dataset.resources}} \
         <div class="resources subsection"> \
           <h3>Resources</h3> \
-          <table> \
+          <table class="table"> \
             <tr> \
               <th>Description</th> \
               <th>Format</th> \
@@ -26,33 +54,25 @@ CKAN.View = CKAN.View || {};
             <tr> \
               <td> \
                 <a href="#dataset/{{dataset.id}}/resource/{{id}}"> \
-                {{description}} \
-                {{^description.length}} \
-                (No description) \
-                {{/description.length}} \
+                {{name}} \
+                {{^name}} \
+                {{id}} \
+                {{/name}} \
                 </a> \
+                {{#if description}} \
+                - {{description}} \
+                {{/if}} \
               </td> \
               <td>{{format}}</td> \
               <td><a href="{{url}}" target="_blank" class="resource-download">Download</a> \
             </tr> \
             {{/dataset.resources}} \
-            {{^dataset.resources}} \
-            <tr><td>No resources.</td><td></td></tr> \
-            {{/dataset.resources}} \
           </table> \
         </div> \
-        <div class="notes subsection"> \
-          <h3 id="anchor-notes">Notes</h3> \
-          <div class="notes-body editable-area" backbone-attribute="notes"> \
-            {{html dataset.notesHtml}} \
-            {{^dataset.notes}} \
-            <em>No notes yet. Click to add some ...</em> \
-            {{/dataset.notes}} \
-          </div> \
-        </div> \
+        {{/if}} \
         <div class="details subsection"> \
           <h3>Additional Information</h3> \
-          <table> \
+          <table class="table"> \
             <thead> \
               <tr> \
                 <th>Field</th> \
@@ -61,6 +81,10 @@ CKAN.View = CKAN.View || {};
             </thead> \
             <tbody> \
               <tr> \
+                <td>Source</td> \
+                <td><a href="{{dataset.url}}">{{dataset.url}}</a></td> \
+              </tr> \
+              <tr> \
                 <td>Creator</td> \
                 <td>{{dataset.author}}</td> \
               </tr> \
@@ -68,27 +92,40 @@ CKAN.View = CKAN.View || {};
                 <td>Maintainer</td> \
                 <td>{{dataset.maintainer}}</td> \
               </tr> \
-              {{#dataset.extras}} \
+              {{#eachkeys dataset.extras}} \
               <tr> \
-                <td class="package-label" property="rdfs:label">{{.}}</td> \
-                <td class="package-details" property="rdf:value">{{.}}</td> \
+                <td class="package-label" property="rdfs:label">{{this.key}}</td> \
+                <td class="package-details" property="rdf:value">{{this.value}}</td> \
               </tr> \
-              {{/dataset.extras}} \
+              {{/eachkeys}} \
             </tbody> \
           </table> \
         </div> \
       </div> \
       <div class="span4"> \
+        <div class="license subsection"> \
+          <h3>License</h3> \
+          <a href="{{dataset.license_url}}">{{dataset.license_title}}</a> \
+          {{#if dataset.isopen}} \
+          <a href="http://opendefinition.org/okd/" title="This dataset satisfies the Open Definition."> \
+              <img class="open-data" src="http://assets.okfn.org/images/ok_buttons/od_80x15_blue.png" alt="[Open Data]"> \
+            </a> \
+          {{else}} \
+          <span class="closed"> \
+            <img src="http://datahub.io/images/icons/lock.png" height="16px" width="16px" alt="None" class="inline-icon ">  Not openly licensed. \
+              </span> \
+          {{/if}} \
+        </div> \
+        {{#if dataset.tags}} \
         <h3>Tags</h3> \
         <div class="tags"> \
-        {{#dataset.tags.length}} \
         <ul class="tags"> \
           {{#dataset.tags}} \
             <li>{{.}}</li> \
           {{/dataset.tags}} \
         </ul> \
-        {{/dataset.tags.length}} \
         </div> \
+        {{/if}} \
       </div> \
     </div> \
   </div> \
@@ -153,9 +190,11 @@ CKAN.View = CKAN.View || {};
         domain: this.options.domain,
         dataset: this.model.toTemplateJSON(),
       };
+      var template = Handlebars.compile(this.template);
+      t = template;
       $('.page-heading').html(tmplData.dataset.displaytitle);
       $('#sidebar .widget-list').html(Mustache.render(this.templateSidebar, tmplData));
-      this.el.html(Mustache.render(this.template, tmplData));
+      this.el.html(template(tmplData));
       this.setupEditable();
       return this;
     },
