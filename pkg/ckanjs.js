@@ -692,11 +692,12 @@ CKAN.UI = function($) {
       my.workspace = this;
 
       var defaultConfig = {
-        endpoint: 'http://ckan.net',
+        endpoint: 'http://datahub.io',
         apiKey: ''
       };
 
-      this.config = _.extend({}, defaultConfig, options);
+      var _cfg = options ? options.config : {};
+      this.config = _.extend({}, defaultConfig, _cfg);
       this.client = new CKAN.Client(this.config);
       if (this.config.fixtures && this.config.fixtures.datasets) {
         $.each(this.config.fixtures.datasets, function(idx, obj) {
