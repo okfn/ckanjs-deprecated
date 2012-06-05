@@ -687,15 +687,19 @@ CKAN.UI = function($) {
 
     initialize: function(options) {
       var self = this;
+      // nasty - we set this as global singleton in this namespace
+      // want to change this but have dependency from resource create on CKAN.UI.workspace
+      my.workspace = this;
+
       var defaultConfig = {
         endpoint: 'http://ckan.net',
         apiKey: ''
       };
 
-      this.config = options.config || defaultConfig;
+      this.config = _.extend({}, defaultConfig, options);
       this.client = new CKAN.Client(this.config);
-      if (options.fixtures && options.fixtures.datasets) {
-        $.each(options.fixtures.datasets, function(idx, obj) {
+      if (this.config.fixtures && this.config.fixtures.datasets) {
+        $.each(this.config.fixtures.datasets, function(idx, obj) {
           var collection = self.client.cache.dataset;
           collection.add(new CKAN.Model.Dataset(obj));
         });
@@ -822,14 +826,15 @@ CKAN.UI = function($) {
       this.switchView('config');
     },
 
-    url: function(controller, action, id) {
-      if (id) {
-        return '#' + controller + '/' + id + '/' + action;
-      } else {
-        return '#' + controller + '/' + action;
-      }
-    }
   });
+
+  my.url = function(controller, action, id) {
+    if (id) {
+      return '#' + controller + '/' + id + '/' + action;
+    } else {
+      return '#' + controller + '/' + action;
+    }
+  }
 
   return my;
 }(jQuery);
@@ -1117,8 +1122,8 @@ CKAN.View = CKAN.View || {};
       var dataset = this.model.toTemplateJSON();
       // if 'UI' mode ...
       var urls = {};
-      if (CKAN.UI && CKAN.UI.workspace) {
-        urls.datasetView = CKAN.UI.workspace.url('dataset', 'view', this.model.id);
+      if (CKAN.UI) {
+        urls.datasetView = CKAN.UI.url('dataset', 'view', this.model.id);
       } else {
         urls.datasetView = dataset.ckan_url;
       }
