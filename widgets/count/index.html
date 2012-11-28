@@ -7,7 +7,7 @@
   <script type="text/javascript">
     jQuery(document).ready(function($) {
       var group = 'economics';
-      var url = 'http://thedatahub.org/api/search/dataset?groups=' + group;
+      var url = 'http://datahub.io/api/search/dataset?groups=' + group;
       $.getJSON(url, function(data) {
         $('.ckanjs-widget-count').html(data.count);
       });
